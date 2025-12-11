@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/features/expenses/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,24 +15,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
 
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: HomePage()
     );
   }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      body: Center(
-          child: Text("Expenses Tracker App")
-      ),
-    );
-  }
-
 }
