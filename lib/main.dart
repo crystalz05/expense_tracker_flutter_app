@@ -1,4 +1,5 @@
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/home_page.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
 import 'package:expenses_tracker_app/injection_container.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
       ),
-      home: HomePage()
+      home: MainPage()
     );
   }
 }
