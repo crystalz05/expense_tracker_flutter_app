@@ -1,5 +1,6 @@
 
 import 'package:equatable/equatable.dart';
+import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 
 abstract class ExpenseEvent extends Equatable {
@@ -20,7 +21,7 @@ class LoadExpenseByIdEvent extends ExpenseEvent{
 }
 
 class AddExpenseEvent extends ExpenseEvent{
-  final Expense expense;
+  final ExpenseParams expense;
   const AddExpenseEvent(this.expense);
 
   @override

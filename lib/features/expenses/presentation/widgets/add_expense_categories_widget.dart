@@ -2,7 +2,10 @@
 import 'package:flutter/material.dart';
 
 class AddExpenseCategoriesWidget extends StatefulWidget {
-  const AddExpenseCategoriesWidget({super.key});
+
+  final ValueChanged<String> onCategorySelected;
+
+  const AddExpenseCategoriesWidget({super.key, required this.onCategorySelected});
 
   @override
   State<StatefulWidget> createState() => _AddExpenseCategoriesWidget();
@@ -43,6 +46,7 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
                 setState(() {
                   selected = item['description'];
                 });
+                widget.onCategorySelected(selected);
               },
               child: Card(
                   color: selected == item['description'] ? Theme.of(context).colorScheme.secondaryContainer .withValues(alpha: 1) : Colors.white,
@@ -74,5 +78,4 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
           );
         });
   }
-
 }

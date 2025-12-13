@@ -61,7 +61,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       Emitter<ExpenseState> emit,
       )async {
     emit(ExpenseLoading());
-    final result = await addExpense(ExpenseParams.fromExpense(event.expense));
+    final result = await addExpense(event.expense);
 
     result.fold(
             (failure) => emit(ExpenseError(failure.message)),
