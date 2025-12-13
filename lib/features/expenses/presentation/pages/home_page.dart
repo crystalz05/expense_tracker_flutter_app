@@ -1,4 +1,5 @@
 
+import 'package:expenses_tracker_app/features/expenses/presentation/mock_data/mock_data.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/balance_card_widget.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/collapsible_transaction_list.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/spend_and_transaction_widget.dart';
@@ -17,21 +18,6 @@ class HomePage extends StatelessWidget {
       {'title': 'Food & Dining', 'subTitle': '₦30,000', 'icon': Icons.shopping_bag},
       {'title': 'Transport', 'subTitle': '₦10,000', 'icon': Icons.movie},
     ];
-
-    final List<Map<String, dynamic>> recentTransactions = [
-      {'title': 'Electricity Bill', 'date': DateTime(2025, 2, 4), 'amount': '₦32,400', 'icon': Icons.lightbulb},
-      {'title': 'Grocery Shopping', 'date': DateTime(2025, 2, 6), 'amount': '₦18,750', 'icon': Icons.fastfood},
-      {'title': 'Movie Night', 'date': DateTime(2025, 2, 5), 'amount': '₦7,200', 'icon': Icons.movie},
-      {'title': 'Transport Fare', 'date': DateTime(2025, 2, 3), 'amount': '₦3,800', 'icon': Icons.directions_bus},
-      {'title': 'Online Shopping', 'date': DateTime(2025, 2, 2), 'amount': '₦45,999', 'icon': Icons.shopping_bag},
-      {'title': 'Restaurant', 'date': DateTime(2025, 2, 1), 'amount': '₦12,300', 'icon': Icons.restaurant},
-      {'title': 'Airtime Purchase', 'date': DateTime(2025, 2, 7), 'amount': '₦5,000', 'icon': Icons.phone_android},
-      {'title': 'Gym Membership', 'date': DateTime(2025, 2, 4), 'amount': '₦20,000', 'icon': Icons.fitness_center},
-      {'title': 'Pharmacy', 'date': DateTime(2025, 2, 2), 'amount': '₦9,450', 'icon': Icons.local_pharmacy},
-      {'title': 'Snacks', 'date': DateTime(2025, 2, 6), 'amount': '₦2,150', 'icon': Icons.fastfood},
-      {'title': 'Online Subscription', 'date': DateTime(2025, 2, 5), 'amount': '₦3,200', 'icon': Icons.subscriptions},
-    ];
-
 
     return SingleChildScrollView(
         child: Padding(

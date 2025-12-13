@@ -1,4 +1,5 @@
 
+import 'package:expenses_tracker_app/features/expenses/presentation/widgets/category_filter_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -22,63 +23,9 @@ class ExpensesHistoryPage extends StatelessWidget {
                     Text("Filter", style: Theme.of(context).textTheme.titleSmall),
                   ],
                 ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100),
-                              side: BorderSide(color: Theme.of(context).colorScheme.outline) ),
-                          child:
-                          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            child: Text("Hello"),
-                          )
-                      ),
-                      Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100),
-                              side: BorderSide(color: Theme.of(context).colorScheme.outline) ),
-                          child:
-                          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            child: Text("Food & Dining"),
-                          )
-                      ),
-                      Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100),
-                              side: BorderSide(color: Theme.of(context).colorScheme.outline) ),
-                          child:
-                          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            child: Text("Transport"),
-                          )
-                      ),
-                      Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100),
-                              side: BorderSide(color: Theme.of(context).colorScheme.outline) ),
-                          child:
-                          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            child: Text("Hello"),
-                          )
-                      ),
-                      Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100),
-                              side: BorderSide(color: Theme.of(context).colorScheme.outline) ),
-                          child:
-                          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            child: Text("Food & Dining"),
-                          )
-                      ),
-                      Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100),
-                              side: BorderSide(color: Theme.of(context).colorScheme.outline) ),
-                          child:
-                          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            child: Text("Transport"),
-                          )
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8,)
+                CategoryFilterWidget(),
+                SizedBox(height: 32),
+                HistorySection(),
               ],
             )
         )
