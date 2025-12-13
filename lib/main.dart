@@ -1,4 +1,5 @@
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/home_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
 import 'package:expenses_tracker_app/injection_container.dart';
@@ -10,7 +11,7 @@ Future<void> main() async {
   await init();
   runApp(
     BlocProvider(
-        create: (_) =>  sl<ExpenseBloc>(),
+        create: (_) =>  sl<ExpenseBloc>()..add(LoadExpensesEvent()),
         child: const MyApp()
     )
   );

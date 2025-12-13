@@ -23,10 +23,12 @@ class ExpenseError extends ExpenseState{
 
 class ExpensesLoaded extends ExpenseState{
   final List<Expense> expenses;
-  const ExpensesLoaded(this.expenses);
+  final double totalSpent;
+  final Map<String, double> categoryTotals;
+  const ExpensesLoaded(this.expenses, this.totalSpent, this.categoryTotals);
 
   @override
-  List<Object?> get props => [expenses];
+  List<Object?> get props => [expenses, totalSpent, categoryTotals];
 }
 
 class ExpenseLoaded extends ExpenseState{

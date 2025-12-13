@@ -8,6 +8,8 @@ import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expen
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/delete_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expense_by_id.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expenses.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_by_category.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_spent.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/update_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -30,6 +32,8 @@ Future<void> init() async {
       ()=> ExpenseRepositoryImpl(localDatasource: sl<ExpensesLocalDatasource>()),
   );
 
+  sl.registerLazySingleton(()=> GetCategoryTotals());
+  sl.registerLazySingleton(()=> GetTotalSpent());
   sl.registerLazySingleton(()=> GetExpenses(sl()));
   sl.registerLazySingleton(()=> GetExpenseById(sl()));
   sl.registerLazySingleton(()=> AddExpense(sl()));
@@ -38,6 +42,8 @@ Future<void> init() async {
 
   sl.registerFactory(
       ()=> ExpenseBloc(
+          getCategoryTotals: sl(),
+          getTotalSpent: sl(),
           getExpenses: sl(),
           getExpenseById: sl(),
           addExpense: sl(),
@@ -45,6 +51,4 @@ Future<void> init() async {
           deleteExpense: sl()
       )
   );
-
-  sl.registerSingleton(()=> GetExpenses(sl()));
 }

@@ -4,6 +4,8 @@ import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expen
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/delete_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expense_by_id.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expenses.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_by_category.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_spent.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/update_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_state.dart';
@@ -11,6 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
 
+  final GetCategoryTotals getCategoryTotals;
+  final GetTotalSpent getTotalSpent;
   final GetExpenses getExpenses;
   final GetExpenseById getExpenseById;
   final AddExpense addExpense;
@@ -18,6 +22,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final DeleteExpense deleteExpense;
 
   ExpenseBloc({
+    required this.getCategoryTotals,
+    required this.getTotalSpent,
     required this.getExpenses,
     required this.getExpenseById,
     required this.addExpense,
@@ -40,7 +46,11 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
 
     result.fold(
           (failure) => emit(ExpenseError(failure.message)),
-          (expenses) => emit(ExpensesLoaded(expenses)),
+          (expenses) {
+            final totalSpent = getTotalSpent(expenses);
+            final categoryTotals = getCategoryTotals(expenses);
+            emit(ExpensesLoaded(expenses, totalSpent, categoryTotals));
+          },
     );
   }
 

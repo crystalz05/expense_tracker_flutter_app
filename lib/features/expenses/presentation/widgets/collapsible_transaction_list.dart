@@ -1,10 +1,12 @@
 
+import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/transaction_widget.dart';
 import 'package:flutter/material.dart';
 
 class CollapsibleTransactionList extends StatefulWidget {
 
-  final List<Map<String, dynamic>> transactions;
+  final List<Expense> transactions;
 
   const CollapsibleTransactionList({super.key, required this.transactions});
 
@@ -48,10 +50,10 @@ class _CollapsibleTransactionListState extends State<CollapsibleTransactionList>
                         ),
                       ),
                       child: TransactionWidget(
-                          icon: transac['icon'],
-                          description: transac['title'],
-                          date: transac['date'],
-                          amount: transac['amount']
+                          icon: Icons.no_food_rounded,
+                          description: transac.description ?? "",
+                          date: transac.updatedAt,
+                          amount: formatter.format(transac.amount)
                       ),
                     );
                   }
