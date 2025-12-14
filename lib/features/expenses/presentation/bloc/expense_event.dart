@@ -43,3 +43,12 @@ class UpdateExpenseEvent extends ExpenseEvent{
   @override
   List<Object?> get props => [expense];
 }
+
+class LoadExpensesByCategoryEvent extends ExpenseEvent {
+  final String category;
+
+  const LoadExpensesByCategoryEvent(this.category);
+
+  @override
+  List<Object?> get props => [category];
+}

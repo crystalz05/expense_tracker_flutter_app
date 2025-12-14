@@ -2,6 +2,7 @@
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/delete_expense.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expense_by_category.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expense_by_id.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expenses.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_by_category.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
 
+  final GetExpenseByCategory getExpenseByCategory;
   final GetCategoryTotals getCategoryTotals;
   final GetTotalSpent getTotalSpent;
   final GetExpenses getExpenses;
@@ -22,6 +24,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final DeleteExpense deleteExpense;
 
   ExpenseBloc({
+    required this.getExpenseByCategory,
     required this.getCategoryTotals,
     required this.getTotalSpent,
     required this.getExpenses,
@@ -30,6 +33,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     required this.updateExpense,
     required this.deleteExpense
   }): super(ExpenseInitial()){
+    on<LoadExpensesByCategoryEvent>(_onLoadExpensesByCategory);
     on<LoadExpensesEvent>(_onLoadExpenses);
     on<LoadExpenseByIdEvent>(_onLoadExpenseById);
     on<AddExpenseEvent>(_onAddExpense);
@@ -110,4 +114,34 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
               add(LoadExpensesEvent());
         });
   }
+
+  Future<void> _onLoadExpensesByCategory(
+      LoadExpensesByCategoryEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    final result = await getExpenseByCategory(
+      CategoryParams(event.category),
+    );
+
+    result.fold(
+          (failure) => emit(ExpenseError(failure.message)),
+          (expenses) {
+        final total = expenses.fold<double>(
+          0,
+              (sum, e) => sum + e.amount,
+        );
+
+        emit(
+          ExpensesByCategoryLoaded(
+            category: event.category,
+            expenses: expenses,
+            total: total,
+          ),
+        );
+      },
+    );
+  }
 }
+

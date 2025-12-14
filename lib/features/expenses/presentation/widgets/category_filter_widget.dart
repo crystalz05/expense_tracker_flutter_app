@@ -1,11 +1,16 @@
 
+import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/mock_data/mock_data.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/transaction_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CategoryFilterWidget extends StatefulWidget {
-  const CategoryFilterWidget({super.key});
+
+  final ValueChanged<String> onCategorySelected;
+
+  const CategoryFilterWidget({super.key, required this.onCategorySelected});
 
   @override
   State<StatefulWidget> createState() => _CategoryFilterWidget();
@@ -29,6 +34,9 @@ class _CategoryFilterWidget extends State<CategoryFilterWidget>{
               onTap: () {
                 setState(() {
                   activeFilter = filterCategory[index];
+                  if(activeFilter == filterCategory[index]){
+                    widget.onCategorySelected(filterCategory[index]);
+                  }
                 });
               },
               child: CategoryCard(title: filterCategory[index], currentActive: filterCategory[index] == activeFilter),
@@ -61,12 +69,13 @@ class CategoryCard extends StatelessWidget{
 }
 
 class HistorySection extends StatelessWidget{
-  const HistorySection({super.key});
+  final List<Expense> expenses;
+  const HistorySection({super.key, required this.expenses});
 
   @override
   Widget build(BuildContext context) {
 
-    final groupTransactions = groupByDay(recentTransactions);
+    final groupTransactions = groupByDayFinal(expenses);
     final sorted = groupTransactions.keys.toList()
       ..sort((a,b) => b.compareTo(a));
 
@@ -105,10 +114,10 @@ class HistorySection extends StatelessWidget{
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 16),
                             child: TransactionWidget(
-                              icon: tx['icon'],
-                              description: tx['title'],
-                              date: tx['date'],
-                              amount: tx['amount'],
+                              icon: Icons.fastfood_outlined,
+                              description: tx.description ?? "",
+                              date: tx.updatedAt,
+                              amount: formatter.format(tx.amount),
                             ),
                           ),
                           if(index != dayTransactions.length-1)

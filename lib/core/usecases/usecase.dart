@@ -55,3 +55,12 @@ class ExpenseParams extends Equatable{
   List<Object?> get props => [amount, category, description, paymentMethod];
 
 }
+
+class CategoryParams extends Equatable {
+  final String category;
+
+  const CategoryParams(this.category);
+
+  @override
+  List<Object?> get props => [category];
+}

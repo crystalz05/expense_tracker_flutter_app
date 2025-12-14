@@ -46,3 +46,18 @@ class ExpenseActionSuccess extends ExpenseState{
   @override
   List<Object?> get props => [message];
 }
+
+class ExpensesByCategoryLoaded extends ExpenseState {
+  final String category;
+  final List<Expense> expenses;
+  final double total;
+
+  const ExpensesByCategoryLoaded({
+    required this.category,
+    required this.expenses,
+    required this.total,
+  });
+
+  @override
+  List<Object?> get props => [category, expenses, total];
+}
