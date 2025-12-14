@@ -16,6 +16,13 @@ class TransactionWidget extends StatelessWidget {
     required this.amount
   });
 
+  String get formattedTime {
+    final hour = date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour);
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'PM' : 'AM';
+    return "$hour:$minute $period";
+  }
+
   @override
   Widget build(BuildContext context) {
     return
@@ -39,7 +46,7 @@ class TransactionWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(description, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w400)),
-                      Text("${DateFormat('MMM').format(date)} ${date.day}", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.normal)),
+                      Text("${DateFormat('MMM').format(date)} ${date.day} ,${date.year} - $formattedTime", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.normal)),
                     ],
                   ),
                 ],

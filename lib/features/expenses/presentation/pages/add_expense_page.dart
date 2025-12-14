@@ -13,7 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddExpensePage extends StatefulWidget {
-  const AddExpensePage({super.key});
+  final VoidCallback onExpenseAdded;
+
+  const AddExpensePage({super.key, required this.onExpenseAdded});
 
   @override
   State<StatefulWidget> createState() => _AddExpensePage();
@@ -54,6 +56,7 @@ class _AddExpensePage extends State<AddExpensePage>{
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.message), backgroundColor: Colors.green)
             );
+            widget.onExpenseAdded();
           }else if (state is ExpenseError){
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.message), backgroundColor: Colors.red)
@@ -130,6 +133,7 @@ class _AddExpensePage extends State<AddExpensePage>{
                                   ) ),
                               onPressed: (){
                                 _submitExpense();
+
                               },
                               child: Text("Add Expense")),
                         )

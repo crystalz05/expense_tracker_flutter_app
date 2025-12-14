@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/mock_data/mock_data.dart';
@@ -68,73 +70,135 @@ class CategoryCard extends StatelessWidget{
   }
 }
 
-class HistorySection extends StatelessWidget{
+class HistorySection extends StatefulWidget {
   final List<Expense> expenses;
-  const HistorySection({super.key, required this.expenses});
+  final ValueChanged<String> onDelete;
+  const HistorySection({super.key, required this.expenses, required this.onDelete});
+
+  @override
+  State<HistorySection> createState() => _HistorySectionState();
+}
+
+class _HistorySectionState extends State<HistorySection> {
+  String? _selectedIndex;
+  Timer? _clearTimer;
+
 
   @override
   Widget build(BuildContext context) {
+    final groupTransactions = groupByDayFinal(widget.expenses);
+    final sorted = groupTransactions.keys.toList()..sort((a,b) => b.compareTo(a));
 
-    final groupTransactions = groupByDayFinal(expenses);
-    final sorted = groupTransactions.keys.toList()
-      ..sort((a,b) => b.compareTo(a));
+
+    if(groupTransactions.isEmpty){
+      return Column(
+        children: [
+          SizedBox(height: 24,),
+          Center(child: Text("No transaction yet"),),
+          SizedBox(height: 24,)
+        ],
+      );
+    }
 
     return Column(
-        children: sorted.map((day){
-          final dayTransactions = groupTransactions[day]!;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: Text(
-                  DateFormat('dd MMM yyyy').format(day),
-                  style: Theme.of(context).textTheme.titleMedium,
+      children: sorted.map((day) {
+        final dayTransactions = groupTransactions[day]!;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              child: Text(
+                DateFormat('dd MMM yyyy').format(day),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            Card(
+              color: Theme.of(context).colorScheme.surface,
+              elevation: 1,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4),
+                  width: 0.5,
                 ),
               ),
+              child: Column(
+                children: List.generate(dayTransactions.length, (index) {
+                  final tx = dayTransactions[index];
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onLongPress: () {
+                      _clearTimer?.cancel();
 
-              Card(
-                color: Colors.white,
-                elevation: 1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4), width: 0.5
-                  ),
-                ),
-                child: Column(
-                  children:
-                    List.generate(dayTransactions.length, (index){
-                      final tx = dayTransactions[index];
+                      setState(() {
+                        _selectedIndex = tx.id;
+                      });
 
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 16),
-                            child: TransactionWidget(
-                              icon: Icons.fastfood_outlined,
-                              description: tx.description ?? "",
-                              date: tx.updatedAt,
-                              amount: formatter.format(tx.amount),
+                      _clearTimer = Timer(const Duration(seconds: 5), () {
+                        if (mounted) {
+                          setState(() {
+                            _selectedIndex = null;
+                          });
+                        }
+                      });
+                    },
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                          child: TransactionWidget(
+                            icon: Icons.fastfood_outlined,
+                            description: tx.description ?? "",
+                            date: tx.updatedAt,
+                            amount: formatter.format(tx.amount),
+                          ),
+                        ),
+                        // Overlay edit/delete if this item is selected
+                        if (_selectedIndex == tx.id)
+                          Positioned.fill(
+                            child: Container(
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.edit, color: Colors.blue),
+                                    onPressed: () {
+                                      // Handle edit
+                                    },
+                                  ),
+                                  SizedBox(width: 48,),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      widget.onDelete(tx.id);
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          if(index != dayTransactions.length-1)
-                            Divider(
+                        if(index != dayTransactions.length-1)
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Divider(
                               height: 1,
                               thickness: 0.5,
                               color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
-                            )
-                        ],
-                      );
-
-                    }),
-                )
-              )
-            ],
-          );
-        }).toList()
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }

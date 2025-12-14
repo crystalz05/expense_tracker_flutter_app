@@ -15,6 +15,10 @@ import 'package:expenses_tracker_app/features/expenses/domain/usecases/update_ex
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'core/presentation/cubit/budget_cubit.dart';
+import 'core/presentation/cubit/theme_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -24,6 +28,17 @@ Future<void> init() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ExpenseModelAdapter());
   final expenseBox = await Hive.openBox<ExpenseModel>('expense_box');
+
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+
+  sl.registerLazySingleton<ThemeCubit>(
+        () => ThemeCubit(sl<SharedPreferences>()),
+  );
+
+  sl.registerLazySingleton<BudgetCubit>(
+        () => BudgetCubit(prefs: sl<SharedPreferences>()),
+  );
 
   sl.registerLazySingleton<ExpensesLocalDatasource>(
       ()=> ExpenseLocalDataSourceImpl(expenseBox),

@@ -21,10 +21,19 @@ class _CollapsibleTransactionListState extends State<CollapsibleTransactionList>
   Widget build(BuildContext context) {
     final visibleItems = showAll ? widget.transactions : widget.transactions.take(5).toList();
 
+    if(widget.transactions.isEmpty){
+      return Column(
+        children: [
+          SizedBox(height: 24,),
+          Center(child: Text("No Transactions yet"),),
+          SizedBox(height: 24,),
+        ],
+      );
+    }
     return Column(
       children: [
         Card(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           elevation: 1,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),

@@ -1,5 +1,11 @@
 
+import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/presentation/cubit/budget_cubit.dart';
+import '../../../../core/presentation/cubit/theme_cubit.dart';
+import '../widgets/budget_dialog.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -18,7 +24,7 @@ class SettingsPage extends StatelessWidget {
                     Text("BUDGET", style: Theme.of(context).textTheme.bodyMedium),
                     SizedBox(height: 8,),
                     Card(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         elevation: 1,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -56,7 +62,25 @@ class SettingsPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    Text("₦200,000.00", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500, color: Colors.green)),
+                                    BlocBuilder<BudgetCubit, BudgetState>(
+                                      builder: (context, state) {
+                                        return Row(
+                                          children: [
+                                            Text("₦${formatter.format(state.monthlyBudget)}"),
+                                            IconButton(
+                                              icon: Icon(Icons.edit),
+                                              onPressed: () async {
+                                                double newBudget = await showDialog(
+                                                  context: context,
+                                                  builder: (_) => BudgetDialog(initialBudget: state.monthlyBudget),
+                                                );
+                                                context.read<BudgetCubit>().setBudget(newBudget);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    )
                                   ],
                                 ),
 
@@ -68,7 +92,7 @@ class SettingsPage extends StatelessWidget {
                     Text("Preferences", style: Theme.of(context).textTheme.bodyMedium),
                     SizedBox(height: 8,),
                     Card(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         elevation: 1,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -106,7 +130,23 @@ class SettingsPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    Switch(value: true, onChanged: (newValue) {} ),
+                                    BlocBuilder<ThemeCubit, ThemeState>(
+                                      builder: (context, state) {
+                                        bool isDark = state == ThemeState.dark;
+
+                                        return Switch(
+                                          value: isDark,
+                                          onChanged: (newValue) {
+                                            // Toggle between light and dark
+                                            if (newValue) {
+                                              context.read<ThemeCubit>().setTheme(ThemeState.dark);
+                                            } else {
+                                              context.read<ThemeCubit>().setTheme(ThemeState.light);
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
 
@@ -118,7 +158,7 @@ class SettingsPage extends StatelessWidget {
                     Text("Preferences", style: Theme.of(context).textTheme.bodyMedium),
                     SizedBox(height: 8,),
                     Card(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         elevation: 1,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

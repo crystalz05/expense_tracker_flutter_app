@@ -51,6 +51,10 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage>{
   Widget _buildWidget(
       BuildContext context, {required List<Expense> expenses}
       ){
+
+    final sortedExpenses = List.of(expenses)
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
     return SingleChildScrollView(
         child: Padding(padding: EdgeInsetsGeometry.all(16),
             child: Column(
@@ -74,7 +78,14 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage>{
                   }
                 },),
                 SizedBox(height: 32),
-                HistorySection(expenses: expenses),
+                HistorySection(
+                  expenses: sortedExpenses,
+                  onDelete: (id){
+                    context.read<ExpenseBloc>()
+                        .add(DeleteExpenseEvent(id)
+                    );
+                  },
+                ),
               ],
             )
         )

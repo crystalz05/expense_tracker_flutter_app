@@ -2,13 +2,13 @@
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/expenses_history_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/settings_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
 
 class MainPage extends StatefulWidget{
   const MainPage({super.key});
+
 
   @override
   State<MainPage> createState() => _MainPage();
@@ -17,17 +17,34 @@ class MainPage extends StatefulWidget{
 
 class _MainPage extends State<MainPage>{
   int currentIndex = 0;
+  late final List<Widget> pages; // <-- declare late final
 
-  final pages = [
-    HomePage(),
-    AddExpensePage(),
-    ExpensesHistoryPage(),
-    SettingsPage(),
-  ];
+
+  void _goHome() {
+    setState(() {
+      currentIndex = 0;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize pages here after 'this' is available
+    pages = [
+      const HomePage(),
+      AddExpensePage(
+        onExpenseAdded: _goHome, // safe now
+      ),
+      const ExpensesHistoryPage(),
+      const SettingsPage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       body: SafeArea(child: pages[currentIndex]),
       bottomNavigationBar: NavigationBarTheme(
           data: NavigationBarThemeData(
@@ -40,14 +57,14 @@ class _MainPage extends State<MainPage>{
                 return const TextStyle(
                     color: Colors.grey
                 );
-              })
+              }),
           ),
           child: Theme(
               data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
               child: NavigationBar(
                 indicatorColor: Colors.transparent,
                 selectedIndex: currentIndex,
-                onDestinationSelected: (index){
+                  onDestinationSelected: (index){
                   setState(() {
                     currentIndex = index;
                   });

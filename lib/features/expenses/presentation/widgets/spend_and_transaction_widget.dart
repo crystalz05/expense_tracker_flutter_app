@@ -18,7 +18,7 @@ class SpendAndTransactionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Card(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         elevation: 1,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),

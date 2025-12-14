@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+
     final List<Map<String, dynamic>> topCategories = [
       {'title': 'Bills & Utilities', 'subTitle': '₦50,000', 'icon': Icons.fastfood},
       {'title': 'Shopping', 'subTitle': '₦20,000', 'icon': Icons.directions_bus},
@@ -34,6 +35,9 @@ class HomePage extends StatelessWidget {
                 }else if(state is ExpenseError){
                   return Center(child: Text('Error: ${state.message}'));
                 }else if(state is ExpensesLoaded){
+
+                  final sortedExpenses = List.of(state.expenses)
+                    ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
                   return
                     Column(
@@ -76,7 +80,7 @@ class HomePage extends StatelessWidget {
                         ),
                         SizedBox(height: 16),
                         Text("Recent Transactions", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        CollapsibleTransactionList(transactions: state.expenses)
+                        CollapsibleTransactionList(transactions: sortedExpenses)
                       ],
                     );
                 }

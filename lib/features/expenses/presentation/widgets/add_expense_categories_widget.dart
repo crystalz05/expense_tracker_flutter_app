@@ -33,11 +33,11 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
         itemCount: categoriesItem.length,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            // maxCrossAxisExtent: 200,
             mainAxisExtent: 70,
             mainAxisSpacing: 6,
-            crossAxisSpacing: 6
+            crossAxisSpacing: 6, crossAxisCount: 2,
         ),
         itemBuilder: (context, index){
           final item = categoriesItem[index];
@@ -49,7 +49,7 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
                 widget.onCategorySelected(selected);
               },
               child: Card(
-                  color: selected == item['description'] ? Theme.of(context).colorScheme.secondaryContainer .withValues(alpha: 1) : Colors.white,
+                  color: selected == item['description'] ? Theme.of(context).colorScheme.surfaceContainerHighest .withValues(alpha: 1) : Theme.of(context).colorScheme.surface,
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
