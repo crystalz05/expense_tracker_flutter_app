@@ -15,7 +15,7 @@ class Expense extends Equatable {
     required this.id,
     required this.amount,
     required this.category,
-    required this.description,
+    this.description,
     required this.createdAt,
     required this.updatedAt,
     required this.paymentMethod

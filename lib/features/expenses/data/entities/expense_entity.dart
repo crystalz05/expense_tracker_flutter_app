@@ -1,37 +1,30 @@
 
-import 'package:hive/hive.dart';
-part 'expense_model.g.dart';
+import 'package:floor/floor.dart';
 
+@Entity(tableName: 'expenses')
+class ExpenseEntity {
 
-@HiveType(typeId: 0)
-class ExpenseModel extends HiveObject {
-
-  @HiveField(0)
+  @primaryKey
   final String id;
-  
-  @HiveField(1)
+
   final double amount;
-
-  @HiveField(2)
   final String category;
-
-  @HiveField(3)
   final String? description;
 
-  @HiveField(4)
+  @ColumnInfo(name: 'created_at')
   final DateTime createdAt;
 
-  @HiveField(5)
+  @ColumnInfo(name: 'updated_at')
   final DateTime updatedAt;
 
-  @HiveField(6)
+  @ColumnInfo(name: 'payment_method')
   final String paymentMethod ;
 
-  ExpenseModel({
+  const ExpenseEntity({
     required this.id,
     required this.amount,
     required this.category,
-    required this.description,
+    this.description,
     required this.createdAt,
     required this.updatedAt,
     required this.paymentMethod

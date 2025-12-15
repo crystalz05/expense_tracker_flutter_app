@@ -1,9 +1,10 @@
 
 
-import '../../domain/entities/expense.dart';
-import '../models/expense_model.dart';
+import 'package:expenses_tracker_app/features/expenses/data/entities/expense_entity.dart';
 
-extension ExpenseModelMapper on ExpenseModel {
+import '../../domain/entities/expense.dart';
+
+extension ExpenseModelMapper on ExpenseEntity {
   Expense toEntity() {
     return Expense(
       id: id,
@@ -18,8 +19,8 @@ extension ExpenseModelMapper on ExpenseModel {
 }
 
 extension ExpenseEntityMapper on Expense {
-  ExpenseModel toModel() {
-    return ExpenseModel(
+  ExpenseEntity toModel() {
+    return ExpenseEntity(
       id: id,
       amount: amount,
       category: category,
