@@ -13,9 +13,6 @@ abstract class ExpenseDao {
 
   @Query('SELECT * FROM expenses WHERE category = :category ORDER BY updated_at DESC')
   Future<List<ExpenseEntity>> getExpenseByCategory(String category);
-  
-  @Query('SELECT SUM(amount) FROM expenses WHERE category = :category')
-  Future<double?> getTotalByCategory(String category);
 
   @insert
   Future<void> addExpense(ExpenseEntity expense);
@@ -28,6 +25,9 @@ abstract class ExpenseDao {
 
   @Query('SELECT * FROM expenses WHERE id = :id')
   Future<void> deleteExpense(String id);
+
+  @Query('SELECT SUM(amount) FROM expenses WHERE category = :category')
+  Future<double?> getTotalByCategory(String category);
 
   @Query('SELECT SUM(amount) FROM expenses')
   Future<double?> getTotalExpense();

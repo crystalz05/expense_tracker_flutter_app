@@ -29,5 +29,4 @@ class ExpenseEntity {
     required this.updatedAt,
     required this.paymentMethod
   });
-
 }

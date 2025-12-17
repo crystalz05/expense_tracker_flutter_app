@@ -16,79 +16,80 @@ class ExpensesHistoryPage extends StatefulWidget {
   State<StatefulWidget> createState() => _ExpensesHistoryPage();
 }
 
-class _ExpensesHistoryPage extends State<ExpensesHistoryPage>{
+class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
+  String _activeFilter = "All";
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<ExpenseBloc, ExpenseState>(
+      listener: (context, state) {
+        if (state is ExpenseActionSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.green),
+          );
+        } else if (state is ExpenseError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is ExpenseLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return
-      BlocConsumer<ExpenseBloc, ExpenseState>(
-        listener: (context, state){
-          if(state is ExpenseActionSuccess){
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: Colors.green)
-            );
-          }else if (state is ExpenseError){
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: Colors.red)
-            );
-          }
-        },
-        builder: (context, state){
-          if(state is ExpenseLoading){
-            return const Center(child: CircularProgressIndicator());
-          }if(state is ExpensesLoaded){
-            return _buildWidget(context, expenses: state.expenses);
-          }
-          else if(state is ExpensesByCategoryLoaded){
-            return _buildWidget(context, expenses: state.expenses);
-          }
-          return const SizedBox.shrink();
-        },
-      );
+        if (state is ExpensesLoaded) {
+          return _buildWidget(context, state.expenses);
+        }
+
+        if (state is ExpensesByCategoryLoaded) {
+          return _buildWidget(context, state.expenses);
+        }
+
+        return const SizedBox.shrink();
+      },
+    );
   }
 
-  Widget _buildWidget(
-      BuildContext context, {required List<Expense> expenses}
-      ){
-
+  Widget _buildWidget(BuildContext context, List<Expense> expenses) {
     final sortedExpenses = List.of(expenses)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
     return SingleChildScrollView(
-        child: Padding(padding: EdgeInsetsGeometry.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("History", style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
-                Text("View all your transactions", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blueGrey)),
-                SizedBox(height: 24),
-                Row(
-                  children: [
-                    Icon(Icons.filter_alt_outlined, size: 20),
-                    SizedBox(width: 8,),
-                    Text("Filter", style: Theme.of(context).textTheme.titleSmall),
-                  ],
-                ),
-                CategoryFilterWidget(onCategorySelected: (filter) {
-                  if(filter == "All"){
-                    context.read<ExpenseBloc>().add(LoadExpensesEvent());
-                  }else{
-                    context.read<ExpenseBloc>().add(LoadExpensesByCategoryEvent(filter));
-                  }
-                },),
-                SizedBox(height: 32),
-                HistorySection(
-                  expenses: sortedExpenses,
-                  onDelete: (id){
-                    context.read<ExpenseBloc>()
-                        .add(DeleteExpenseEvent(id)
-                    );
-                  },
-                ),
-              ],
-            )
-        )
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("History"),
+            const SizedBox(height: 24),
+
+            CategoryFilterWidget(
+              activeFilter: _activeFilter,
+              onCategorySelected: (filter) {
+                setState(() => _activeFilter = filter);
+
+                if (filter == "All") {
+                  context.read<ExpenseBloc>().add(LoadExpensesEvent());
+                } else {
+                  context
+                      .read<ExpenseBloc>()
+                      .add(LoadExpensesEvent(category: filter));
+                }
+              },
+            ),
+
+            const SizedBox(height: 32),
+
+            HistorySection(
+              expenses: sortedExpenses,
+              onDelete: (id) {
+                context.read<ExpenseBloc>().add(DeleteExpenseEvent(id));
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

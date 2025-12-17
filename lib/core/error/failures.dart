@@ -11,5 +11,17 @@ abstract class Failure extends Equatable {
 }
 
 class DatabaseFailure extends Failure {
-  const DatabaseFailure([super.message = "Database operation failed"]);
+  const DatabaseFailure([super.message = 'Database operation failed']);
+}
+
+class ServerFailure extends Failure {
+  const ServerFailure([super.message = 'Server error occurred']);
+}
+
+class AuthFailure extends Failure {
+  const AuthFailure([super.message = 'Authentication failed']);
+}
+
+class CacheFailure extends Failure {
+  const CacheFailure([super.message = 'Cache error occurred']);
 }

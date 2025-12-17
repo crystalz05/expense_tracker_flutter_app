@@ -1,147 +1,145 @@
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/delete_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expense_by_category.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expense_by_date_range.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expense_by_id.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expenses.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_by_category.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_spent.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/update_expense.dart';
-import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
-import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/expense.dart';
+import 'expense_event.dart';
+import 'expense_state.dart';
 
 class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
-
-  final GetExpenseByCategory getExpenseByCategory;
-  final GetCategoryTotals getCategoryTotals;
-  final GetTotalSpent getTotalSpent;
   final GetExpenses getExpenses;
   final GetExpenseById getExpenseById;
+  final GetExpenseByCategory getExpenseByCategory;
+  final GetExpenseByDateRange getExpenseByDateRange;
+  final GetCategoryTotals getCategoryTotals;
+  final GetTotalSpent getTotalSpent;
   final AddExpense addExpense;
   final UpdateExpense updateExpense;
   final DeleteExpense deleteExpense;
 
   ExpenseBloc({
-    required this.getExpenseByCategory,
-    required this.getCategoryTotals,
-    required this.getTotalSpent,
     required this.getExpenses,
     required this.getExpenseById,
+    required this.getExpenseByCategory,
+    required this.getExpenseByDateRange,
+    required this.getCategoryTotals,
+    required this.getTotalSpent,
     required this.addExpense,
     required this.updateExpense,
-    required this.deleteExpense
-  }): super(ExpenseInitial()){
-    on<LoadExpensesByCategoryEvent>(_onLoadExpensesByCategory);
-    on<LoadExpensesEvent>(_onLoadExpenses);
-    on<LoadExpenseByIdEvent>(_onLoadExpenseById);
-    on<AddExpenseEvent>(_onAddExpense);
-    on<UpdateExpenseEvent>(_onUpdateExpense);
-    on<DeleteExpenseEvent>(_onDeleteExpense);
+    required this.deleteExpense,
+  }) : super(ExpenseInitial()) {
+    on<LoadExpensesEvent>(_loadExpenses);
+    on<LoadExpenseByIdEvent>(_loadExpenseById);
+    on<AddExpenseEvent>(_addExpense);
+    on<UpdateExpenseEvent>(_updateExpense);
+    on<DeleteExpenseEvent>(_deleteExpense);
   }
 
-  Future<void> _onLoadExpenses(
+  Future<void> _loadExpenses(
       LoadExpensesEvent event,
-      Emitter<ExpenseState> emit,
-      )async{
-    emit(ExpenseLoading());
-    final result =await getExpenses(NoParams());
-
-    result.fold(
-          (failure) => emit(ExpenseError(failure.message)),
-          (expenses) {
-            final totalSpent = getTotalSpent(expenses);
-            final categoryTotals = getCategoryTotals(expenses);
-            emit(ExpensesLoaded(expenses, totalSpent, categoryTotals));
-          },
-    );
-  }
-
-  Future<void> _onLoadExpenseById(
-      LoadExpenseByIdEvent event,
-      Emitter<ExpenseState> emit,)async{
-    emit(ExpenseLoading());
-    final result = await getExpenseById(IdParams(id: event.id));
-
-    result.fold(
-            (failure) => emit(ExpenseError(failure.message)),
-            (expense) => emit(ExpenseLoaded(expense))
-    );
-  }
-
-  Future<void> _onAddExpense(
-      AddExpenseEvent event,
-      Emitter<ExpenseState> emit,
-      )async {
-    emit(ExpenseLoading());
-    final result = await addExpense(event.expense);
-
-    result.fold(
-            (failure) => emit(ExpenseError(failure.message)),
-            (_) async {
-          emit(ExpenseActionSuccess("Expense Created Successfully"));
-          add(LoadExpensesEvent());
-        });
-  }
-
-  Future<void> _onUpdateExpense(
-      UpdateExpenseEvent event,
-      Emitter<ExpenseState> emit,
-      )async {
-    emit(ExpenseLoading());
-    final result = await updateExpense(event.expense);
-
-    result.fold(
-        (failure) => emit(ExpenseError(failure.message)),
-        (_) async {
-          emit(ExpenseActionSuccess("Expense updated successfully"));
-          add(LoadExpensesEvent());
-        });
-  }
-
-  Future<void> _onDeleteExpense(
-      DeleteExpenseEvent event,
-      Emitter<ExpenseState> emit,
-      )async {
-    emit(ExpenseLoading());
-    final result = await deleteExpense(IdParams(id: event.id));
-
-    result.fold(
-            (failure) => emit(ExpenseError(failure.message)),
-        (_) async{
-              emit(ExpenseActionSuccess("Expense Deleted Successfully"));
-              add(LoadExpensesEvent());
-        });
-  }
-
-  Future<void> _onLoadExpensesByCategory(
-      LoadExpensesByCategoryEvent event,
       Emitter<ExpenseState> emit,
       ) async {
     emit(ExpenseLoading());
 
-    final result = await getExpenseByCategory(
-      CategoryParams(event.category),
-    );
+    try {
+      List<Expense> expenses;
+
+      if (event.category != null) {
+        final result =
+        await getExpenseByCategory(CategoryParams(event.category!));
+        expenses = result.fold((f) => throw Exception(f.message), (e) => e);
+      } else if (event.from != null && event.to != null) {
+        final result = await getExpenseByDateRange(
+          DateRangeParams(start: event.from!, end: event.to!),
+        );
+        expenses = result.fold((f) => throw Exception(f.message), (e) => e);
+      } else {
+        final result = await getExpenses(NoParams());
+        expenses = result.fold((f) => throw Exception(f.message), (e) => e);
+      }
+
+      emit(
+        ExpensesLoaded(
+          expenses,
+          getTotalSpent(expenses),
+          getCategoryTotals(expenses),
+        ),
+      );
+    } catch (e) {
+      emit(ExpenseError(e.toString()));
+    }
+  }
+
+
+  Future<void> _loadExpenseById(
+      LoadExpenseByIdEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    final result = await getExpenseById(IdParams(id: event.id));
 
     result.fold(
-          (failure) => emit(ExpenseError(failure.message)),
-          (expenses) {
-        final total = expenses.fold<double>(
-          0,
-              (sum, e) => sum + e.amount,
-        );
+          (f) => emit(ExpenseError(f.message)),
+          (expense) => emit(ExpenseLoaded(expense)),
+    );
+  }
 
-        emit(
-          ExpensesByCategoryLoaded(
-            category: event.category,
-            expenses: expenses,
-            total: total,
-          ),
-        );
+  Future<void> _addExpense(
+      AddExpenseEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    final result = await addExpense(event.params);
+
+    result.fold(
+          (f) => emit(ExpenseError(f.message)),
+          (_) {
+        emit(const ExpenseActionSuccess("Expense created successfully"));
+        add(LoadExpensesEvent());
+      },
+    );
+  }
+
+  Future<void> _updateExpense(
+      UpdateExpenseEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    final result = await updateExpense(event.expense);
+
+    result.fold(
+          (f) => emit(ExpenseError(f.message)),
+          (_) {
+        emit(const ExpenseActionSuccess("Expense updated successfully"));
+        add(LoadExpensesEvent());
+      },
+    );
+  }
+
+  Future<void> _deleteExpense(
+      DeleteExpenseEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    final result = await deleteExpense(IdParams(id: event.id));
+
+    result.fold(
+          (f) => emit(ExpenseError(f.message)),
+          (_) {
+        emit(const ExpenseActionSuccess("Expense deleted successfully"));
+        add(LoadExpensesEvent());
       },
     );
   }
 }
-

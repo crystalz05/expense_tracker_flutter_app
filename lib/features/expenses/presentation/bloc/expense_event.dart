@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
@@ -10,33 +9,26 @@ abstract class ExpenseEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadExpensesEvent extends ExpenseEvent{}
+class LoadExpensesEvent extends ExpenseEvent {
+  final String? category;
+  final DateTime? from;
+  final DateTime? to;
 
-class LoadExpenseByIdEvent extends ExpenseEvent{
-  final String id;
-  const LoadExpenseByIdEvent(this.id);
-
-  @override
-  List<Object?> get props => [id];
-}
-
-class AddExpenseEvent extends ExpenseEvent{
-  final ExpenseParams expense;
-  const AddExpenseEvent(this.expense);
+  const LoadExpensesEvent({this.category, this.from, this.to});
 
   @override
-  List<Object?> get props => [expense];
+  List<Object?> get props => [category ?? '', from ?? '', to ?? ''];
 }
 
-class DeleteExpenseEvent extends ExpenseEvent{
-  final String id;
-  const DeleteExpenseEvent(this.id);
+class AddExpenseEvent extends ExpenseEvent {
+  final ExpenseParams params;
+  const AddExpenseEvent(this.params);
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [params];
 }
 
-class UpdateExpenseEvent extends ExpenseEvent{
+class UpdateExpenseEvent extends ExpenseEvent {
   final Expense expense;
   const UpdateExpenseEvent(this.expense);
 
@@ -44,11 +36,18 @@ class UpdateExpenseEvent extends ExpenseEvent{
   List<Object?> get props => [expense];
 }
 
-class LoadExpensesByCategoryEvent extends ExpenseEvent {
-  final String category;
-
-  const LoadExpensesByCategoryEvent(this.category);
+class DeleteExpenseEvent extends ExpenseEvent {
+  final String id;
+  const DeleteExpenseEvent(this.id);
 
   @override
-  List<Object?> get props => [category];
+  List<Object?> get props => [id];
+}
+
+class LoadExpenseByIdEvent extends ExpenseEvent {
+  final String id;
+  const LoadExpenseByIdEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
 }

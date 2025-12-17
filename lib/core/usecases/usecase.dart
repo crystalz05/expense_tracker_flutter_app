@@ -77,3 +77,30 @@ class DateRangeParams extends Equatable {
   @override
   List<Object?> get props => [start, end];
 }
+
+class SignInParams extends Equatable {
+  final String email;
+  final String password;
+
+  const SignInParams({
+    required this.email,
+    required this.password});
+
+  @override
+  List<Object?> get props => [email, password];
+}
+
+class SignUpParams extends Equatable {
+  final String email;
+  final String password;
+  final String? displayName;
+
+  const SignUpParams({
+    required this.email,
+    required this.password,
+    this.displayName,
+  });
+
+  @override
+  List<Object?> get props => [email, password, displayName];
+}

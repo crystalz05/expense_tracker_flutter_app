@@ -102,6 +102,7 @@ class _AddExpensePage extends State<AddExpensePage>{
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
                             ),
                           ),
+                          textCapitalization: TextCapitalization.sentences,
                         ),
                         SizedBox(height: 24),
                         Text("Payment Method", style: Theme.of(context).textTheme.bodyMedium),

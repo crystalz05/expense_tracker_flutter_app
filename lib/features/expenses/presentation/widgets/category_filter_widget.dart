@@ -8,46 +8,46 @@ import 'package:expenses_tracker_app/features/expenses/presentation/widgets/tran
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class CategoryFilterWidget extends StatefulWidget {
-
+class CategoryFilterWidget extends StatelessWidget {
+  final String activeFilter;
   final ValueChanged<String> onCategorySelected;
 
-  const CategoryFilterWidget({super.key, required this.onCategorySelected});
+  const CategoryFilterWidget({
+    super.key,
+    required this.activeFilter,
+    required this.onCategorySelected,
+  });
 
-  @override
-  State<StatefulWidget> createState() => _CategoryFilterWidget();
-
-}
-
-class _CategoryFilterWidget extends State<CategoryFilterWidget>{
-
-  String activeFilter = "All";
-  final List<String> filterCategory = ["All", "Food & Dining", "Transport", "Shopping", "Entertainment", "Bills & Utilities", "Health", "Other"];
+  static const List<String> categories = [
+    "All",
+    "Food & Dining",
+    "Transport",
+    "Shopping",
+    "Entertainment",
+    "Bills & Utilities",
+    "Health",
+    "Other",
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          spacing: 8,
-          children: List.generate(filterCategory.length, (index){
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  activeFilter = filterCategory[index];
-                  if(activeFilter == filterCategory[index]){
-                    widget.onCategorySelected(filterCategory[index]);
-                  }
-                });
-              },
-              child: CategoryCard(title: filterCategory[index], currentActive: filterCategory[index] == activeFilter),
-            );
-          })
-        ),
-      );
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: categories.map((category) {
+          return GestureDetector(
+            onTap: () => onCategorySelected(category),
+            child: CategoryCard(
+              title: category,
+              currentActive: category == activeFilter,
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 }
+
 
 class CategoryCard extends StatelessWidget{
 
