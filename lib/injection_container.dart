@@ -6,9 +6,19 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'core/constants/supabase_constants.dart';
 import 'core/presentation/cubit/budget_cubit.dart';
 import 'core/presentation/cubit/theme_cubit.dart';
+import 'features/auth/data/datasources/auth_remote_datasource.dart';
+import 'features/auth/data/datasources/auth_remote_datasource_impl.dart';
+import 'features/auth/data/repositories/auth_repository_impl.dart';
+import 'features/auth/domain/repositories/auth_repository.dart';
+import 'features/auth/domain/usecases/get_current_user.dart';
+import 'features/auth/domain/usecases/sign_in.dart';
+import 'features/auth/domain/usecases/sign_out.dart';
+import 'features/auth/domain/usecases/sign_up.dart';
 import 'features/auth/domain/user_session/user_session.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/expenses/data/datasources/app_database.dart';
 import 'features/expenses/data/datasources/expense_remote_datasource.dart';
 import 'features/expenses/data/datasources/expense_remote_datasource_impl.dart';
@@ -31,6 +41,11 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
 
+  await Supabase.initialize(
+    url: SupabaseConstants.supabaseUrl,
+    anonKey: SupabaseConstants.supabaseAnonKey,
+  );
+
   final database = await $FloorAppDatabase
       .databaseBuilder("app_database.db")
       .addMigrations([migration1to2])
@@ -45,7 +60,6 @@ Future<void> init() async {
 
   //Syncing expenses
   sl.registerLazySingleton(() => SyncExpenses(sl()));
-
 
   // Cubits
   sl.registerLazySingleton(() => ThemeCubit(sl()));
@@ -77,6 +91,32 @@ Future<void> init() async {
           )
   );
 
+// Register AuthRemoteDatasource first
+  sl.registerLazySingleton<AuthRemoteDatasource>(
+        () => AuthRemoteDatasourceImpl(sl<SupabaseClient>()),
+  );
+
+// Then register AuthRepositoryImpl
+  sl.registerLazySingleton<AuthRepository>(
+        () => AuthRepositoryImpl(sl<AuthRemoteDatasource>()),
+  );
+
+
+  sl.registerLazySingleton(() => SignIn(sl()));
+  sl.registerLazySingleton(() => SignUp(sl()));
+  sl.registerLazySingleton(() => SignOut(sl()));
+  sl.registerLazySingleton(() => GetCurrentUser(sl()));
+
+  sl.registerFactory(
+        () => AuthBloc(
+      signIn: sl(),
+      signUp: sl(),
+      signOut: sl(),
+      getCurrentUser: sl(),
+      authRepository: sl(),
+    ),
+  );
+
 
   sl.registerLazySingleton(() => GetExpenses(sl()));
   sl.registerLazySingleton(() => GetExpenseById(sl()));
@@ -85,7 +125,6 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteExpense(sl()));
   sl.registerLazySingleton(() => GetExpenseByCategory(sl()));
   sl.registerLazySingleton(() => GetExpenseByDateRange(sl()));
-  sl.registerLazySingleton(() => SyncExpenses(sl()));
 
   // Use case classes without repository dependencies
   sl.registerLazySingleton(() => GetTotalSpent());

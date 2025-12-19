@@ -1,5 +1,8 @@
 import 'package:expenses_tracker_app/core/presentation/cubit/budget_cubit.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/theme_cubit.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/pages/login_page.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/home_page.dart';
@@ -8,6 +11,8 @@ import 'package:expenses_tracker_app/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'features/auth/presentation/bloc/auth_event.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
@@ -15,7 +20,10 @@ Future<void> main() async {
     MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => sl<ExpenseBloc>()..add(LoadExpensesEvent()),
+              create: (_) => sl<AuthBloc>()..add(AuthCheckRequested()),
+          ),
+          BlocProvider(
+            create: (_) => sl<ExpenseBloc>(),
           ),
           BlocProvider(
             create: (_) => sl<ThemeCubit>(),
@@ -37,7 +45,7 @@ class MyApp extends StatelessWidget {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) {
         return MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Tyro Spend Wise',
           theme: ThemeData.light().copyWith(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
           ),
@@ -45,7 +53,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey, brightness: Brightness.dark),
           ),
           themeMode: context.read<ThemeCubit>().themeMode,
-          home: const MainPage(),
+          home: LoginPage()
         );
       },
     );

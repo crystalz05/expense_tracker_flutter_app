@@ -3,6 +3,7 @@ import 'user_session.dart';
 
 abstract class UserSession {
   String get userId;
+  bool get isAuthenticated;
 }
 
 class UserSessionImpl implements UserSession {
@@ -18,4 +19,7 @@ class UserSessionImpl implements UserSession {
     }
     return user.id;
   }
+
+  @override
+  bool get isAuthenticated => supabase.auth.currentUser != null;
 }
