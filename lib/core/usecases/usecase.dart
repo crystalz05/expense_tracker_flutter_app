@@ -20,13 +20,16 @@ class NoParams extends Equatable{
 class IdParams extends Equatable {
 
   final String id;
+  final DateTime updatedAt;
 
-  const IdParams({required this.id});
+  IdParams({
+    required this.id,
+    DateTime? updatedAt
+  }): updatedAt = updatedAt ?? DateTime.now();
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, updatedAt];
 }
-
 
 class ExpenseParams extends Equatable{
 

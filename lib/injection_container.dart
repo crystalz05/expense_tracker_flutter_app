@@ -1,9 +1,17 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:expenses_tracker_app/core/network/network_info.dart';
+import 'package:expenses_tracker_app/features/expenses/data/datasources/migrations.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/sync_expenses.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/presentation/cubit/budget_cubit.dart';
 import 'core/presentation/cubit/theme_cubit.dart';
+import 'features/auth/domain/user_session/user_session.dart';
 import 'features/expenses/data/datasources/app_database.dart';
+import 'features/expenses/data/datasources/expense_remote_datasource.dart';
+import 'features/expenses/data/datasources/expense_remote_datasource_impl.dart';
 import 'features/expenses/data/datasources/expenses_local_datasource.dart';
 import 'features/expenses/data/datasources/expenses_local_datasource_impl.dart';
 import 'features/expenses/data/repositories/expense_repository_impl.dart';
@@ -25,6 +33,7 @@ Future<void> init() async {
 
   final database = await $FloorAppDatabase
       .databaseBuilder("app_database.db")
+      .addMigrations([migration1to2])
       .build();
 
   // Shared Preferences
@@ -34,6 +43,10 @@ Future<void> init() async {
   sl.registerSingleton<AppDatabase>(database);
   sl.registerSingleton(database.expenseDao);
 
+  //Syncing expenses
+  sl.registerLazySingleton(() => SyncExpenses(sl()));
+
+
   // Cubits
   sl.registerLazySingleton(() => ThemeCubit(sl()));
   sl.registerLazySingleton(() => BudgetCubit(prefs: sl()));
@@ -42,9 +55,27 @@ Future<void> init() async {
   sl.registerLazySingleton<ExpensesLocalDatasource>(
           () => ExpenseLocalDataSourceImpl(sl()));
 
+  //user session
+  sl.registerLazySingleton<UserSession>(
+          () => UserSessionImpl(Supabase.instance.client));
+
+  //remote data source
+  sl.registerLazySingleton<ExpenseRemoteDatasource>(
+          () => ExpenseRemoteDatasourceImpl(Supabase.instance.client));
+
+  // Register Connectivity first
+  sl.registerLazySingleton<Connectivity>(() => Connectivity());
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+
   // Repository
   sl.registerLazySingleton<ExpenseRepository>(
-          () => ExpenseRepositoryImpl(localDatasource: sl()));
+          () => ExpenseRepositoryImpl(
+            localDatasource: sl(),
+            remoteDatasource: sl(),
+            networkInfo: sl(),
+            userSession: sl(),
+          )
+  );
 
 
   sl.registerLazySingleton(() => GetExpenses(sl()));
@@ -54,6 +85,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteExpense(sl()));
   sl.registerLazySingleton(() => GetExpenseByCategory(sl()));
   sl.registerLazySingleton(() => GetExpenseByDateRange(sl()));
+  sl.registerLazySingleton(() => SyncExpenses(sl()));
 
   // Use case classes without repository dependencies
   sl.registerLazySingleton(() => GetTotalSpent());
@@ -70,5 +102,6 @@ Future<void> init() async {
     getExpenseByDateRange: sl(),
     getTotalSpent: sl(),
     getCategoryTotals: sl(),
+    syncExpenses: sl(),
   ));
 }

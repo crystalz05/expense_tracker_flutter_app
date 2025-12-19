@@ -12,4 +12,7 @@ abstract class ExpenseRepository {
   Future<Either<Failure, Expense>> getExpenseById(String id);
   Future<Either<Failure, void>> updateExpense(Expense expense);
   Future<Either<Failure, void>> deleteExpense(String id);
+  Future<Either<Failure, void>> softDeleteExpense(String id, DateTime updatedAt);
+  Future<Either<Failure, void>> syncExpenses();
+
 }

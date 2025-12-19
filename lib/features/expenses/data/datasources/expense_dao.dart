@@ -1,35 +1,39 @@
 
-import 'package:expenses_tracker_app/features/expenses/data/entities/expense_entity.dart';
 import 'package:floor/floor.dart';
+
+import '../models/expense_model.dart';
 
 @dao
 abstract class ExpenseDao {
 
-  @Query('SELECT * FROM expenses ORDER BY updated_at DESC')
-  Future<List<ExpenseEntity>> getExpenses();
+  @Query('SELECT * FROM expenses WHERE is_deleted = 0 ORDER BY updated_at DESC')
+  Future<List<ExpenseModel>> getExpenses();
 
-  @Query('SELECT * FROM expenses WHERE updated_at BETWEEN :start AND :end ORDER BY updated_at DESC')
-  Future<List<ExpenseEntity>> getExpensesByDateRange(DateTime start, DateTime end);
+  @Query('SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND updated_at BETWEEN :start AND :end ORDER BY updated_at DESC')
+  Future<List<ExpenseModel>> getExpensesByDateRange(DateTime start, DateTime end);
 
-  @Query('SELECT * FROM expenses WHERE category = :category ORDER BY updated_at DESC')
-  Future<List<ExpenseEntity>> getExpenseByCategory(String category);
+  @Query('SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND category = :category ORDER BY updated_at DESC')
+  Future<List<ExpenseModel>> getExpenseByCategory(String category);
 
   @insert
-  Future<void> addExpense(ExpenseEntity expense);
+  Future<void> addExpense(ExpenseModel expense);
 
-  @Query('SELECT * FROM expenses WHERE id = :id')
-  Future<ExpenseEntity?> getExpenseById(String id);
+  @Query('SELECT * FROM expenses WHERE id = :id AND is_deleted = 0')
+  Future<ExpenseModel?> getExpenseById(String id);
 
   @update
-  Future<void> updateExpense(ExpenseEntity expense);
+  Future<void> updateExpense(ExpenseModel expense);
 
-  @Query('SELECT * FROM expenses WHERE id = :id')
+  @Query('DELETE FROM expenses WHERE id = :id')
   Future<void> deleteExpense(String id);
 
-  @Query('SELECT SUM(amount) FROM expenses WHERE category = :category')
+  @Query('UPDATE expenses SET is_deleted = 1, updated_at = :updatedAt WHERE id = :id')
+  Future<void> softDeleteExpense(String id, DateTime updatedAt);
+
+  @Query('SELECT SUM(amount) FROM expenses WHERE is_deleted = 0 AND category = :category')
   Future<double?> getTotalByCategory(String category);
 
-  @Query('SELECT SUM(amount) FROM expenses')
+  @Query('SELECT SUM(amount) FROM expenses WHERE is_deleted = 0')
   Future<double?> getTotalExpense();
 }
 

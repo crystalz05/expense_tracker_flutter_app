@@ -9,7 +9,8 @@ class Expense extends Equatable {
   final String? description;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String paymentMethod ;
+  final String paymentMethod;
+  final bool isDeleted;
 
   const Expense({
     required this.id,
@@ -18,7 +19,8 @@ class Expense extends Equatable {
     this.description,
     required this.createdAt,
     required this.updatedAt,
-    required this.paymentMethod
+    required this.paymentMethod,
+    this.isDeleted = false
   });
 
   Expense copyWith({
@@ -28,7 +30,8 @@ class Expense extends Equatable {
     String? description,
     DateTime? createdAt,
     DateTime? updatedAt,
-    required String paymentMethod
+    required String paymentMethod,
+    bool? isDeleted
   }){
     return Expense(
         id: id ?? this.id,
@@ -37,11 +40,12 @@ class Expense extends Equatable {
         description: description ?? this.description,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
-        paymentMethod: paymentMethod
+        paymentMethod: paymentMethod,
+        isDeleted: isDeleted ?? this.isDeleted
     );
   }
 
   @override
-  List<Object?> get props => [id, amount, category, description, createdAt, updatedAt, paymentMethod];
+  List<Object?> get props => [id, amount, category, description, createdAt, updatedAt, paymentMethod, isDeleted];
 
 }

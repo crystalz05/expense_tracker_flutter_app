@@ -1,8 +1,8 @@
 
 import 'package:expenses_tracker_app/core/error/exceptions.dart';
 import 'package:expenses_tracker_app/features/expenses/data/datasources/app_database.dart';
-import 'package:expenses_tracker_app/features/expenses/data/entities/expense_entity.dart';
 
+import '../models/expense_model.dart';
 import 'expenses_local_datasource.dart';
 
 class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
@@ -11,7 +11,7 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
   ExpenseLocalDataSourceImpl(this.database);
 
   @override
-  Future<void> addExpense(ExpenseEntity expense) async {
+  Future<void> addExpense(ExpenseModel expense) async {
     try {
       await database.expenseDao.addExpense(expense);
     }catch (e, s){
@@ -29,7 +29,7 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
   }
 
   @override
-  Future<List<ExpenseEntity>> getExpenseByCategory(String category) async {
+  Future<List<ExpenseModel>> getExpenseByCategory(String category) async {
     try{
       return await database.expenseDao.getExpenseByCategory(category);
     }catch (e, s){
@@ -38,7 +38,7 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
   }
 
   @override
-  Future<ExpenseEntity?> getExpenseById(String id) async {
+  Future<ExpenseModel?> getExpenseById(String id) async {
     try{
       return await database.expenseDao.getExpenseById(id);
     }catch (e, s){
@@ -47,7 +47,7 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
   }
 
   @override
-  Future<List<ExpenseEntity>> getExpenses() async {
+  Future<List<ExpenseModel>> getExpenses() async {
     try{
       return await database.expenseDao.getExpenses();
     }catch (e, s){
@@ -56,7 +56,7 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
   }
 
   @override
-  Future<List<ExpenseEntity>> getExpensesByDateRange(DateTime start, DateTime end) async {
+  Future<List<ExpenseModel>> getExpensesByDateRange(DateTime start, DateTime end) async {
     try{
       return await database.expenseDao.getExpensesByDateRange(start, end);
     }catch(e, s){
@@ -83,11 +83,22 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
   }
 
   @override
-  Future<void> updateExpense(ExpenseEntity expense) async {
+  Future<void> updateExpense(ExpenseModel expense) async {
     try{
       await database.expenseDao.updateExpense(expense);
     }catch (e, s){
       throw DatabaseException('Failed to update expense ${e.toString()}', s);
     }
   }
+
+  @override
+  Future<void> softDeleteExpense(String id, DateTime updatedAt) async {
+    try {
+      await database.expenseDao.softDeleteExpense(id, updatedAt);
+    }catch (e, s){
+      throw DatabaseException('Failed to delete expense: ${e.toString()}', s);
+    }
+  }
 }
+
+

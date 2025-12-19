@@ -28,11 +28,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.getCurrentUser,
     required this.authRepository
   }): super(AuthInitial()){
-    on<AuthCheckRequested>();
-    on<AuthSignInRequested>();
-    on<AuthSignUpRequested>();
-    on<AuthSignOutRequested>();
-    on<AuthUserChanged>();
+    on<AuthCheckRequested>(_onAuthCheckRequested);
+    on<AuthSignInRequested>(_onSignInRequested);
+    on<AuthSignUpRequested>(_onSignUpRequested);
+    on<AuthSignOutRequested>(_onSignOutRequested);
+    on<AuthUserChanged>(_onUserChanged);
 
     _authSubscription = authRepository.authStateChanges.listen((user){
       add(AuthUserChanged(user));
@@ -47,8 +47,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await getCurrentUser(NoParams());
 
     result.fold(
-        (failure) => emit(AuthUnauthenticated()),
-        (user) {
+            (failure) => emit(AuthError(failure.message)),
+            (user) {
           if(user != null){
             emit(AuthAuthenticated(user));
           }else {
@@ -58,5 +58,64 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
+  Future<void> _onSignInRequested(
+      AuthSignInRequested event,
+      Emitter<AuthState> emit) async {
+    emit(AuthLoading());
 
+    final result = await signIn(SignInParams(email: event.email, password: event.password));
+
+    result.fold(
+            (failure) => emit(AuthError(failure.message)),
+            (user) => emit(AuthAuthenticated(user))
+    );
+  }
+
+  Future<void> _onSignUpRequested(
+      AuthSignUpRequested event,
+      Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+
+    final result = await signUp(
+        SignUpParams(
+            email: event.email,
+            password: event.password,
+            displayName: event.displayName
+        )
+    );
+    result.fold(
+        (failure) => emit(AuthError(failure.message)),
+        (user) => emit(AuthAuthenticated(user))
+    );
+  }
+
+  Future<void> _onSignOutRequested(
+      AuthSignOutRequested event,
+      Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+
+    final result = await signOut(NoParams());
+
+    result.fold(
+        (failure) => emit(AuthError(failure.message)),
+        (_) => emit(AuthUnauthenticated())
+    );
+  }
+
+  void _onUserChanged(
+      AuthUserChanged event,
+      Emitter<AuthState> emit,
+      ) {
+    if (event.user != null) {
+      emit(AuthAuthenticated(event.user!));
+    } else {
+      emit(AuthUnauthenticated());
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _authSubscription?.cancel();
+    return super.close();
+  }
 }

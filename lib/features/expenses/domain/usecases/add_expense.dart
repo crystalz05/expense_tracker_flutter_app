@@ -21,8 +21,8 @@ class AddExpense extends UseCase<void, ExpenseParams> {
         amount: params.amount,
         category: params.category,
         description: params.description,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
+        updatedAt: DateTime.now().toUtc(),
         paymentMethod: params.paymentMethod
     );
 

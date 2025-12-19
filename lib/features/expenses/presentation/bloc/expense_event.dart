@@ -17,7 +17,7 @@ class LoadExpensesEvent extends ExpenseEvent {
   const LoadExpensesEvent({this.category, this.from, this.to});
 
   @override
-  List<Object?> get props => [category ?? '', from ?? '', to ?? ''];
+  List<Object?> get props => [category, from, to];
 }
 
 class AddExpenseEvent extends ExpenseEvent {
@@ -51,3 +51,8 @@ class LoadExpenseByIdEvent extends ExpenseEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class SyncExpensesEvent extends ExpenseEvent {
+  const SyncExpensesEvent();
+}
+

@@ -10,6 +10,7 @@ import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_spent.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/update_expense.dart';
 import '../../domain/entities/expense.dart';
+import '../../domain/usecases/sync_expenses.dart';
 import 'expense_event.dart';
 import 'expense_state.dart';
 
@@ -23,6 +24,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final AddExpense addExpense;
   final UpdateExpense updateExpense;
   final DeleteExpense deleteExpense;
+  final SyncExpenses syncExpenses;
 
   ExpenseBloc({
     required this.getExpenses,
@@ -34,12 +36,14 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     required this.addExpense,
     required this.updateExpense,
     required this.deleteExpense,
+    required this.syncExpenses,
   }) : super(ExpenseInitial()) {
     on<LoadExpensesEvent>(_loadExpenses);
     on<LoadExpenseByIdEvent>(_loadExpenseById);
     on<AddExpenseEvent>(_addExpense);
     on<UpdateExpenseEvent>(_updateExpense);
     on<DeleteExpenseEvent>(_deleteExpense);
+    on<SyncExpensesEvent>(_syncExpenses);
   }
 
   Future<void> _loadExpenses(
@@ -104,6 +108,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Expense created successfully"));
+        add(SyncExpensesEvent());
         add(LoadExpensesEvent());
       },
     );
@@ -121,6 +126,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Expense updated successfully"));
+        add(SyncExpensesEvent());
         add(LoadExpensesEvent());
       },
     );
@@ -138,8 +144,21 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Expense deleted successfully"));
+        add(SyncExpensesEvent());
         add(LoadExpensesEvent());
       },
+    );
+  }
+
+  Future<void> _syncExpenses(
+      SyncExpensesEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    final result = await syncExpenses(NoParams());
+
+    result.fold(
+          (f) => emit(ExpenseError(f.message)),
+          (_) => add(LoadExpensesEvent()),
     );
   }
 }

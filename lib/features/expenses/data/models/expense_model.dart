@@ -2,7 +2,7 @@
 import 'package:floor/floor.dart';
 
 @Entity(tableName: 'expenses')
-class ExpenseEntity {
+class ExpenseModel {
 
   @primaryKey
   final String id;
@@ -18,15 +18,19 @@ class ExpenseEntity {
   final DateTime updatedAt;
 
   @ColumnInfo(name: 'payment_method')
-  final String paymentMethod ;
+  final String paymentMethod;
 
-  const ExpenseEntity({
+  @ColumnInfo(name: 'is_deleted')
+  final bool isDeleted;
+
+  const ExpenseModel({
     required this.id,
     required this.amount,
     required this.category,
     this.description,
     required this.createdAt,
     required this.updatedAt,
-    required this.paymentMethod
+    required this.paymentMethod,
+    required this.isDeleted
   });
 }
