@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
               );
             }
             if (state is AuthAuthenticated) {
-              //TODO NAVIGATE TO MAIN PAGE
+              context.go("/main-page");
             }
           }, builder: (BuildContext context, AuthState state) {
 
@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                           Container(
                             padding: EdgeInsets.all(18),
                             decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                                color: Theme.of(context).colorScheme.surfaceContainer,
                                 borderRadius: BorderRadius.circular(16)
                             ),
                             child: Icon(
@@ -85,72 +85,107 @@ class _LoginPageState extends State<LoginPage> {
                           SizedBox(height: 24),
                           Text("Welcome Back", style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w800)),
                           SizedBox(height: 6),
-                          Text("Sign in to continue tracking your expenses", style: Theme.of(context).textTheme.titleMedium),
+                          Text("Sign in to continue tracking your expenses", style: Theme.of(context).textTheme.bodyLarge),
                           SizedBox(height: 24),
                           Card(
                             color: Theme.of(context).colorScheme.surface,
-                              child: Padding(
-                                padding: EdgeInsets.all(24),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadiusGeometry.all(Radius.circular(12)),
+                                side: BorderSide(color: Theme.of(context)
+                                    .colorScheme.outline.withValues(alpha: 0.2))),
+                            child: Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
 
-                                    Text("Email", style: Theme.of(context).textTheme.titleMedium),
-                                    SizedBox(height: 4),
-                                    TextFormField(
-                                      controller: _emailController,
-                                      keyboardType: TextInputType.emailAddress,
-                                      decoration: InputDecoration(
+                                  Text("Email", style: Theme.of(context).textTheme.titleMedium),
+                                  SizedBox(height: 4),
+                                  TextFormField(
+                                    controller: _emailController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    decoration: InputDecoration(
                                         hintText: "you@example.com",
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter your email';
-                                        }
-                                        return null;
-                                      },
                                     ),
-
-                                    TextField(
-                                      controller: _emailController,
-                                      maxLines: 1,
-                                      decoration: InputDecoration(
-                                        hintText: "What did you spend on?",
-                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-                                        ),
-                                      ),
-                                      textCapitalization: TextCapitalization.sentences,
+                                    validator: (value) {
+                                      if (value?.isEmpty ?? true) return 'Please enter your email';
+                                      if (!value!.contains('@')) return 'Invalid email';
+                                      return null;
+                                    },
+                                    enabled: !isLoading,
+                                  ),
+                                  SizedBox(height: 6),
+                                  Text("Password", style: Theme.of(context).textTheme.titleMedium),
+                                  TextFormField(
+                                    controller: _passwordController,
+                                    obscureText: _obscurePassword,
+                                    keyboardType: TextInputType.emailAddress,
+                                    decoration: InputDecoration(
+                                        hintText: "********",
+                                        suffixIcon: IconButton(onPressed: (){
+                                          setState(() {
+                                            _obscurePassword = !_obscurePassword;
+                                          });
+                                        }, icon: _obscurePassword ? Icon(CupertinoIcons.eye_slash) : Icon(CupertinoIcons.eye)),
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))
                                     ),
-                                    Divider(height: 1),
-                                    TextFormField(
-                                      controller: _passwordController,
-                                      obscureText: !_obscurePassword,
-                                      decoration: InputDecoration(
-                                        labelText: 'Password',
-                                        prefixIcon: Icon(Icons.lock),
-                                        suffixIcon: IconButton(
-                                          icon: Icon(
-                                            _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              _obscurePassword = !_obscurePassword;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter your password';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              )
-                          )
+                                    validator: (value) {
+                                      if (value?.isEmpty ?? true) return 'Required';
+                                      if (value!.length < 6) return 'Minimum 6 characters';
+                                      return null;
+                                    },
+                                    enabled: !isLoading,
+                                  ),
+                                  SizedBox(height: 24,),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                        style: ButtonStyle(
+                                            foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onPrimary) ,
+                                            elevation: WidgetStatePropertyAll(0),
+                                            padding: WidgetStatePropertyAll(EdgeInsetsGeometry.symmetric(vertical: 16)),
+                                            backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.primary),
+                                            shape: WidgetStatePropertyAll(
+                                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+                                            ) ),
+                                        onPressed: (){
+                                          isLoading ? null : _signIn;
+                                          _signIn();
+                                        },
+                                        child: isLoading
+                                            ? SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.onPrimary,),
+                                        ) : Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text("Sign In"),
+                                            SizedBox(width: 12,),
+                                            Icon(Icons.arrow_forward_ios, size: 12,)
+                                          ],
+                                        )),
+                                  ),
+                                  SizedBox(height: 12,),
+                                  SizedBox(
+                                      width: double.infinity,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text("Don't have an account?"),
+                                          TextButton(onPressed: isLoading ? null :  (){
+                                            context.go('/signup');
+                                          }, child: Text("Sign Up", style: TextStyle(color: Colors.green),))
+                                        ],
+                                      )
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       )
                   ),

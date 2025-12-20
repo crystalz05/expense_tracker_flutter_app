@@ -9,6 +9,8 @@ const lightColorScheme = ColorScheme(
   secondary: Color(0xFF2563EB),
   onSecondary: Colors.white,
 
+  surfaceContainer: Color(0xFFEEF1F4),
+
   surface: Colors.white,
   onSurface: Color(0xFF111827),
 
@@ -25,6 +27,7 @@ const darkColorScheme = ColorScheme(
   secondary: Color(0xFF38BDF8),
   onSecondary: Color(0xFF020617),
 
+  surfaceContainer: Color(0xFF1B2742),
 
   surface: Color(0xFF0F172A),
   onSurface: Color(0xFFE5E7EB),

@@ -1,8 +1,11 @@
 
+import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/expenses_history_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_page.dart';
 
@@ -29,6 +32,7 @@ class _MainPage extends State<MainPage>{
   @override
   void initState() {
     super.initState();
+    context.read<ExpenseBloc>().add(LoadExpensesEvent());
 
     // Initialize pages here after 'this' is available
     pages = [
@@ -44,10 +48,10 @@ class _MainPage extends State<MainPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       body: SafeArea(child: pages[currentIndex]),
       bottomNavigationBar: NavigationBarTheme(
           data: NavigationBarThemeData(
+            backgroundColor: Theme.of(context).colorScheme.surface,
               labelTextStyle: WidgetStateProperty.resolveWith((states){
                 if(states.contains(WidgetState.selected)){
                   return TextStyle(

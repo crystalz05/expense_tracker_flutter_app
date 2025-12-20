@@ -1,8 +1,10 @@
 import 'package:expenses_tracker_app/core/colors/colors.dart';
+import 'package:expenses_tracker_app/core/navigation/app_router.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/budget_cubit.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/theme_cubit.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/login_page.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
@@ -45,20 +47,35 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) {
-        return MaterialApp(
-            title: 'Tyro Spend Wise',
-            theme: ThemeData(
-                useMaterial3: true,
-                colorScheme: lightColorScheme,
-                scaffoldBackgroundColor: lightColorScheme.surface
-            ),
-            darkTheme: ThemeData(
-                useMaterial3: true,
-                colorScheme: darkColorScheme,
-                scaffoldBackgroundColor: darkColorScheme.surface
-            ),
-            themeMode: context.read<ThemeCubit>().themeMode,
-            home: LoginPage()
+        // return MaterialApp(
+        //     title: 'Tyro Spend Wise',
+        //     theme: ThemeData(
+        //         useMaterial3: true,
+        //         colorScheme: lightColorScheme,
+        //         scaffoldBackgroundColor: lightColorScheme.surface
+        //     ),
+        //     darkTheme: ThemeData(
+        //         useMaterial3: true,
+        //         colorScheme: darkColorScheme,
+        //         scaffoldBackgroundColor: darkColorScheme.surface
+        //     ),
+        //     themeMode: context.read<ThemeCubit>().themeMode,
+        //     home: SignupPage()
+        // );
+        return MaterialApp.router(
+          title: 'Tyro Spend Wise',
+          theme: ThemeData(
+              useMaterial3: true,
+              colorScheme: lightColorScheme,
+              scaffoldBackgroundColor: lightColorScheme.surface
+          ),
+          darkTheme: ThemeData(
+              useMaterial3: true,
+              colorScheme: darkColorScheme,
+              scaffoldBackgroundColor: darkColorScheme.surface
+          ),
+          themeMode: context.read<ThemeCubit>().themeMode,
+          routerConfig: router,
         );
       },
     );
