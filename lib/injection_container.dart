@@ -46,6 +46,19 @@ Future<void> init() async {
     anonKey: SupabaseConstants.supabaseAnonKey,
   );
 
+  // 2️⃣ Register the Supabase client
+  sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+
+  // 3️⃣ Register AuthRemoteDatasource that depends on SupabaseClient
+  sl.registerLazySingleton<AuthRemoteDatasource>(
+        () => AuthRemoteDatasourceImpl(sl<SupabaseClient>()),
+  );
+
+  // 4️⃣ Register AuthRepository that depends on AuthRemoteDatasource
+  sl.registerLazySingleton<AuthRepository>(
+        () => AuthRepositoryImpl(sl<AuthRemoteDatasource>()),
+  );
+
   final database = await $FloorAppDatabase
       .databaseBuilder("app_database.db")
       .addMigrations([migration1to2])
@@ -90,17 +103,6 @@ Future<void> init() async {
             userSession: sl(),
           )
   );
-
-// Register AuthRemoteDatasource first
-  sl.registerLazySingleton<AuthRemoteDatasource>(
-        () => AuthRemoteDatasourceImpl(sl<SupabaseClient>()),
-  );
-
-// Then register AuthRepositoryImpl
-  sl.registerLazySingleton<AuthRepository>(
-        () => AuthRepositoryImpl(sl<AuthRemoteDatasource>()),
-  );
-
 
   sl.registerLazySingleton(() => SignIn(sl()));
   sl.registerLazySingleton(() => SignUp(sl()));

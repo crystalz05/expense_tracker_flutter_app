@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/core/colors/colors.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/budget_cubit.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/theme_cubit.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -20,7 +21,7 @@ Future<void> main() async {
     MultiBlocProvider(
         providers: [
           BlocProvider(
-              create: (_) => sl<AuthBloc>()..add(AuthCheckRequested()),
+            create: (_) => sl<AuthBloc>()..add(AuthCheckRequested()),
           ),
           BlocProvider(
             create: (_) => sl<ExpenseBloc>(),
@@ -45,15 +46,19 @@ class MyApp extends StatelessWidget {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) {
         return MaterialApp(
-          title: 'Tyro Spend Wise',
-          theme: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey, brightness: Brightness.dark),
-          ),
-          themeMode: context.read<ThemeCubit>().themeMode,
-          home: LoginPage()
+            title: 'Tyro Spend Wise',
+            theme: ThemeData(
+                useMaterial3: true,
+                colorScheme: lightColorScheme,
+                scaffoldBackgroundColor: lightColorScheme.surface
+            ),
+            darkTheme: ThemeData(
+                useMaterial3: true,
+                colorScheme: darkColorScheme,
+                scaffoldBackgroundColor: darkColorScheme.surface
+            ),
+            themeMode: context.read<ThemeCubit>().themeMode,
+            home: LoginPage()
         );
       },
     );
