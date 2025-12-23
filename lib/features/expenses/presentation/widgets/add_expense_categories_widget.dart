@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/expenses_categories.dart';
+
 class AddExpenseCategoriesWidget extends StatefulWidget {
 
   final ValueChanged<String> onCategorySelected;
@@ -40,7 +42,12 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
             crossAxisSpacing: 6, crossAxisCount: 2,
         ),
         itemBuilder: (context, index){
+
+
           final item = categoriesItem[index];
+          bool active =  selected == item['description'];
+          final categoryData = ExpenseCategories.fromName(item['description']);
+
           return GestureDetector(
               onTap: () {
                 setState(() {
@@ -49,13 +56,13 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
                 widget.onCategorySelected(selected);
               },
               child: Card(
-                  color: selected == item['description'] ? Theme.of(context).colorScheme.surfaceContainerHighest .withValues(alpha: 1) : Theme.of(context).colorScheme.surface,
+                  color: active ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                       side: BorderSide(width: 1,
-                          color: selected == item['description']
-                          ? Theme.of(context).colorScheme.outline.withValues(alpha: 1) : // default color
+                          color: active
+                          ? Theme.of(context).colorScheme.surface : // default color
                           Theme.of(context).colorScheme.outline.withValues(alpha: 0.4)),
                   ),
                   child: Padding(padding: EdgeInsetsGeometry.only(left: 8),
@@ -65,12 +72,12 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
                       children: [
                         Container(
                           padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                          decoration: BoxDecoration(color: active ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.primary,
                               borderRadius: BorderRadius.circular(100)),
-                          child: Icon(item['icon'], size: 20,),
+                          child: Icon(categoryData.icon, size: 20, color: categoryData.color,),
                         ),
                         SizedBox(width: 8),
-                        Text(item['description'], style: Theme.of(context).textTheme.titleMedium)
+                        Text(item['description'], style: Theme.of(context).textTheme.titleMedium?.copyWith(color: active ? Theme.of(context).colorScheme.onPrimary:  Theme.of(context).colorScheme.primary ))
                       ],
                     ),
                   )

@@ -27,10 +27,6 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.green),
           );
-        } else if (state is ExpenseError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
         }
       },
       builder: (context, state) {
@@ -84,7 +80,7 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
             HistorySection(
               expenses: sortedExpenses,
               onDelete: (id) {
-                context.read<ExpenseBloc>().add(DeleteExpenseEvent(id));
+                context.read<ExpenseBloc>().add(SoftDeleteExpenseEvent(id));
               },
             ),
           ],

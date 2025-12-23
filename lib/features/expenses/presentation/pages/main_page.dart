@@ -4,6 +4,7 @@ import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/expenses_history_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/settings_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -79,8 +80,8 @@ class _MainPage extends State<MainPage>{
                       selectedIcon: Icon(Icons.home, color: Theme.of(context).colorScheme.primary),
                       label: "Home"),
                   NavigationDestination(
-                      icon: const Icon(Icons.add_box_outlined, color: Colors.grey,),
-                      selectedIcon: Icon(Icons.add_box, color: Theme.of(context).colorScheme.primary,),
+                      icon: const Icon(CupertinoIcons.add_circled, color: Colors.grey,),
+                      selectedIcon: Icon(CupertinoIcons.add_circled_solid, color: Theme.of(context).colorScheme.primary,),
                       label: "Add"),
                   NavigationDestination(
                       icon: Icon(Icons.history_outlined, color: Colors.grey,),

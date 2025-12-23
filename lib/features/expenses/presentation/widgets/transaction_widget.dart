@@ -2,9 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/utils/expenses_categories.dart';
+
 class TransactionWidget extends StatelessWidget {
   final IconData icon;
   final String description;
+  final String category;
   final DateTime date;
   final String amount;
 
@@ -12,6 +15,7 @@ class TransactionWidget extends StatelessWidget {
     super.key,
     required this.icon,
     required this.description,
+    required this.category,
     required this.date,
     required this.amount
   });
@@ -25,6 +29,9 @@ class TransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final categoryData = ExpenseCategories.fromName(category);
+
     return
       Column(
         children: [
@@ -36,10 +43,10 @@ class TransactionWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                        color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(16)
                     ),
-                    child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 18),
+                    child: Icon(categoryData.icon, color: categoryData.color, size: 18),
                   ),
                   SizedBox(width: 8),
                   Column(

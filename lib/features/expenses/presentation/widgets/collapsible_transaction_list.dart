@@ -61,6 +61,7 @@ class _CollapsibleTransactionListState extends State<CollapsibleTransactionList>
                       child: TransactionWidget(
                           icon: Icons.no_food_rounded,
                           description: transac.description ?? "",
+                          category: transac.category,
                           date: transac.updatedAt,
                           amount: formatter.format(transac.amount)
                       ),

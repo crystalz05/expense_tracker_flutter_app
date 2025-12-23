@@ -44,6 +44,14 @@ class DeleteExpenseEvent extends ExpenseEvent {
   List<Object?> get props => [id];
 }
 
+class SoftDeleteExpenseEvent extends ExpenseEvent {
+  final String id;
+  const SoftDeleteExpenseEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}
+
 class LoadExpenseByIdEvent extends ExpenseEvent {
   final String id;
   const LoadExpenseByIdEvent(this.id);

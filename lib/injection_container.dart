@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:expenses_tracker_app/core/network/network_info.dart';
 import 'package:expenses_tracker_app/features/expenses/data/datasources/migrations.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/soft_delete_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/sync_expenses.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -131,6 +132,7 @@ Future<void> init() async {
   // Use case classes without repository dependencies
   sl.registerLazySingleton(() => GetTotalSpent());
   sl.registerLazySingleton(() => GetCategoryTotals());
+  sl.registerLazySingleton(() => SoftDeleteExpense(sl()));
 
   // Bloc
   sl.registerFactory(() => ExpenseBloc(
@@ -144,5 +146,6 @@ Future<void> init() async {
     getTotalSpent: sl(),
     getCategoryTotals: sl(),
     syncExpenses: sl(),
+    softDeleteExpense: sl()
   ));
 }

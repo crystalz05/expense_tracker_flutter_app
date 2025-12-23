@@ -1,18 +1,32 @@
 
+import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_event.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/widgets/sign_out_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/cubit/budget_cubit.dart';
 import '../../../../core/presentation/cubit/theme_cubit.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 import '../widgets/budget_dialog.dart';
+
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state){
+        if(state is AuthUnauthenticated){
+          context.go("/login");
+          // Navigate to login page or show a message
+        }
+      },
+      child:
       SingleChildScrollView(
           child: Padding(padding: EdgeInsetsGeometry.all(16),
               child: Column(
@@ -47,10 +61,10 @@ class SettingsPage extends StatelessWidget {
                                         Container(
                                           padding: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                                              color: Theme.of(context).colorScheme.primary,
                                               borderRadius: BorderRadius.circular(16)
                                           ),
-                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.primary, size: 18),
+                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 18),
                                         ),
                                         SizedBox(width: 8),
                                         Column(
@@ -115,10 +129,10 @@ class SettingsPage extends StatelessWidget {
                                         Container(
                                           padding: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                                              color: Theme.of(context).colorScheme.primary,
                                               borderRadius: BorderRadius.circular(16)
                                           ),
-                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.primary, size: 18),
+                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 18),
                                         ),
                                         SizedBox(width: 8),
                                         Column(
@@ -181,10 +195,10 @@ class SettingsPage extends StatelessWidget {
                                         Container(
                                           padding: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                                              color: Theme.of(context).colorScheme.primary,
                                               borderRadius: BorderRadius.circular(16)
                                           ),
-                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.primary, size: 18),
+                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 18),
                                         ),
                                         SizedBox(width: 8),
                                         Column(
@@ -208,10 +222,10 @@ class SettingsPage extends StatelessWidget {
                                         Container(
                                           padding: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                                              color: Theme.of(context).colorScheme.primary,
                                               borderRadius: BorderRadius.circular(16)
                                           ),
-                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.primary, size: 18),
+                                          child: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 18),
                                         ),
                                         SizedBox(width: 8),
                                         Column(
@@ -231,9 +245,35 @@ class SettingsPage extends StatelessWidget {
                             )
                         )
                     ),
+                    SizedBox(height: 48,),
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                          style: ButtonStyle(
+                              foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onPrimary) ,
+                              elevation: WidgetStatePropertyAll(0),
+                              padding: WidgetStatePropertyAll(EdgeInsetsGeometry.symmetric(vertical: 18)),
+                              backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.error),
+                              shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(7))
+                              ) ),
+                          onPressed: (){
+                            showDialog(
+                                context: context,
+                                builder: (_) => SignOutDialogWidget(onConfirm: () {context.read<AuthBloc>().add(AuthSignOutRequested());
+                                }
+                                )
+                            );
+                          },
+                          child: Text("Sign out"))
+                      ,
+                    )
                   ]
               )
           )
-      );
+      )
+
+      ,
+    );
   }
 }

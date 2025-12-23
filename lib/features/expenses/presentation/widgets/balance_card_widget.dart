@@ -27,8 +27,8 @@ class BalanceCardWidget extends StatelessWidget {
 
             return
             Card(
-              color: Theme.of(context).colorScheme.surface,
-              elevation: 1,
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              elevation: 4,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                   side: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4), width: 0.5)
@@ -45,9 +45,9 @@ class BalanceCardWidget extends StatelessWidget {
                           children: [
                             Container(
                               padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer,
                                   borderRadius: BorderRadius.circular(16)),
-                              child: Icon(Icons.account_balance_wallet),
+                              child: Icon(Icons.account_balance_wallet, color: Theme.of(context).colorScheme.onPrimary,),
                             ),
                             SizedBox(width: 8),
                             Column(

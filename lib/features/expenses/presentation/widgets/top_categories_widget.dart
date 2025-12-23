@@ -1,5 +1,6 @@
 
 
+import 'package:expenses_tracker_app/core/utils/expenses_categories.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,9 @@ class TopCategoriesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final categoryData = ExpenseCategories.fromName(title);
+
     return Card(
         color: Theme.of(context).colorScheme.surface,
         elevation: 1,
@@ -36,10 +40,10 @@ class TopCategoriesWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(16)
                 ),
-                child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 18,),
+                child: Icon(categoryData.icon, color: categoryData.color, size: 18,),
               ),
               SizedBox(height: 8),
               Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),

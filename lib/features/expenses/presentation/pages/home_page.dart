@@ -1,4 +1,6 @@
 
+import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_state.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_state.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
@@ -7,8 +9,10 @@ import 'package:expenses_tracker_app/features/expenses/presentation/widgets/bala
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/collapsible_transaction_list.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/spend_and_transaction_widget.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/top_categories_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -32,10 +36,7 @@ class HomePage extends StatelessWidget {
               builder: (context, state){
                 if(state is ExpenseLoading){
                   return const Center(child: CircularProgressIndicator());
-                }else if(state is ExpenseError){
-                  return Center(child: Text('Error: ${state.message}'));
                 }else if(state is ExpensesLoaded){
-
                   final sortedExpenses = List.of(state.expenses)
                     ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
@@ -43,8 +44,43 @@ class HomePage extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Welcome Back", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blueGrey)),
-                        Text("SpendWise", style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                BlocBuilder<AuthBloc, AuthState>(
+                                    builder: (context, state){
+                                      if(state is AuthAuthenticated){
+                                        return Text("Hello, ${state.user.displayName}", style: Theme.of(context).textTheme.bodyMedium);
+                                      }
+                                      return Container();
+                                    }
+                                ),
+                                Text("Track Expenses", style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                IconButton(icon: Icon(Icons.donut_small, size: 32,),
+                                  onPressed: (){
+                                    context.go("/budget-page");
+                                  },
+                                ),
+                                IconButton(icon: Icon(CupertinoIcons.chart_pie, size: 32,),
+                                  onPressed: (){
+
+                                  },
+                                ),
+                                SizedBox(width: 24,),
+                                Icon(CupertinoIcons.person_alt_circle_fill, size: 48,)
+                              ],
+                            )
+                          ],
+                        ),
                         SizedBox(height: 16),
                         BalanceCardWidget(totalSpent: state.totalSpent),
                         SizedBox(height: 8),

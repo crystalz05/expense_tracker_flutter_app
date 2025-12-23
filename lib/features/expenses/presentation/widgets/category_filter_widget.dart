@@ -8,6 +8,8 @@ import 'package:expenses_tracker_app/features/expenses/presentation/widgets/tran
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/utils/expenses_categories.dart';
+
 class CategoryFilterWidget extends StatelessWidget {
   final String activeFilter;
   final ValueChanged<String> onCategorySelected;
@@ -150,6 +152,7 @@ class _HistorySectionState extends State<HistorySection> {
                           child: TransactionWidget(
                             icon: Icons.fastfood_outlined,
                             description: tx.description ?? "",
+                            category: tx.category,
                             date: tx.updatedAt,
                             amount: formatter.format(tx.amount),
                           ),

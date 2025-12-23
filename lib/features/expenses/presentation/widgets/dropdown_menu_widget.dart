@@ -23,6 +23,7 @@ class _DropdownMenuWidget extends State<DropdownMenuWidget>{
               borderRadius: BorderRadius.circular(12),
             ),
           ),
+          backgroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.surface)
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(

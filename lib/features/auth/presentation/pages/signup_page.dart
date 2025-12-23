@@ -1,11 +1,9 @@
 
 import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive/hive.dart';
 
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -26,7 +24,7 @@ class _SignUpPageState extends State<SignupPage> {
   final _confirmPasswordController = TextEditingController();
   final _displayNameController = TextEditingController();
   bool _obscurePassword = false;
-  bool _obscureConfirmPassword = false;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {

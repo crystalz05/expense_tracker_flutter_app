@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/soft_delete_expense.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expense.dart';
@@ -25,6 +26,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final UpdateExpense updateExpense;
   final DeleteExpense deleteExpense;
   final SyncExpenses syncExpenses;
+  final SoftDeleteExpense softDeleteExpense;
 
   ExpenseBloc({
     required this.getExpenses,
@@ -37,12 +39,14 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     required this.updateExpense,
     required this.deleteExpense,
     required this.syncExpenses,
+    required this.softDeleteExpense,
   }) : super(ExpenseInitial()) {
     on<LoadExpensesEvent>(_loadExpenses);
     on<LoadExpenseByIdEvent>(_loadExpenseById);
     on<AddExpenseEvent>(_addExpense);
     on<UpdateExpenseEvent>(_updateExpense);
     on<DeleteExpenseEvent>(_deleteExpense);
+    on<SoftDeleteExpenseEvent>(_softDeleteExpense);
     on<SyncExpensesEvent>(_syncExpenses);
   }
 
@@ -139,6 +143,24 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     emit(ExpenseLoading());
 
     final result = await deleteExpense(IdParams(id: event.id));
+
+    result.fold(
+          (f) => emit(ExpenseError(f.message)),
+          (_) {
+        emit(const ExpenseActionSuccess("Expense deleted successfully"));
+        add(SyncExpensesEvent());
+        add(LoadExpensesEvent());
+      },
+    );
+  }
+
+  Future<void> _softDeleteExpense(
+      SoftDeleteExpenseEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    final result = await softDeleteExpense(IdParams(id: event.id));
 
     result.fold(
           (f) => emit(ExpenseError(f.message)),
