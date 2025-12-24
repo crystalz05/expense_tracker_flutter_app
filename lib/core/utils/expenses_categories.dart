@@ -49,6 +49,12 @@ class ExpenseCategories {
     color: Colors.green,
   );
 
+  static const education = ExpenseCategory(
+    name: 'Education',
+    icon: Icons.school_outlined,
+    color: Colors.orangeAccent,
+  );
+
   static const others = ExpenseCategory(
     name: 'Others',
     icon: Icons.category,
@@ -62,6 +68,7 @@ class ExpenseCategories {
     entertainment,
     bills,
     health,
+    education,
     others,
   ];
 

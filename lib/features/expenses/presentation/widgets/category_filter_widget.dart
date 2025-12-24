@@ -20,28 +20,28 @@ class CategoryFilterWidget extends StatelessWidget {
     required this.onCategorySelected,
   });
 
-  static const List<String> categories = [
-    "All",
-    "Food & Dining",
-    "Transport",
-    "Shopping",
-    "Entertainment",
-    "Bills & Utilities",
-    "Health",
-    "Other",
-  ];
+  // static const List<String> categories = [
+  //   "All",
+  //   "Food & Dining",
+  //   "Transport",
+  //   "Shopping",
+  //   "Entertainment",
+  //   "Bills & Utilities",
+  //   "Health",
+  //   "Other",
+  // ];
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: categories.map((category) {
+        children: ExpenseCategories.all.map((category) {
           return GestureDetector(
-            onTap: () => onCategorySelected(category),
+            onTap: () => onCategorySelected(category.name),
             child: CategoryCard(
-              title: category,
-              currentActive: category == activeFilter,
+              title: category.name,
+              currentActive: category.name == activeFilter,
             ),
           );
         }).toList(),

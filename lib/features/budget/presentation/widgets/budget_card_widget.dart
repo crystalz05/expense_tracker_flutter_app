@@ -1,4 +1,6 @@
 
+import 'package:expenses_tracker_app/core/utils/expenses_categories.dart';
+import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
 import 'package:flutter/material.dart';
@@ -8,33 +10,24 @@ import '../../../../core/presentation/cubit/budget_cubit.dart';
 
 class BudgetCardWidget extends StatelessWidget {
 
-  final double totalSpent;
+  final Budget budget;
   final VoidCallback? onTap;
 
   const BudgetCardWidget({
     super.key,
-    required this.totalSpent,
+    required this.budget,
     this.onTap
   });
 
 
   @override
   Widget build(BuildContext context) {
-
-    String category = "Food & Dining";
-    IconData icon = Icons.no_meals_rounded;
-    String description = "Food";
-    Color color = Colors.lightGreen;
-    double total = 20000.00;
-    double spent = 7500.00;
-    String period = "Monthly";
-    DateTime startDate = DateTime(2024, 6, 1);
-    DateTime endDate = DateTime(2024, 6, 30);
+    final categoryData = ExpenseCategories.fromName(budget.category);
 
     return
       BlocBuilder<BudgetCubit, BudgetState>(
           builder: (context, state) {
-            final double fraction = spent / total;
+            final double fraction = budget.amount / budget.amount;
             final String percentage = (fraction * 100).toStringAsFixed(1);
 
             return InkWell(
@@ -59,16 +52,16 @@ class BudgetCardWidget extends StatelessWidget {
                             children: [
                               Container(
                                 padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(color: color,
+                                decoration: BoxDecoration(color: categoryData.color,
                                     borderRadius: BorderRadius.circular(16)),
-                                child: Icon(icon, color: Theme.of(context).colorScheme.onPrimary,),
+                                child: Icon(categoryData.icon, color: Theme.of(context).colorScheme.onPrimary,),
                               ),
                               SizedBox(width: 8),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(category, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                                  Text(description, style: Theme.of(context).textTheme.bodySmall,),
+                                  Text(budget.category, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                                  Text(budget.description, style: Theme.of(context).textTheme.bodySmall,),
                                 ],
                               ),
                             ],
@@ -81,39 +74,13 @@ class BudgetCardWidget extends StatelessWidget {
                         children: [
                           Icon(Icons.calendar_month, size: 16, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),),
                           SizedBox(width: 4),
-                          Text("$period: ${startDate.day}/${startDate.month}/${startDate.year} - ${endDate.day}/${endDate.month}/${endDate.year}",
+                          Text("${budget.period}: ${budget.startDate.day}/${budget.startDate.month}/${budget.startDate.year} - ${budget.endDate.day}/${budget.endDate.month}/${budget.endDate.year}",
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                               )),
                         ],
                       ),
                       SizedBox(height: 8),
-                      Container(
-                        width: 200,
-                        height: 7,
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        child: FractionallySizedBox(
-                          alignment: Alignment.centerLeft,
-                          widthFactor: fraction,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                borderRadius: BorderRadius.circular(8)
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("₦${formatter.format(spent)} / ₦${formatter.format(total)}"),
-                          Text("$percentage%", style: Theme.of(context).textTheme.titleSmall,)
-                        ],
-                      )
                     ],
                   ),
                 ),

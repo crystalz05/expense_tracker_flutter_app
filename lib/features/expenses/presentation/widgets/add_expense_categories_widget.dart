@@ -25,6 +25,7 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
     {'icon': Icons.videogame_asset_outlined, 'description': 'Entertainment'},
     {'icon': Icons.money, 'description': 'Bills & Utilities'},
     {'icon': Icons.health_and_safety, 'description': 'Health'},
+    {'icon': Icons.school_outlined, 'description': 'Education'},
     {'icon': Icons.horizontal_distribute_rounded, 'description': 'Others'},
   ];
 
@@ -32,7 +33,7 @@ class _AddExpenseCategoriesWidget extends State<AddExpenseCategoriesWidget>{
   Widget build(BuildContext context) {
 
     return GridView.builder(
-        itemCount: categoriesItem.length,
+        itemCount: ExpenseCategories.all.length,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

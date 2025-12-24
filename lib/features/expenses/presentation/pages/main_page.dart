@@ -73,6 +73,9 @@ class _MainPage extends State<MainPage>{
                   setState(() {
                     currentIndex = index;
                   });
+                  if(index == 0){
+                    context.read<ExpenseBloc>().add(LoadExpensesEvent());
+                  }
                 },
                 destinations: [
                   NavigationDestination(

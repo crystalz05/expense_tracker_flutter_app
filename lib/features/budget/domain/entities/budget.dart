@@ -4,22 +4,26 @@ import 'package:equatable/equatable.dart';
 class Budget extends Equatable {
   final int? id;
   final String category;
+  final String description;
   final double amount;
   final DateTime startDate;
   final DateTime endDate;
   final String period; // 'monthly', 'weekly', 'yearly'
   final bool isRecurring;
   final double? alertThreshold; // Percentage to trigger alert (e.g., 80%)
+  final bool isDeleted;
 
   const Budget({
     this.id,
     required this.category,
+    this.description = "No description",
     required this.amount,
     required this.startDate,
     required this.endDate,
     required this.period,
     this.isRecurring = true,
     this.alertThreshold = 80.0,
+    this.isDeleted = false
   });
 
   @override

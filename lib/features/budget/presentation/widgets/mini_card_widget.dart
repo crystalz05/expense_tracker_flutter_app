@@ -1,11 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../expenses/presentation/misc/formatter.dart';
+
 class MiniCardWidget extends StatelessWidget {
 
-  final double spent;
+  final String title;
+  final double? data;
+  final int? count;
 
-  const MiniCardWidget({super.key, required this.spent});
+  const MiniCardWidget({
+    super.key,
+    required this.title,
+    this.data,
+    this.count
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +39,14 @@ class MiniCardWidget extends StatelessWidget {
                     children: [
                       Icon(Icons.trending_up, size: 18, color: Colors.grey,),
                       SizedBox(width: 8),
-                      Text("Spent", style: TextStyle(color: Colors.grey),)
+                      Text(title, style: TextStyle(color: Colors.grey),)
                     ],
                   ),
                   SizedBox(height: 8,),
-                  Text("$spent", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),),
+                  if(count != null)
+                    Text("$count ${(count! <= 1 ? "txn" : "txns")}", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),)
+                  else if(data != null)
+                    Text("₦${formatter.format(data)}", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),),
                 ],
               )
           ),

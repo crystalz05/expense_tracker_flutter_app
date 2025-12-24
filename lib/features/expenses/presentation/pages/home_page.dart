@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                               children: [
                                 IconButton(icon: Icon(Icons.donut_small, size: 32,),
                                   onPressed: (){
-                                    context.go("/budget-page");
+                                    context.push("/budget-page");
                                   },
                                 ),
                                 IconButton(icon: Icon(CupertinoIcons.chart_pie, size: 32,),
