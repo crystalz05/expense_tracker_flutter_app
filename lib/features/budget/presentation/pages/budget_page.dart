@@ -55,10 +55,7 @@ class BudgetPage extends StatelessWidget {
                                   .titleLarge
                                   ?.copyWith(fontWeight: FontWeight.bold)),
                               ElevatedButton(onPressed: (){
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => AddBudget(onBudgetAdded: () {})
-                                );
+                                context.push("/add-budget-page");
                               },
                                   style: ButtonStyle(
                                       backgroundColor: WidgetStatePropertyAll(

@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 class DropdownMenuWidget extends StatefulWidget{
-  final ValueChanged<String> paymentMethodSelected;
+  final ValueChanged<String> onSelected;
 
-  const DropdownMenuWidget({super.key, required this.paymentMethodSelected});
+  const DropdownMenuWidget({super.key, required this.onSelected});
 
   @override
   State<StatefulWidget> createState() => _DropdownMenuWidget();
@@ -37,7 +37,7 @@ class _DropdownMenuWidget extends State<DropdownMenuWidget>{
         ],
         onSelected: (value) {
           setState(() => selectedCategory = value!);
-          widget.paymentMethodSelected(value!);
+          widget.onSelected(value!);
         },
       );
 

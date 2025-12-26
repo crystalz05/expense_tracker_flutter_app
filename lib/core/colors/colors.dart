@@ -33,5 +33,5 @@ const darkColorScheme = ColorScheme(
   onSurface: Color(0xFFFFFFFF),
 
   error: Color(0xFFEF4444),
-  onError: Colors.black,
+  onError: Colors.white,
 );

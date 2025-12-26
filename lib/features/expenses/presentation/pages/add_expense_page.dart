@@ -86,6 +86,7 @@ class _AddExpensePage extends State<AddExpensePage>{
                           value == null || value.isEmpty ? 'Please enter an amount' : null,
                           decoration: InputDecoration(
                             hintText: "0.00",
+                            hintStyle: TextStyle(fontWeight: FontWeight.w200),
                             prefixText: "₦ ",
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
                             ),
@@ -99,6 +100,7 @@ class _AddExpensePage extends State<AddExpensePage>{
                           maxLines: 1,
                           decoration: InputDecoration(
                             hintText: "What did you spend on?",
+                            hintStyle: TextStyle(fontWeight: FontWeight.w200),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -107,7 +109,7 @@ class _AddExpensePage extends State<AddExpensePage>{
                         SizedBox(height: 24),
                         Text("Payment Method", style: Theme.of(context).textTheme.bodyMedium),
                         SizedBox(height: 8,),
-                        DropdownMenuWidget(paymentMethodSelected: (method){
+                        DropdownMenuWidget(onSelected: (method){
                           setState(() {
                             _paymentMethod = method;
                           });

@@ -3,6 +3,7 @@ import 'package:expenses_tracker_app/features/auth/presentation/pages/login_page
 import 'package:expenses_tracker_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
+import 'package:expenses_tracker_app/features/budget/presentation/pages/add_budget.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/pages/budget_detail_page.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/pages/budget_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
@@ -37,6 +38,10 @@ final GoRouter router = GoRouter(
             final budget = state.extra as Budget;
             return BudgetDetailPage(budget: budget);
           }
-      )
+      ),
+      GoRoute(
+        path: '/add-budget-page',
+        builder: (context, state) => const AddBudget(),
+      ),
     ]
 );
