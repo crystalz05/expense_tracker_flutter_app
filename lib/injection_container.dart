@@ -62,8 +62,9 @@ Future<void> init() async {
 
   final database = await $FloorAppDatabase
       .databaseBuilder("app_database.db")
-      .addMigrations([migration1to2])
+      .fallbackToDestructiveMigration
       .build();
+
 
   // Shared Preferences
   final sharedPreferences = await SharedPreferences.getInstance();

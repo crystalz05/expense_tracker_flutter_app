@@ -74,13 +74,15 @@ class _$AppDatabase extends AppDatabase {
 
   ExpenseDao? _expenseDaoInstance;
 
+  BudgetDao? _budgetDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -97,6 +99,8 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `expenses` (`id` TEXT NOT NULL, `amount` REAL NOT NULL, `category` TEXT NOT NULL, `description` TEXT, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `payment_method` TEXT NOT NULL, `is_deleted` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `budgets` (`id` TEXT, `userId` TEXT NOT NULL, `id` TEXT, `userId` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `amount` REAL NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER NOT NULL, `period` TEXT NOT NULL, `isRecurring` INTEGER NOT NULL, `alertThreshold` REAL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -107,6 +111,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   ExpenseDao get expenseDao {
     return _expenseDaoInstance ??= _$ExpenseDao(database, changeListener);
+  }
+
+  @override
+  BudgetDao get budgetDao {
+    return _budgetDaoInstance ??= _$BudgetDao(database, changeListener);
   }
 }
 
@@ -183,6 +192,22 @@ class _$ExpenseDao extends ExpenseDao {
   }
 
   @override
+  Future<List<ExpenseModel>> getExpensesByCategoryAndPeriod(
+    String category,
+    DateTime start,
+    DateTime end,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND category = ?1 AND updated_at BETWEEN ?2 AND ?3 ORDER BY updated_at DESC',
+        mapper: (Map<String, Object?> row) => ExpenseModel(id: row['id'] as String, amount: row['amount'] as double, category: row['category'] as String, description: row['description'] as String?, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _dateTimeConverter.decode(row['updated_at'] as int), paymentMethod: row['payment_method'] as String, isDeleted: (row['is_deleted'] as int) != 0),
+        arguments: [
+          category,
+          _dateTimeConverter.encode(start),
+          _dateTimeConverter.encode(end)
+        ]);
+  }
+
+  @override
   Future<List<ExpenseModel>> getExpenseByCategory(String category) async {
     return _queryAdapter.queryList(
         'SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND category = ?1 ORDER BY updated_at DESC',
@@ -246,6 +271,111 @@ class _$ExpenseDao extends ExpenseDao {
   @override
   Future<void> updateExpense(ExpenseModel expense) async {
     await _expenseModelUpdateAdapter.update(expense, OnConflictStrategy.abort);
+  }
+}
+
+class _$BudgetDao extends BudgetDao {
+  _$BudgetDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _budgetModelInsertionAdapter = InsertionAdapter(
+            database,
+            'budgets',
+            (BudgetModel item) => <String, Object?>{
+                  'id': item.id,
+                  'userId': item.userId,
+                  'id': item.id,
+                  'userId': item.userId,
+                  'category': item.category,
+                  'description': item.description,
+                  'amount': item.amount,
+                  'startDate': _dateTimeConverter.encode(item.startDate),
+                  'endDate': _dateTimeConverter.encode(item.endDate),
+                  'period': item.period,
+                  'isRecurring': item.isRecurring ? 1 : 0,
+                  'alertThreshold': item.alertThreshold,
+                  'createdAt': _dateTimeConverter.encode(item.createdAt)
+                }),
+        _budgetModelUpdateAdapter = UpdateAdapter(
+            database,
+            'budgets',
+            ['id'],
+            (BudgetModel item) => <String, Object?>{
+                  'id': item.id,
+                  'userId': item.userId,
+                  'id': item.id,
+                  'userId': item.userId,
+                  'category': item.category,
+                  'description': item.description,
+                  'amount': item.amount,
+                  'startDate': _dateTimeConverter.encode(item.startDate),
+                  'endDate': _dateTimeConverter.encode(item.endDate),
+                  'period': item.period,
+                  'isRecurring': item.isRecurring ? 1 : 0,
+                  'alertThreshold': item.alertThreshold,
+                  'createdAt': _dateTimeConverter.encode(item.createdAt)
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<BudgetModel> _budgetModelInsertionAdapter;
+
+  final UpdateAdapter<BudgetModel> _budgetModelUpdateAdapter;
+
+  @override
+  Future<List<BudgetModel>> getAllBudgets() async {
+    return _queryAdapter.queryList('SELECT * FROM budgets',
+        mapper: (Map<String, Object?> row) => BudgetModel(
+            id: row['id'] as String?,
+            userId: row['userId'] as String,
+            category: row['category'] as String,
+            description: row['description'] as String,
+            amount: row['amount'] as double,
+            startDate: _dateTimeConverter.decode(row['startDate'] as int),
+            endDate: _dateTimeConverter.decode(row['endDate'] as int),
+            period: row['period'] as String,
+            isRecurring: (row['isRecurring'] as int) != 0,
+            alertThreshold: row['alertThreshold'] as double?,
+            createdAt: _dateTimeConverter.decode(row['createdAt'] as int)));
+  }
+
+  @override
+  Future<BudgetModel?> getBudgetById(String id) async {
+    return _queryAdapter.query('SELECT * FROM budgets WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => BudgetModel(
+            id: row['id'] as String?,
+            userId: row['userId'] as String,
+            category: row['category'] as String,
+            description: row['description'] as String,
+            amount: row['amount'] as double,
+            startDate: _dateTimeConverter.decode(row['startDate'] as int),
+            endDate: _dateTimeConverter.decode(row['endDate'] as int),
+            period: row['period'] as String,
+            isRecurring: (row['isRecurring'] as int) != 0,
+            alertThreshold: row['alertThreshold'] as double?,
+            createdAt: _dateTimeConverter.decode(row['createdAt'] as int)),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteBudget(String id) async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM budgets WHERE id = ?1', arguments: [id]);
+  }
+
+  @override
+  Future<void> insertBudget(BudgetModel budget) async {
+    await _budgetModelInsertionAdapter.insert(budget, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateBudget(BudgetModel budget) async {
+    await _budgetModelUpdateAdapter.update(budget, OnConflictStrategy.abort);
   }
 }
 
