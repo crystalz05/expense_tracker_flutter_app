@@ -7,7 +7,7 @@ import 'package:floor/floor.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
-import '../models/expense_model.dart';
+import '../../features/expenses/data/models/expense_model.dart';
 
 part 'app_database.g.dart';
 

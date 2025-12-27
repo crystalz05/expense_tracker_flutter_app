@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 import 'package:uuid/uuid.dart';
 
@@ -56,7 +57,6 @@ class ExpenseParams extends Equatable{
 
   @override
   List<Object?> get props => [amount, category, description, paymentMethod];
-
 }
 
 class CategoryParams extends Equatable {
@@ -107,3 +107,15 @@ class SignUpParams extends Equatable {
   @override
   List<Object?> get props => [email, password, displayName];
 }
+
+class CreateOrUpdateBudgetParams extends Equatable {
+  final Budget budget;
+
+  const CreateOrUpdateBudgetParams({
+    required this.budget,
+  });
+
+  @override
+  List<Object?> get props => [budget];
+}
+

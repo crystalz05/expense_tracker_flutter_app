@@ -125,20 +125,36 @@ class _AddExpensePage extends State<AddExpensePage>{
                         SizedBox(height: 24),
                         SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                  foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onPrimary) ,
-                                  elevation: WidgetStatePropertyAll(0),
-                                  padding: WidgetStatePropertyAll(EdgeInsetsGeometry.symmetric(vertical: 18)),
-                                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.primary),
-                                  shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(7))
-                                  ) ),
-                              onPressed: (){
-                                _submitExpense();
+                          child: BlocBuilder<ExpenseBloc, ExpenseState>(
+                            builder: (context, state) {
+                              final isLoading = state is ExpenseLoading;
 
-                              },
-                              child: Text("Add Expense")),
+                              return ElevatedButton(
+                                style: ButtonStyle(
+                                  foregroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.onPrimary),
+                                  elevation: WidgetStateProperty.all(0),
+                                  padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 18)),
+                                  backgroundColor: WidgetStateProperty.all(
+                                    Theme.of(context).colorScheme.primary,
+                                  ),
+                                  shape: WidgetStateProperty.all(
+                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                                  ),
+                                ),
+                                onPressed: isLoading ? null : _submitExpense, // disable when loading
+                                child: isLoading
+                                    ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                    : Text("Add Expense"),
+                              );
+                            },
+                          ),
                         )
                       ],
                     )

@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/features/budget/presentation/widgets/add_budget_category_grid_widget.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/widgets/buttons_widget.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/widgets/period_drop_down_menu.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,9 +25,9 @@ class _AddBudgetState extends State<AddBudget> {
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
   DateTime? endDate;
+  bool? isRecurring = false;
   String? _selectedCategory;
   DateTime? startDate;
-  bool? _isRecurring;
   Period? _period;
   double? _alertThreshold;
 
@@ -46,6 +47,22 @@ class _AddBudgetState extends State<AddBudget> {
         DateFormat('EEEE, MMMM d, yyyy').format(startDate!);
   }
 
+  void _submitBudget(){
+    if(_formKey.currentState!.validate()){
+
+    }
+  }
+
+  // if(_formKey.currentState!.validate()){
+  // final expense = ExpenseParams(
+  // amount: double.parse(_amountController.text),
+  // category: _selectedCategory ?? "Food & Dining",
+  // description: _descriptionController.text,
+  // paymentMethod: _paymentMethod ?? "",
+  // );
+  // context.read<ExpenseBloc>().add(AddExpenseEvent(expense));
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,162 +74,179 @@ class _AddBudgetState extends State<AddBudget> {
           )
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Create a budget to track your spending in a specific category",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w300)),
-              SizedBox(height: 16,),
-              Text("Budget Description", style: Theme.of(context).textTheme.bodyMedium),
-              SizedBox(height: 8,),
-              TextField(
-                controller: _budgetDescriptionController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  hintText: "e.g., Monthly Groceries?",
-                  hintStyle: TextStyle(fontWeight: FontWeight.w200),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                textCapitalization: TextCapitalization.sentences,
-              ),
-
-              SizedBox(height: 24,),
-              Text("Budget Amount (₦)", style: Theme.of(context).textTheme.bodyMedium),
-              SizedBox(height: 8,),
-              TextFormField(
-                controller: _budgetAmountController,
-                maxLines: 1,
-                keyboardType: TextInputType.numberWithOptions(),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
-                ],
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Please enter an amount' : null,
-                decoration: InputDecoration(
-                  hintText: "0.00",
-                  hintStyle: TextStyle(fontWeight: FontWeight.w200),
-                  prefixText: "₦ ",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              SizedBox(height: 24,),
-              Text(
-                "Categories",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              SizedBox(height: 24,),
-              Text(
-                "Start Date",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _startDateController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  hintText: "Pick a date",
-                  hintStyle: const TextStyle(fontWeight: FontWeight.w200),
-                  prefixIcon: const Icon(Icons.calendar_today_sharp, size: 18),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onTap: () async {
-                  final pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: startDate ?? DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2100),
-                  );
-
-                  if (pickedDate != null) {
-                    setState(() {
-                      startDate = pickedDate;
-                      _startDateController.text =
-                          DateFormat('EEEE, MMMM d, yyyy').format(pickedDate);
-                    });
-                  }
-                },
-              ),
-
-              const SizedBox(width: 12),
-
-              SizedBox(height: 24,),
-              Text(
-                "End Date",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _endDateController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  hintText: "Pick a date",
-                  hintStyle: const TextStyle(fontWeight: FontWeight.w200),
-                  prefixIcon: const Icon(Icons.calendar_today_sharp, size: 18),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onTap: () async {
-                  final pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: endDate ?? DateTime.now(),
-                    firstDate: startDate ?? DateTime(1900),
-                    lastDate: DateTime(2100),
-                  );
-
-                  if (pickedDate != null) {
-                    setState(() {
-                      endDate = pickedDate;
-                      _endDateController.text =
-                          DateFormat('EEEE, MMMM d, yyyy').format(pickedDate);
-                    });
-                  }
-                },
-              ),
-              SizedBox(height: 24,),
-              Text(
-                "Period",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                child: PeriodDropDownMenu<Period>(
-                  width: double.infinity,
-                  items: Period.values,
-                  initialValue: Period.monthly,
-                  labelBuilder: (p) => p.label,
-                  onSelected: (period) {
-                    setState(() {
-                      _period = period;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(height: 24,),
-              Row(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: ButtonsWidget(
-                      textColor: Theme.of(context).colorScheme.onError,
-                      color: Theme.of(context).colorScheme.error,
-                      buttonName: "Cancel",
-                      onPressed: () {})),
-                  SizedBox(width: 24),
-                  Expanded(child: ButtonsWidget(
-                      buttonName: "Add Budget",
-                      onPressed: () {})),
+                  Text("Create a budget to track your spending in a specific category",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500)),
+                  Divider(thickness: 0.5,),
+                  SizedBox(height: 16,),
+                  Text("Budget Description", style: Theme.of(context).textTheme.bodyMedium),
+                  SizedBox(height: 8,),
+                  TextFormField(
+                    controller: _budgetDescriptionController,
+                    maxLines: 1,
+                    validator: (value) => value == null || value.isEmpty ? 'Please enter a description' : null ,
 
+                    decoration: InputDecoration(
+                      hintText: "e.g., Monthly Groceries?",
+                      hintStyle: TextStyle(fontWeight: FontWeight.w200),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+
+                  SizedBox(height: 24,),
+                  Text("Budget Amount (₦)", style: Theme.of(context).textTheme.bodyMedium),
+                  SizedBox(height: 8,),
+                  TextFormField(
+                    controller: _budgetAmountController,
+                    maxLines: 1,
+                    keyboardType: TextInputType.numberWithOptions(),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                    ],
+                    validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter an amount' : null,
+                    decoration: InputDecoration(
+                      hintText: "0.00",
+                      hintStyle: TextStyle(fontWeight: FontWeight.w200),
+                      prefixText: "₦ ",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24,),
+                  Text(
+                    "Categories",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  AddBudgetCategoryGridWidget(onCategorySelected: (category){},),
+                  SizedBox(height: 24,),
+                  Text(
+                    "Start Date",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _startDateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: "Pick a date",
+                      hintStyle: const TextStyle(fontWeight: FontWeight.w200),
+                      prefixIcon: const Icon(Icons.calendar_today_sharp, size: 18),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onTap: () async {
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: startDate ?? DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime(2100),
+                      );
+
+                      if (pickedDate != null) {
+                        setState(() {
+                          startDate = pickedDate;
+                          _startDateController.text =
+                              DateFormat('EEEE, MMMM d, yyyy').format(pickedDate);
+                        });
+                      }
+                    },
+                  ),
+                  SizedBox(height: 24,),
+                  Text(
+                    "End Date",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _endDateController,
+                    validator: (value) => value == null || value.isEmpty ? 'Please pick a end date' : null ,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: "Pick a date",
+                      hintStyle: const TextStyle(fontWeight: FontWeight.w200),
+                      prefixIcon: const Icon(Icons.calendar_today_sharp, size: 18),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onTap: () async {
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: endDate ?? DateTime.now(),
+                        firstDate: startDate ?? DateTime(1900),
+                        lastDate: DateTime(2100),
+                      );
+
+                      if (pickedDate != null) {
+                        setState(() {
+                          endDate = pickedDate;
+                          _endDateController.text =
+                              DateFormat('EEEE, MMMM d, yyyy').format(pickedDate);
+                        });
+                      }
+                    },
+                  ),
+                  SizedBox(height: 24,),
+                  Text(
+                    "Period",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    child: PeriodDropDownMenu<Period>(
+                      width: double.infinity,
+                      items: Period.values,
+                      initialValue: Period.monthly,
+                      labelBuilder: (p) => p.label,
+                      onSelected: (period) {
+                        setState(() {
+                          _period = period;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 24,),
+                  Row(
+                    children: [
+                      Checkbox(value: isRecurring, onChanged: (recurring) {
+                        setState(() {
+                          isRecurring = recurring ?? false;
+                        });
+                      }),
+                      Text("Make this a recurring budget")
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(child: ButtonsWidget(
+                          textColor: Theme.of(context).colorScheme.onError,
+                          color: Theme.of(context).colorScheme.error,
+                          buttonName: "Cancel",
+                          onPressed: () {context.pop();})),
+                      SizedBox(width: 24),
+                      Expanded(child: ButtonsWidget(
+                          buttonName: "Add Budget",
+                          onPressed: () {
+                            _submitBudget();
+                          })),
+                    ],
+                  ),
+                  SizedBox(height: 24)
                 ],
-              )
-            ],
-          ),
-        ),
+              ),
+            ),
+
+          )
       ),
     );
   }

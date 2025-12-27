@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:expenses_tracker_app/core/network/network_info.dart';
-import 'package:expenses_tracker_app/features/expenses/data/datasources/migrations.dart';
+import 'package:expenses_tracker_app/core/database/migrations.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/soft_delete_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/sync_expenses.dart';
 import 'package:get_it/get_it.dart';
@@ -20,7 +20,7 @@ import 'features/auth/domain/usecases/sign_out.dart';
 import 'features/auth/domain/usecases/sign_up.dart';
 import 'features/auth/domain/user_session/user_session.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/expenses/data/datasources/app_database.dart';
+import 'core/database/app_database.dart';
 import 'features/expenses/data/datasources/expense_remote_datasource.dart';
 import 'features/expenses/data/datasources/expense_remote_datasource_impl.dart';
 import 'features/expenses/data/datasources/expenses_local_datasource.dart';

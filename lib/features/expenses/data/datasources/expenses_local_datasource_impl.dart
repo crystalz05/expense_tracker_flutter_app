@@ -1,6 +1,6 @@
 
 import 'package:expenses_tracker_app/core/error/exceptions.dart';
-import 'package:expenses_tracker_app/features/expenses/data/datasources/app_database.dart';
+import 'package:expenses_tracker_app/core/database/app_database.dart';
 
 import '../models/expense_model.dart';
 import 'expenses_local_datasource.dart';

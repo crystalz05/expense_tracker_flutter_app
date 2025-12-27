@@ -118,7 +118,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                                     ),
                                   ),
                                 ),
-                                child: BudgetTransactionHistoryWidget(expense: state.expenses.first),
+                                child: BudgetTransactionHistoryWidget(expenses: state.expenses),
                               )
                           ],
                         ),

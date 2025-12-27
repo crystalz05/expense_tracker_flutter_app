@@ -1,4 +1,3 @@
-
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,16 +5,14 @@ import 'package:intl/intl.dart';
 import '../../../../core/utils/expenses_categories.dart';
 
 class BudgetTransactionHistoryWidget extends StatelessWidget {
-  final Expense expense;
+  final List<Expense> expenses;
 
   const BudgetTransactionHistoryWidget({
     super.key,
-    required this.expense,
+    required this.expenses,
   });
 
-  String get formattedTime {
-
-    DateTime date = expense.updatedAt;
+  String _formattedTime(DateTime date) {
     final hour = date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour);
     final minute = date.minute.toString().padLeft(2, '0');
     final period = date.hour >= 12 ? 'PM' : 'AM';
@@ -24,15 +21,26 @@ class BudgetTransactionHistoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (expenses.isEmpty) {
+      return Center(child: Text("No transactions yet"));
+    }
 
-    final categoryData = ExpenseCategories.fromName(expense.category);
-    final date = expense.updatedAt;
+    return ListView.separated(
+      shrinkWrap: true, // use if inside another scrollable
+      physics: NeverScrollableScrollPhysics(), // disable inner scrolling
+      itemCount: expenses.length,
+      separatorBuilder: (context, index) => Divider(
+        color: Colors.grey[300],
+        thickness: 1,
+      ),
+      itemBuilder: (context, index) {
+        final expense = expenses[index];
+        final categoryData = ExpenseCategories.fromName(expense.category);
+        final date = expense.updatedAt;
 
-
-    return
-      Column(
-        children: [
-          Row(
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
@@ -40,8 +48,8 @@ class BudgetTransactionHistoryWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(16)
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(categoryData.icon, color: categoryData.color, size: 18),
                   ),
@@ -49,16 +57,26 @@ class BudgetTransactionHistoryWidget extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(expense.description ?? "", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w400)),
-                      Text("${DateFormat('MMM').format(date)} ${date.day} ,${date.year} - $formattedTime", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.normal)),
+                      Text(
+                        expense.description ?? "",
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "${DateFormat('MMM').format(date)} ${date.day}, ${date.year} - ${_formattedTime(date)}",
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.normal),
+                      ),
                     ],
                   ),
                 ],
               ),
-              Text("${expense.amount}", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500)),
+              Text(
+                "₦${expense.amount.toStringAsFixed(2)}",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+              ),
             ],
-          )
-        ],
-      );
+          ),
+        );
+      },
+    );
   }
 }
