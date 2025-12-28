@@ -118,7 +118,7 @@ class ExpenseRemoteDatasourceImpl implements ExpenseRemoteDatasource {
 
       // Upload local expenses that don't exist remotely
       for (final local in localExpenses) {
-        if (local.id == null || !remoteIds.contains(local.id)) {
+        if (!remoteIds.contains(local.id)) {
           await addExpense(local, userId);
         }
       }
