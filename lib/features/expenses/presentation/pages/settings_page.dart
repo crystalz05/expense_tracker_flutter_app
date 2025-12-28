@@ -76,7 +76,7 @@ class SettingsPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    BlocBuilder<BudgetCubit, BudgetState>(
+                                    BlocBuilder<BudgetCubit, BudgetStateSecondary>(
                                       builder: (context, state) {
                                         return Row(
                                           children: [

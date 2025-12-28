@@ -33,10 +33,10 @@ final GoRouter router = GoRouter(
         builder: (context, state) => const BudgetPage(),
       ),
       GoRoute(
-          path: '/budget-detail-page',
+          path: '/budget-detail-page/:id',
           builder: (context, state) {
-            final budget = state.extra as Budget;
-            return BudgetDetailPage(budget: budget);
+            final budgetId = state.pathParameters['id']!;
+            return BudgetDetailPage(budgetId: budgetId);
           }
       ),
       GoRoute(

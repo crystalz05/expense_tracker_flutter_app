@@ -9,13 +9,13 @@ abstract class ExpenseDao {
   @Query('SELECT * FROM expenses WHERE is_deleted = 0 ORDER BY updated_at DESC')
   Future<List<ExpenseModel>> getExpenses();
 
-  @Query('SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND updated_at BETWEEN :start AND :end ORDER BY updated_at DESC')
+  @Query('SELECT * FROM expenses WHERE is_deleted = 0 AND updated_at BETWEEN :start AND :end ORDER BY updated_at DESC')
   Future<List<ExpenseModel>> getExpensesByDateRange(DateTime start, DateTime end);
 
-  @Query('SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND category = :category AND updated_at BETWEEN :start AND :end ORDER BY updated_at DESC')
+  @Query('SELECT * FROM expenses WHERE is_deleted = 0 AND category = :category AND updated_at BETWEEN :start AND :end ORDER BY updated_at DESC')
   Future<List<ExpenseModel>> getExpensesByCategoryAndPeriod(String category, DateTime start, DateTime end);
 
-  @Query('SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND category = :category ORDER BY updated_at DESC')
+  @Query('SELECT * FROM expenses WHERE is_deleted = 0 AND category = :category ORDER BY updated_at DESC')
   Future<List<ExpenseModel>> getExpenseByCategory(String category);
 
   @insert

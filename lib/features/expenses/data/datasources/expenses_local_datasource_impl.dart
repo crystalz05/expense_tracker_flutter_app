@@ -99,6 +99,13 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource{
       throw DatabaseException('Failed to delete expense: ${e.toString()}', s);
     }
   }
+
+  @override
+  Future<List<ExpenseModel>> getByCategoryAndPeriod(String category, DateTime start, DateTime end) async {
+    try{
+      return await database.expenseDao.getExpensesByCategoryAndPeriod(category, start, end);
+    }catch(e, s){
+      throw DatabaseException('Failed to get expense by category and period: ${e.toString()}', s);
+    }
+  }
 }
-
-

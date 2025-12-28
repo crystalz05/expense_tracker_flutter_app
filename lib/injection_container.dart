@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:expenses_tracker_app/core/network/network_info.dart';
 import 'package:expenses_tracker_app/core/database/migrations.dart';
+import 'package:expenses_tracker_app/features/budget/budget_injection.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/soft_delete_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/sync_expenses.dart';
 import 'package:get_it/get_it.dart';
@@ -62,9 +63,8 @@ Future<void> init() async {
 
   final database = await $FloorAppDatabase
       .databaseBuilder("app_database.db")
-      .fallbackToDestructiveMigration
+      // .addMigrations([migration1to2])
       .build();
-
 
   // Shared Preferences
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -134,6 +134,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetTotalSpent());
   sl.registerLazySingleton(() => GetCategoryTotals());
   sl.registerLazySingleton(() => SoftDeleteExpense(sl()));
+
+  await initBudget(sl);
 
   // Bloc
   sl.registerFactory(() => ExpenseBloc(

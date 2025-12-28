@@ -162,6 +162,8 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     }
   }
 
+
+
   @override
   Future<Either<Failure, void>> syncExpenses() async {
     try {
@@ -186,6 +188,16 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     }
   }
 
-
-
+  @override
+  Future<Either<Failure, List<Expense>>> getByCategoryAndPeriod(String category, DateTime start, DateTime end) async {
+    try {
+      final models = await localDatasource.getByCategoryAndPeriod(category, start, end);
+      final entities = models.map((e) => e.toEntity()).toList();
+      return Right(entities);
+    } on DatabaseException catch (e){
+      return Left(DatabaseFailure(e.message));
+    } catch (e){
+      return Left(DatabaseFailure('Unexpected error: ${e.toString()}'));
+    }
+  }
 }

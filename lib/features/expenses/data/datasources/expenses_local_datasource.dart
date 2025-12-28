@@ -13,8 +13,10 @@ abstract class ExpensesLocalDatasource {
   Future<void> deleteExpense(String id);
   Future<void> softDeleteExpense(String id, DateTime updatedAt);
   Future<List<ExpenseModel>> getExpensesByDateRange(DateTime start, DateTime end);
+  Future<List<ExpenseModel>> getByCategoryAndPeriod(String category, DateTime start, DateTime end);
   Future<List<ExpenseModel>> getExpenseByCategory(String category);
   Future<double?> getTotalByCategory(String category);
   Future<double?> getTotalExpense();
 
 }
+

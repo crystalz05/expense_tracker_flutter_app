@@ -20,7 +20,7 @@ class BalanceCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return
-      BlocBuilder<BudgetCubit, BudgetState>(
+      BlocBuilder<BudgetCubit, BudgetStateSecondary>(
           builder: (context, state) {
             final double fraction = totalSpent / state.monthlyBudget;
             final String percentage = (fraction * 100).toStringAsFixed(1);

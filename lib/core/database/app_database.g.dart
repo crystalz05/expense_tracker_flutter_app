@@ -100,7 +100,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `expenses` (`id` TEXT NOT NULL, `amount` REAL NOT NULL, `category` TEXT NOT NULL, `description` TEXT, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `payment_method` TEXT NOT NULL, `is_deleted` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `budgets` (`id` TEXT, `userId` TEXT NOT NULL, `id` TEXT, `userId` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `amount` REAL NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER NOT NULL, `period` TEXT NOT NULL, `isRecurring` INTEGER NOT NULL, `alertThreshold` REAL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `budgets` (`id` TEXT NOT NULL, `userId` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `amount` REAL NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER NOT NULL, `period` TEXT NOT NULL, `isRecurring` INTEGER NOT NULL, `alertThreshold` REAL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -183,7 +183,7 @@ class _$ExpenseDao extends ExpenseDao {
     DateTime end,
   ) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND updated_at BETWEEN ?1 AND ?2 ORDER BY updated_at DESC',
+        'SELECT * FROM expenses WHERE is_deleted = 0 AND updated_at BETWEEN ?1 AND ?2 ORDER BY updated_at DESC',
         mapper: (Map<String, Object?> row) => ExpenseModel(id: row['id'] as String, amount: row['amount'] as double, category: row['category'] as String, description: row['description'] as String?, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _dateTimeConverter.decode(row['updated_at'] as int), paymentMethod: row['payment_method'] as String, isDeleted: (row['is_deleted'] as int) != 0),
         arguments: [
           _dateTimeConverter.encode(start),
@@ -198,7 +198,7 @@ class _$ExpenseDao extends ExpenseDao {
     DateTime end,
   ) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND category = ?1 AND updated_at BETWEEN ?2 AND ?3 ORDER BY updated_at DESC',
+        'SELECT * FROM expenses WHERE is_deleted = 0 AND category = ?1 AND updated_at BETWEEN ?2 AND ?3 ORDER BY updated_at DESC',
         mapper: (Map<String, Object?> row) => ExpenseModel(id: row['id'] as String, amount: row['amount'] as double, category: row['category'] as String, description: row['description'] as String?, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _dateTimeConverter.decode(row['updated_at'] as int), paymentMethod: row['payment_method'] as String, isDeleted: (row['is_deleted'] as int) != 0),
         arguments: [
           category,
@@ -210,7 +210,7 @@ class _$ExpenseDao extends ExpenseDao {
   @override
   Future<List<ExpenseModel>> getExpenseByCategory(String category) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM expenses WHERE WHERE is_deleted = 0 AND category = ?1 ORDER BY updated_at DESC',
+        'SELECT * FROM expenses WHERE is_deleted = 0 AND category = ?1 ORDER BY updated_at DESC',
         mapper: (Map<String, Object?> row) => ExpenseModel(id: row['id'] as String, amount: row['amount'] as double, category: row['category'] as String, description: row['description'] as String?, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _dateTimeConverter.decode(row['updated_at'] as int), paymentMethod: row['payment_method'] as String, isDeleted: (row['is_deleted'] as int) != 0),
         arguments: [category]);
   }
@@ -285,8 +285,6 @@ class _$BudgetDao extends BudgetDao {
             (BudgetModel item) => <String, Object?>{
                   'id': item.id,
                   'userId': item.userId,
-                  'id': item.id,
-                  'userId': item.userId,
                   'category': item.category,
                   'description': item.description,
                   'amount': item.amount,
@@ -302,8 +300,6 @@ class _$BudgetDao extends BudgetDao {
             'budgets',
             ['id'],
             (BudgetModel item) => <String, Object?>{
-                  'id': item.id,
-                  'userId': item.userId,
                   'id': item.id,
                   'userId': item.userId,
                   'category': item.category,
@@ -331,7 +327,7 @@ class _$BudgetDao extends BudgetDao {
   Future<List<BudgetModel>> getAllBudgets() async {
     return _queryAdapter.queryList('SELECT * FROM budgets',
         mapper: (Map<String, Object?> row) => BudgetModel(
-            id: row['id'] as String?,
+            id: row['id'] as String,
             userId: row['userId'] as String,
             category: row['category'] as String,
             description: row['description'] as String,
@@ -348,7 +344,7 @@ class _$BudgetDao extends BudgetDao {
   Future<BudgetModel?> getBudgetById(String id) async {
     return _queryAdapter.query('SELECT * FROM budgets WHERE id = ?1',
         mapper: (Map<String, Object?> row) => BudgetModel(
-            id: row['id'] as String?,
+            id: row['id'] as String,
             userId: row['userId'] as String,
             category: row['category'] as String,
             description: row['description'] as String,

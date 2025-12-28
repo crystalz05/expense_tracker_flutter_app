@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class Budget extends Equatable {
-  final String? id;
+  final String id;
   final String userId; // Track which user owns this budget
   final String category;
   final String description;
@@ -14,7 +14,7 @@ class Budget extends Equatable {
   final DateTime createdAt;
 
   const Budget({
-    this.id,
+    required this.id,
     required this.userId,
     required this.category,
     required this.description,

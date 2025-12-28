@@ -33,3 +33,7 @@ class NetworkFailure extends Failure {
 class NotFoundFailure extends Failure {
   const NotFoundFailure([super.message = 'Data not found']);
 }
+
+class UnreachableError extends Failure {
+  const UnreachableError([super.message = 'Data not found']);
+}

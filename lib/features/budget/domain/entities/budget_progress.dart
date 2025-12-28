@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import 'budget.dart';
 
 class BudgetProgress extends Equatable {
@@ -13,11 +12,12 @@ class BudgetProgress extends Equatable {
   const BudgetProgress({
     required this.budget,
     required this.spent,
-    required this.remaining,
-    required this.percentageUsed,
+    required double remaining,
+    required double percentageUsed,
     required this.isOverBudget,
     required this.shouldAlert,
-  });
+  })  : remaining = remaining < 0 ? 0 : remaining,
+        percentageUsed = percentageUsed > 100 ? 100 : percentageUsed;
 
   @override
   List<Object?> get props => [

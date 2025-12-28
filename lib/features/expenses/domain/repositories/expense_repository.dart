@@ -9,6 +9,7 @@ abstract class ExpenseRepository {
   Future<Either<Failure, List<Expense>>> getExpenses();
   Future<Either<Failure, List<Expense>>> getExpenseByCategory(String category);
   Future<Either<Failure, List<Expense>>> getExpensesByDateRange(DateTime start, DateTime end);
+  Future<Either<Failure, List<Expense>>> getByCategoryAndPeriod(String category, DateTime start, DateTime end);
   Future<Either<Failure, Expense>> getExpenseById(String id);
   Future<Either<Failure, void>> updateExpense(Expense expense);
   Future<Either<Failure, void>> deleteExpense(String id);

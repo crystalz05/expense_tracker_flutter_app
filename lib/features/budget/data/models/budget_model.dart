@@ -4,57 +4,35 @@ import 'package:uuid/uuid.dart';
 import '../../domain/entities/budget.dart';
 
 @Entity(tableName: 'budgets')
-class BudgetModel extends Budget {
-  @override
+class BudgetModel {
   @primaryKey
-  final String? id;
+  final String id;
 
-  @override
   final String userId;
+  final String category;
+  final String description;
+  final double amount;
+  final DateTime startDate;
+  final DateTime endDate;
+  final String period;
+  final bool isRecurring;
+  final double? alertThreshold;
+  final DateTime createdAt;
 
   const BudgetModel({
-    this.id,
+    required this.id,
     required this.userId,
-    required String category,
-    required String description,
-    required double amount,
-    required DateTime startDate,
-    required DateTime endDate,
-    required String period,
-    bool isRecurring = true,
-    double? alertThreshold = 80.0,
-    required DateTime createdAt,
-  }) : super(
-    id: id,
-    userId: userId,
-    category: category,
-    description: description,
-    amount: amount,
-    startDate: startDate,
-    endDate: endDate,
-    period: period,
-    isRecurring: isRecurring,
-    alertThreshold: alertThreshold,
-    createdAt: createdAt,
-  );
+    required this.category,
+    required this.description,
+    required this.amount,
+    required this.startDate,
+    required this.endDate,
+    required this.period,
+    required this.isRecurring,
+    this.alertThreshold,
+    required this.createdAt,
+  });
 
-  factory BudgetModel.fromEntity(Budget budget) {
-    return BudgetModel(
-      id: budget.id ?? const Uuid().v4(), // Generate UUID if null
-      userId: budget.userId,
-      category: budget.category,
-      description: budget.description,
-      amount: budget.amount,
-      startDate: budget.startDate,
-      endDate: budget.endDate,
-      period: budget.period,
-      isRecurring: budget.isRecurring,
-      alertThreshold: budget.alertThreshold,
-      createdAt: budget.createdAt,
-    );
-  }
-
-  // For Supabase sync
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -82,7 +60,7 @@ class BudgetModel extends Budget {
       endDate: DateTime.parse(json['end_date']),
       period: json['period'],
       isRecurring: json['is_recurring'] ?? true,
-      alertThreshold: (json['alert_threshold'] as num?)?.toDouble() ?? 80.0,
+      alertThreshold: (json['alert_threshold'] as num?)?.toDouble(),
       createdAt: DateTime.parse(json['created_at']),
     );
   }

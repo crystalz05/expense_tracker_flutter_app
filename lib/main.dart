@@ -6,6 +6,7 @@ import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.d
 import 'package:expenses_tracker_app/features/auth/presentation/pages/login_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/splash_page.dart';
+import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/home_page.dart';
@@ -33,6 +34,9 @@ Future<void> main() async {
           ),
           BlocProvider(
               create: (_) => sl<BudgetCubit>()
+          ),
+          BlocProvider(
+              create: (_) => sl<BudgetBloc>()
           )
         ],
         child: const MyApp()),
