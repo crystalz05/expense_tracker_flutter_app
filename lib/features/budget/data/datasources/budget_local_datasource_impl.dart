@@ -8,50 +8,29 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
   BudgetLocalDataSourceImpl(this.dao);
 
   @override
-  Future<List<BudgetModel>> getBudgets() => dao.getAllBudgets();
+  Future<List<BudgetModel>> getBudgets(String userId) => dao.getAllBudgets(userId);
 
   @override
   Future<BudgetModel?> getBudgetById(String id) => dao.getBudgetById(id);
 
   @override
-  Future<void> createBudget(BudgetModel budget) =>
-      dao.insertBudget(budget);
+  Future<void> createBudget(BudgetModel budget) => dao.insertBudget(budget);
 
   @override
-  Future<void> updateBudget(BudgetModel budget) =>
-      dao.updateBudget(budget);
+  Future<void> updateBudget(BudgetModel budget) => dao.updateBudget(budget);
 
   @override
-  Future<void> deleteBudget(String id) =>
-      dao.deleteBudget(id);
+  Future<void> deleteBudget(String id) => dao.deleteBudget(id);
+
+  @override
+  Future<List<BudgetModel>> getBudgetsNeedingSync(String userId) => dao.getBudgetsNeedingSync(userId);
+
+  @override
+  Future<List<BudgetModel>> getDeletedBudgets(String userId) => dao.getDeletedBudgets(userId);
+
+  @override
+  Future<void> permanentlyDeleteBudgets(List<String> ids) => dao.permanentlyDeleteBudgets(ids);
+
+  @override
+  Future<void> clearUserData(String userId) => dao.clearUserData(userId);
 }
-
-// final AppDatabase database;
-// ExpenseLocalDataSourceImpl(this.database);
-//
-// @override
-// Future<void> addExpense(ExpenseModel expense) async {
-//   try {
-//     await database.expenseDao.addExpense(expense);
-//   }catch (e, s){
-//     throw DatabaseException('Failed to add expense: ${e.toString()}', s);
-//   }
-// }
-//
-// @override
-// Future<void> deleteExpense(String id) async {
-//   try {
-//     await database.expenseDao.deleteExpense(id);
-//   }catch (e, s){
-//     throw DatabaseException('Failed to delete expense: ${e.toString()}', s);
-//   }
-// }
-//
-// @override
-// Future<List<ExpenseModel>> getExpenseByCategory(String category) async {
-//   try{
-//     return await database.expenseDao.getExpenseByCategory(category);
-//   }catch (e, s){
-//     throw DatabaseException('Failed to get expense by category: ${e.toString()}', s);
-//   }
-// }

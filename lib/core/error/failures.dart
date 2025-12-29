@@ -37,3 +37,15 @@ class NotFoundFailure extends Failure {
 class UnreachableError extends Failure {
   const UnreachableError([super.message = 'Data not found']);
 }
+
+class PermissionFailure extends Failure {
+  const PermissionFailure([super.message = 'You do not have sufficient permission']);
+}
+
+class DuplicateFailure extends Failure {
+  const DuplicateFailure([super.message = 'Duplicate entry found']);
+}
+
+class UnknownFailure extends Failure {
+  const UnknownFailure([super.message = 'Duplicate entry found']);
+}

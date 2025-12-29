@@ -1,4 +1,4 @@
-
+// core/utils/date_time_converter.dart
 import 'package:floor/floor.dart';
 
 class DateTimeConverter extends TypeConverter<DateTime, int> {
@@ -10,5 +10,18 @@ class DateTimeConverter extends TypeConverter<DateTime, int> {
   @override
   int encode(DateTime value) {
     return value.millisecondsSinceEpoch;
+  }
+}
+
+class NullableDateTimeConverter extends TypeConverter<DateTime?, int?> {
+  @override
+  DateTime? decode(int? databaseValue) {
+    if (databaseValue == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(databaseValue);
+  }
+
+  @override
+  int? encode(DateTime? value) {
+    return value?.millisecondsSinceEpoch;
   }
 }

@@ -13,7 +13,7 @@ import '../../features/expenses/data/models/expense_model.dart';
 
 part 'app_database.g.dart';
 
-@TypeConverters([DateTimeConverter])
+@TypeConverters([DateTimeConverter, NullableDateTimeConverter])
 @Database(
   version: 3, // bump version
   entities: [

@@ -70,14 +70,11 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
             }
 
             // Handle successful deletion
-            if (state is BudgetLoaded) {
-              final budgetExists = state.budgets.any((b) => b.id == widget.budgetId);
-              if (!budgetExists) {
+            if (state is BudgetOperationSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Budget deleted successfully')),
                 );
                 context.pop();
-              }
             }
 
             // When budget progress loads, fetch expenses for that period
@@ -104,10 +101,11 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
 
               return BlocBuilder<ExpenseBloc, ExpenseState>(
                 builder: (context, expenseState) {
+
                   // Show loading for expenses while budget progress is loaded
                   final isLoadingExpenses = expenseState is ExpenseLoading;
-                  final List<Expense>expenses = expenseState is ExpensesLoaded ? expenseState.expenses : [];
-                  final totalSpent = expenseState is ExpensesLoaded ? expenseState.totalSpent : progress.spent;
+                  final List<Expense>expenses = expenseState is ExpensesByCategoryLoaded ? expenseState.expenses : [];
+                  final totalSpent = expenseState is ExpensesByCategoryLoaded ? expenseState.total : progress.spent;
 
                   return SingleChildScrollView(
                     child: Padding(
@@ -177,8 +175,8 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
 
                           // Budget progress card
                           BudgetCardExpandedWidget(
-                            budget: budget,
-                            totalSpent: totalSpent,
+                            budget: progress.budget,
+                            totalSpent: progress.spent,
                             categoryExpenses: expenses,
                           ),
 

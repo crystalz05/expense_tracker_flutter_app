@@ -23,7 +23,6 @@ class _BudgetPageState extends State<BudgetPage> {
     super.initState();
     // Load all expenses for balance card
     context.read<ExpenseBloc>().add(const LoadExpensesEvent());
-    // Load all budget progress (budgets + their spending)
     context.read<BudgetBloc>().add(LoadAllBudgetProgress());
   }
 

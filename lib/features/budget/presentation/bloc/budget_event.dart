@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../../domain/entities/budget.dart';
 
 abstract class BudgetEvent extends Equatable {
@@ -9,10 +8,10 @@ abstract class BudgetEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Load all budgets
-class LoadBudgets extends BudgetEvent {}
+class LoadBudgetsEvent extends BudgetEvent {
+  const LoadBudgetsEvent();
+}
 
-/// Create new budget
 class CreateBudgetEvent extends BudgetEvent {
   final Budget budget;
 
@@ -22,7 +21,6 @@ class CreateBudgetEvent extends BudgetEvent {
   List<Object?> get props => [budget];
 }
 
-/// Update budget
 class UpdateBudgetEvent extends BudgetEvent {
   final Budget budget;
 
@@ -32,7 +30,6 @@ class UpdateBudgetEvent extends BudgetEvent {
   List<Object?> get props => [budget];
 }
 
-/// Delete budget
 class DeleteBudgetEvent extends BudgetEvent {
   final String budgetId;
 
@@ -42,7 +39,6 @@ class DeleteBudgetEvent extends BudgetEvent {
   List<Object?> get props => [budgetId];
 }
 
-/// Load progress for a single budget
 class LoadBudgetProgress extends BudgetEvent {
   final String budgetId;
 
@@ -52,5 +48,10 @@ class LoadBudgetProgress extends BudgetEvent {
   List<Object?> get props => [budgetId];
 }
 
-/// Load progress for all budgets
-class LoadAllBudgetProgress extends BudgetEvent {}
+class LoadAllBudgetProgress extends BudgetEvent {
+  const LoadAllBudgetProgress();
+}
+
+class SyncBudgetsEvent extends BudgetEvent {
+  const SyncBudgetsEvent();
+}

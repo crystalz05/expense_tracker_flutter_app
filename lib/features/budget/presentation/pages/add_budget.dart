@@ -12,6 +12,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
+import '../../../expenses/presentation/bloc/expense_bloc.dart';
+import '../../../expenses/presentation/bloc/expense_event.dart';
 import '../../../expenses/presentation/widgets/dropdown_menu_widget.dart';
 import '../../domain/entities/budget.dart';
 import '../bloc/budget_bloc.dart';
@@ -103,11 +105,13 @@ class _AddBudgetState extends State<AddBudget> {
                     content: Text(state.message),
                     backgroundColor: Colors.red)
             );
-          }else if (state is BudgetLoaded) {
+          }else if (state is BudgetOperationSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Budget created successfully!')),
             );
             context.pop();
+            context.read<ExpenseBloc>().add(const LoadExpensesEvent());
+            context.read<BudgetBloc>().add(LoadAllBudgetProgress());
           }
         },
         child: Scaffold(

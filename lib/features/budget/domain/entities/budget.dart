@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 class Budget extends Equatable {
   final String id;
@@ -12,6 +13,10 @@ class Budget extends Equatable {
   final bool isRecurring;
   final double? alertThreshold; // Percentage to trigger alert (e.g., 80%)
   final DateTime createdAt;
+  final DateTime? updatedAt;
+  final bool isDeleted;
+  final bool needsSync;
+  final DateTime? lastSyncedAt;
 
   const Budget({
     required this.id,
@@ -25,6 +30,10 @@ class Budget extends Equatable {
     this.isRecurring = true,
     this.alertThreshold = 80.0,
     required this.createdAt,
+    this.updatedAt,
+    this.isDeleted = false,
+    this.needsSync = false,
+    this.lastSyncedAt
   });
 
   @override
@@ -40,5 +49,9 @@ class Budget extends Equatable {
     isRecurring,
     alertThreshold,
     createdAt,
+    updatedAt,
+    isDeleted,
+    needsSync,
+    lastSyncedAt,
   ];
 }

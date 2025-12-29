@@ -15,6 +15,7 @@ extension BudgetModelMapper on BudgetModel {
       isRecurring: isRecurring,
       alertThreshold: alertThreshold,
       createdAt: createdAt,
+      isDeleted: isDeleted,
     );
   }
 }
@@ -33,6 +34,7 @@ extension BudgetEntityMapper on Budget {
       isRecurring: isRecurring,
       alertThreshold: alertThreshold,
       createdAt: createdAt,
+      isDeleted: isDeleted,
     );
   }
 }

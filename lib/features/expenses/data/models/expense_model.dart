@@ -1,6 +1,9 @@
 
 import 'package:floor/floor.dart';
 
+import '../../../../core/utils/date_time_converter.dart';
+
+@TypeConverters([DateTimeConverter, NullableDateTimeConverter])
 @Entity(tableName: 'expenses')
 class ExpenseModel {
 

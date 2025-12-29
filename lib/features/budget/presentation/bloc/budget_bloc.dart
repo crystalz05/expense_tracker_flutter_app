@@ -1,16 +1,13 @@
-import 'package:expenses_tracker_app/features/budget/presentation/dummy_data/mock_data.dart';
+import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/presentation/cubit/budget_cubit.dart';
-import '../../../../core/usecases/usecase.dart';
 import '../../domain/usecases/create_budget.dart';
 import '../../domain/usecases/delete_budget.dart';
 import '../../domain/usecases/get_all_budget_progress.dart';
 import '../../domain/usecases/get_budget.dart';
 import '../../domain/usecases/get_budget_progress.dart';
 import '../../domain/usecases/update_budget.dart';
-import 'budget_event.dart';
-import 'budget_state.dart';
+import '../bloc/budget_event.dart';
+import '../bloc/budget_state.dart';
 
 class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   final GetBudgets getBudgets;
@@ -27,9 +24,8 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     required this.deleteBudget,
     required this.getBudgetProgress,
     required this.getAllBudgetProgress,
-  }) : super(BudgetInitial()) {
-
-    on<LoadBudgets>(_onLoadBudgets);
+  }) : super(const BudgetInitial()) {
+    on<LoadBudgetsEvent>(_onLoadBudgets);
     on<CreateBudgetEvent>(_onCreateBudget);
     on<UpdateBudgetEvent>(_onUpdateBudget);
     on<DeleteBudgetEvent>(_onDeleteBudget);
@@ -38,13 +34,15 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   }
 
   Future<void> _onLoadBudgets(
-      LoadBudgets event,
+      LoadBudgetsEvent event,
       Emitter<BudgetState> emit,
       ) async {
-    emit(BudgetLoading());
+    emit(const BudgetLoading());
+
     final result = await getBudgets(NoParams());
+
     result.fold(
-          (f) => emit(BudgetError(f.message)),
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
           (budgets) => emit(BudgetLoaded(budgets)),
     );
   }
@@ -53,12 +51,13 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       CreateBudgetEvent event,
       Emitter<BudgetState> emit,
       ) async {
-    final result = await createBudget(
-      CreateOrUpdateBudgetParams(budget: event.budget),
-    );
+    emit(const BudgetLoading());
+
+    final result = await createBudget(CreateOrUpdateBudgetParams(budget: event.budget));
+
     result.fold(
-          (f) => emit(BudgetError(f.message)),
-          (_) => add(LoadBudgets()),
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+          (_) => emit(const BudgetOperationSuccess('Budget created successfully')),
     );
   }
 
@@ -66,12 +65,13 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       UpdateBudgetEvent event,
       Emitter<BudgetState> emit,
       ) async {
-    final result = await updateBudget(
-      CreateOrUpdateBudgetParams(budget: event.budget),
-    );
+    emit(const BudgetLoading());
+
+    final result = await updateBudget(CreateOrUpdateBudgetParams(budget: event.budget));
+
     result.fold(
-          (f) => emit(BudgetError(f.message)),
-          (_) => add(LoadBudgets()),
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+          (_) => emit(const BudgetOperationSuccess('Budget updated successfully')),
     );
   }
 
@@ -79,10 +79,13 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       DeleteBudgetEvent event,
       Emitter<BudgetState> emit,
       ) async {
+    emit(const BudgetLoading());
+
     final result = await deleteBudget(IdParams(id: event.budgetId));
+
     result.fold(
-          (f) => emit(BudgetError(f.message)),
-          (_) => add(LoadBudgets()),
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+          (_) => emit(const BudgetOperationSuccess('Budget deleted successfully')),
     );
   }
 
@@ -90,10 +93,12 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       LoadBudgetProgress event,
       Emitter<BudgetState> emit,
       ) async {
-    emit(BudgetLoading());
+    emit(const BudgetLoading());
+
     final result = await getBudgetProgress(event.budgetId);
+
     result.fold(
-          (f) => emit(BudgetError(f.message)),
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
           (progress) => emit(BudgetProgressLoaded(progress)),
     );
   }
@@ -102,11 +107,17 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       LoadAllBudgetProgress event,
       Emitter<BudgetState> emit,
       ) async {
-    emit(BudgetLoading());
+    emit(const BudgetLoading());
+
     final result = await getAllBudgetProgress();
+
     result.fold(
-          (f) => emit(BudgetError(f.message)),
-          (progress) => emit(AllBudgetProgressLoaded(progress)),
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+          (progressList) => emit(AllBudgetProgressLoaded(progressList)),
     );
+  }
+
+  String _mapFailureToMessage(dynamic failure) {
+    return failure.toString().replaceAll('Failure', '').trim();
   }
 }

@@ -1,9 +1,13 @@
 import 'package:get_it/get_it.dart';
 
 import '../../core/database/app_database.dart';
+import '../../core/network/network_info.dart';
+import '../auth/domain/user_session/user_session.dart';
 import '../expenses/domain/repositories/expense_repository.dart';
 import 'data/datasources/budget_local_datasource.dart';
 import 'data/datasources/budget_local_datasource_impl.dart';
+import 'data/datasources/budget_remote_datasource.dart';
+import 'data/datasources/budget_remote_datasource_impl.dart';
 import 'data/repositories/budget_repository_impl.dart';
 import 'domain/repositories/budget_repository.dart';
 import 'domain/usecases/create_budget.dart';
@@ -15,19 +19,25 @@ import 'domain/usecases/update_budget.dart';
 import 'presentation/bloc/budget_bloc.dart';
 
 Future<void> initBudget(GetIt sl) async {
-
   // DAO
   sl.registerLazySingleton(() => sl<AppDatabase>().budgetDao);
 
-  // Local datasource
+  // Data sources
   sl.registerLazySingleton<BudgetLocalDataSource>(
         () => BudgetLocalDataSourceImpl(sl()),
   );
 
-  // Repository (NO ExpenseDao here)
+  sl.registerLazySingleton<BudgetRemoteDataSource>(
+        () => BudgetRemoteDataSourceImpl(sl()),
+  );
+
+  // Repository
   sl.registerLazySingleton<BudgetRepository>(
         () => BudgetRepositoryImpl(
       localDataSource: sl(),
+      remoteDataSource: sl(),
+      networkInfo: sl<NetworkInfo>(),
+      userSession: sl<UserSession>(),
     ),
   );
 

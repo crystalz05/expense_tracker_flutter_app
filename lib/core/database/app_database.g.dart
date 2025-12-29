@@ -100,7 +100,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `expenses` (`id` TEXT NOT NULL, `amount` REAL NOT NULL, `category` TEXT NOT NULL, `description` TEXT, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `payment_method` TEXT NOT NULL, `is_deleted` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `budgets` (`id` TEXT NOT NULL, `userId` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `amount` REAL NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER NOT NULL, `period` TEXT NOT NULL, `isRecurring` INTEGER NOT NULL, `alertThreshold` REAL, `createdAt` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `budgets` (`id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `amount` REAL NOT NULL, `start_date` INTEGER NOT NULL, `end_date` INTEGER NOT NULL, `period` TEXT NOT NULL, `is_recurring` INTEGER NOT NULL, `alert_threshold` REAL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER, `is_deleted` INTEGER NOT NULL, `needs_sync` INTEGER NOT NULL, `last_synced_at` INTEGER, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -284,16 +284,22 @@ class _$BudgetDao extends BudgetDao {
             'budgets',
             (BudgetModel item) => <String, Object?>{
                   'id': item.id,
-                  'userId': item.userId,
+                  'user_id': item.userId,
                   'category': item.category,
                   'description': item.description,
                   'amount': item.amount,
-                  'startDate': _dateTimeConverter.encode(item.startDate),
-                  'endDate': _dateTimeConverter.encode(item.endDate),
+                  'start_date': _dateTimeConverter.encode(item.startDate),
+                  'end_date': _dateTimeConverter.encode(item.endDate),
                   'period': item.period,
-                  'isRecurring': item.isRecurring ? 1 : 0,
-                  'alertThreshold': item.alertThreshold,
-                  'createdAt': _dateTimeConverter.encode(item.createdAt)
+                  'is_recurring': item.isRecurring ? 1 : 0,
+                  'alert_threshold': item.alertThreshold,
+                  'created_at': _dateTimeConverter.encode(item.createdAt),
+                  'updated_at':
+                      _nullableDateTimeConverter.encode(item.updatedAt),
+                  'is_deleted': item.isDeleted ? 1 : 0,
+                  'needs_sync': item.needsSync ? 1 : 0,
+                  'last_synced_at':
+                      _nullableDateTimeConverter.encode(item.lastSyncedAt)
                 }),
         _budgetModelUpdateAdapter = UpdateAdapter(
             database,
@@ -301,16 +307,22 @@ class _$BudgetDao extends BudgetDao {
             ['id'],
             (BudgetModel item) => <String, Object?>{
                   'id': item.id,
-                  'userId': item.userId,
+                  'user_id': item.userId,
                   'category': item.category,
                   'description': item.description,
                   'amount': item.amount,
-                  'startDate': _dateTimeConverter.encode(item.startDate),
-                  'endDate': _dateTimeConverter.encode(item.endDate),
+                  'start_date': _dateTimeConverter.encode(item.startDate),
+                  'end_date': _dateTimeConverter.encode(item.endDate),
                   'period': item.period,
-                  'isRecurring': item.isRecurring ? 1 : 0,
-                  'alertThreshold': item.alertThreshold,
-                  'createdAt': _dateTimeConverter.encode(item.createdAt)
+                  'is_recurring': item.isRecurring ? 1 : 0,
+                  'alert_threshold': item.alertThreshold,
+                  'created_at': _dateTimeConverter.encode(item.createdAt),
+                  'updated_at':
+                      _nullableDateTimeConverter.encode(item.updatedAt),
+                  'is_deleted': item.isDeleted ? 1 : 0,
+                  'needs_sync': item.needsSync ? 1 : 0,
+                  'last_synced_at':
+                      _nullableDateTimeConverter.encode(item.lastSyncedAt)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -324,20 +336,28 @@ class _$BudgetDao extends BudgetDao {
   final UpdateAdapter<BudgetModel> _budgetModelUpdateAdapter;
 
   @override
-  Future<List<BudgetModel>> getAllBudgets() async {
-    return _queryAdapter.queryList('SELECT * FROM budgets',
+  Future<List<BudgetModel>> getAllBudgets(String userId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM budgets WHERE is_deleted = 0 AND user_id = ?1',
         mapper: (Map<String, Object?> row) => BudgetModel(
             id: row['id'] as String,
-            userId: row['userId'] as String,
+            userId: row['user_id'] as String,
             category: row['category'] as String,
             description: row['description'] as String,
             amount: row['amount'] as double,
-            startDate: _dateTimeConverter.decode(row['startDate'] as int),
-            endDate: _dateTimeConverter.decode(row['endDate'] as int),
+            startDate: _dateTimeConverter.decode(row['start_date'] as int),
+            endDate: _dateTimeConverter.decode(row['end_date'] as int),
             period: row['period'] as String,
-            isRecurring: (row['isRecurring'] as int) != 0,
-            alertThreshold: row['alertThreshold'] as double?,
-            createdAt: _dateTimeConverter.decode(row['createdAt'] as int)));
+            isRecurring: (row['is_recurring'] as int) != 0,
+            alertThreshold: row['alert_threshold'] as double?,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt:
+                _nullableDateTimeConverter.decode(row['updated_at'] as int?),
+            isDeleted: (row['is_deleted'] as int) != 0,
+            needsSync: (row['needs_sync'] as int) != 0,
+            lastSyncedAt: _nullableDateTimeConverter
+                .decode(row['last_synced_at'] as int?)),
+        arguments: [userId]);
   }
 
   @override
@@ -345,16 +365,22 @@ class _$BudgetDao extends BudgetDao {
     return _queryAdapter.query('SELECT * FROM budgets WHERE id = ?1',
         mapper: (Map<String, Object?> row) => BudgetModel(
             id: row['id'] as String,
-            userId: row['userId'] as String,
+            userId: row['user_id'] as String,
             category: row['category'] as String,
             description: row['description'] as String,
             amount: row['amount'] as double,
-            startDate: _dateTimeConverter.decode(row['startDate'] as int),
-            endDate: _dateTimeConverter.decode(row['endDate'] as int),
+            startDate: _dateTimeConverter.decode(row['start_date'] as int),
+            endDate: _dateTimeConverter.decode(row['end_date'] as int),
             period: row['period'] as String,
-            isRecurring: (row['isRecurring'] as int) != 0,
-            alertThreshold: row['alertThreshold'] as double?,
-            createdAt: _dateTimeConverter.decode(row['createdAt'] as int)),
+            isRecurring: (row['is_recurring'] as int) != 0,
+            alertThreshold: row['alert_threshold'] as double?,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt:
+                _nullableDateTimeConverter.decode(row['updated_at'] as int?),
+            isDeleted: (row['is_deleted'] as int) != 0,
+            needsSync: (row['needs_sync'] as int) != 0,
+            lastSyncedAt: _nullableDateTimeConverter
+                .decode(row['last_synced_at'] as int?)),
         arguments: [id]);
   }
 
@@ -365,8 +391,111 @@ class _$BudgetDao extends BudgetDao {
   }
 
   @override
+  Future<List<BudgetModel>> getBudgetsNeedingSync(String userId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM budgets WHERE needs_sync = 1 AND user_id = ?1',
+        mapper: (Map<String, Object?> row) => BudgetModel(
+            id: row['id'] as String,
+            userId: row['user_id'] as String,
+            category: row['category'] as String,
+            description: row['description'] as String,
+            amount: row['amount'] as double,
+            startDate: _dateTimeConverter.decode(row['start_date'] as int),
+            endDate: _dateTimeConverter.decode(row['end_date'] as int),
+            period: row['period'] as String,
+            isRecurring: (row['is_recurring'] as int) != 0,
+            alertThreshold: row['alert_threshold'] as double?,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt:
+                _nullableDateTimeConverter.decode(row['updated_at'] as int?),
+            isDeleted: (row['is_deleted'] as int) != 0,
+            needsSync: (row['needs_sync'] as int) != 0,
+            lastSyncedAt: _nullableDateTimeConverter
+                .decode(row['last_synced_at'] as int?)),
+        arguments: [userId]);
+  }
+
+  @override
+  Future<List<BudgetModel>> getDeletedBudgets(String userId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM budgets WHERE is_deleted = 1 AND user_id = ?1',
+        mapper: (Map<String, Object?> row) => BudgetModel(
+            id: row['id'] as String,
+            userId: row['user_id'] as String,
+            category: row['category'] as String,
+            description: row['description'] as String,
+            amount: row['amount'] as double,
+            startDate: _dateTimeConverter.decode(row['start_date'] as int),
+            endDate: _dateTimeConverter.decode(row['end_date'] as int),
+            period: row['period'] as String,
+            isRecurring: (row['is_recurring'] as int) != 0,
+            alertThreshold: row['alert_threshold'] as double?,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt:
+                _nullableDateTimeConverter.decode(row['updated_at'] as int?),
+            isDeleted: (row['is_deleted'] as int) != 0,
+            needsSync: (row['needs_sync'] as int) != 0,
+            lastSyncedAt: _nullableDateTimeConverter
+                .decode(row['last_synced_at'] as int?)),
+        arguments: [userId]);
+  }
+
+  @override
+  Future<void> permanentlyDeleteBudgets(List<String> ids) async {
+    const offset = 1;
+    final _sqliteVariablesForIds =
+        Iterable<String>.generate(ids.length, (i) => '?${i + offset}')
+            .join(',');
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM budgets WHERE is_deleted = 1 AND id IN (' +
+            _sqliteVariablesForIds +
+            ')',
+        arguments: [...ids]);
+  }
+
+  @override
+  Future<void> markAsSynced(
+    String id,
+    DateTime syncTime,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE budgets SET needs_sync = 0, last_synced_at = ?2 WHERE id = ?1',
+        arguments: [id, _dateTimeConverter.encode(syncTime)]);
+  }
+
+  @override
+  Future<List<BudgetModel>> getBudgetsModifiedAfter(
+    String userId,
+    DateTime timestamp,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM budgets WHERE user_id = ?1 AND (updated_at > ?2 OR (updated_at IS NULL AND created_at > ?2))',
+        mapper: (Map<String, Object?> row) => BudgetModel(id: row['id'] as String, userId: row['user_id'] as String, category: row['category'] as String, description: row['description'] as String, amount: row['amount'] as double, startDate: _dateTimeConverter.decode(row['start_date'] as int), endDate: _dateTimeConverter.decode(row['end_date'] as int), period: row['period'] as String, isRecurring: (row['is_recurring'] as int) != 0, alertThreshold: row['alert_threshold'] as double?, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _nullableDateTimeConverter.decode(row['updated_at'] as int?), isDeleted: (row['is_deleted'] as int) != 0, needsSync: (row['needs_sync'] as int) != 0, lastSyncedAt: _nullableDateTimeConverter.decode(row['last_synced_at'] as int?)),
+        arguments: [userId, _dateTimeConverter.encode(timestamp)]);
+  }
+
+  @override
+  Future<void> cleanupOldDeletedBudgets(DateTime cutoffTime) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM budgets WHERE is_deleted = 1 AND updated_at < ?1',
+        arguments: [_dateTimeConverter.encode(cutoffTime)]);
+  }
+
+  @override
+  Future<void> clearUserData(String userId) async {
+    await _queryAdapter.queryNoReturn('DELETE FROM budgets WHERE user_id = ?1',
+        arguments: [userId]);
+  }
+
+  @override
   Future<void> insertBudget(BudgetModel budget) async {
     await _budgetModelInsertionAdapter.insert(budget, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertBudgets(List<BudgetModel> budgets) async {
+    await _budgetModelInsertionAdapter.insertList(
+        budgets, OnConflictStrategy.replace);
   }
 
   @override
@@ -377,3 +506,4 @@ class _$BudgetDao extends BudgetDao {
 
 // ignore_for_file: unused_element
 final _dateTimeConverter = DateTimeConverter();
+final _nullableDateTimeConverter = NullableDateTimeConverter();

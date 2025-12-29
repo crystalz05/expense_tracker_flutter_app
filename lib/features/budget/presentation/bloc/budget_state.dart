@@ -1,57 +1,63 @@
-  import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
+import '../../domain/entities/budget.dart';
+import '../../domain/entities/budget_progress.dart';
 
-  import '../../domain/entities/budget.dart';
-  import '../../domain/entities/budget_progress.dart';
+abstract class BudgetState extends Equatable {
+  const BudgetState();
 
-  abstract class BudgetState extends Equatable {
-    const BudgetState();
+  @override
+  List<Object?> get props => [];
+}
 
-    @override
-    List<Object?> get props => [];
-  }
+class BudgetInitial extends BudgetState {
+  const BudgetInitial();
+}
 
-  /// Initial
-  class BudgetInitial extends BudgetState {}
+class BudgetLoading extends BudgetState {
+  const BudgetLoading();
+}
 
-  /// Loading
-  class BudgetLoading extends BudgetState {}
+class BudgetLoaded extends BudgetState {
+  final List<Budget> budgets;
 
-  /// Budgets loaded
-  class BudgetLoaded extends BudgetState {
-    final List<Budget> budgets;
+  const BudgetLoaded(this.budgets);
 
-    const BudgetLoaded(this.budgets);
+  @override
+  List<Object?> get props => [budgets];
+}
 
-    @override
-    List<Object?> get props => [budgets];
-  }
+class BudgetProgressLoaded extends BudgetState {
+  final BudgetProgress progress;
 
-  /// Budget progress loaded (single)
-  class BudgetProgressLoaded extends BudgetState {
-    final BudgetProgress progress;
+  const BudgetProgressLoaded(this.progress);
 
-    const BudgetProgressLoaded(this.progress);
+  @override
+  List<Object?> get props => [progress];
+}
 
-    @override
-    List<Object?> get props => [progress];
-  }
+class AllBudgetProgressLoaded extends BudgetState {
+  final List<BudgetProgress> progress;
 
-  /// Budget progress loaded (all)
-  class AllBudgetProgressLoaded extends BudgetState {
-    final List<BudgetProgress> progress;
+  const AllBudgetProgressLoaded(this.progress);
 
-    const AllBudgetProgressLoaded(this.progress);
+  @override
+  List<Object?> get props => [progress];
+}
 
-    @override
-    List<Object?> get props => [progress];
-  }
+class BudgetError extends BudgetState {
+  final String message;
 
-  /// Error
-  class BudgetError extends BudgetState {
-    final String message;
+  const BudgetError(this.message);
 
-    const BudgetError(this.message);
+  @override
+  List<Object?> get props => [message];
+}
 
-    @override
-    List<Object?> get props => [message];
-  }
+class BudgetOperationSuccess extends BudgetState {
+  final String message;
+
+  const BudgetOperationSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
