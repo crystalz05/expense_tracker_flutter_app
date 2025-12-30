@@ -216,6 +216,14 @@ class _$ExpenseDao extends ExpenseDao {
   }
 
   @override
+  Future<double?> getTotalByCategory(String category) async {
+    return _queryAdapter.query(
+        'SELECT SUM(amount) FROM expenses WHERE is_deleted = 0 AND category = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as double,
+        arguments: [category]);
+  }
+
+  @override
   Future<ExpenseModel?> getExpenseById(String id) async {
     return _queryAdapter.query(
         'SELECT * FROM expenses WHERE id = ?1 AND is_deleted = 0',
@@ -229,6 +237,13 @@ class _$ExpenseDao extends ExpenseDao {
             paymentMethod: row['payment_method'] as String,
             isDeleted: (row['is_deleted'] as int) != 0),
         arguments: [id]);
+  }
+
+  @override
+  Future<double?> getTotalExpense() async {
+    return _queryAdapter.query(
+        'SELECT SUM(amount) FROM expenses WHERE is_deleted = 0',
+        mapper: (Map<String, Object?> row) => row.values.first as double);
   }
 
   @override
@@ -248,18 +263,24 @@ class _$ExpenseDao extends ExpenseDao {
   }
 
   @override
-  Future<double?> getTotalByCategory(String category) async {
-    return _queryAdapter.query(
-        'SELECT SUM(amount) FROM expenses WHERE is_deleted = 0 AND category = ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as double,
-        arguments: [category]);
+  Future<List<ExpenseModel>> getAllExpensesIncludingDeleted() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM expenses ORDER BY updated_at DESC',
+        mapper: (Map<String, Object?> row) => ExpenseModel(
+            id: row['id'] as String,
+            amount: row['amount'] as double,
+            category: row['category'] as String,
+            description: row['description'] as String?,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt: _dateTimeConverter.decode(row['updated_at'] as int),
+            paymentMethod: row['payment_method'] as String,
+            isDeleted: (row['is_deleted'] as int) != 0));
   }
 
   @override
-  Future<double?> getTotalExpense() async {
-    return _queryAdapter.query(
-        'SELECT SUM(amount) FROM expenses WHERE is_deleted = 0',
-        mapper: (Map<String, Object?> row) => row.values.first as double);
+  Future<void> purgeSoftDeleted() async {
+    await _queryAdapter
+        .queryNoReturn('DELETE FROM expenses WHERE is_deleted = 1');
   }
 
   @override

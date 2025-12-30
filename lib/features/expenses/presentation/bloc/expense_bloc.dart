@@ -1,4 +1,3 @@
-import 'package:expenses_tracker_app/features/expenses/domain/usecases/soft_delete_expense.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expense.dart';
@@ -10,8 +9,10 @@ import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_expen
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_by_category.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_total_spent.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/update_expense.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/soft_delete_expense.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/sync_expenses.dart';
 import '../../domain/entities/expense.dart';
-import '../../domain/usecases/sync_expenses.dart';
+import '../../domain/usecases/purge_soft_delete.dart';
 import 'expense_event.dart';
 import 'expense_state.dart';
 
@@ -27,6 +28,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final DeleteExpense deleteExpense;
   final SyncExpenses syncExpenses;
   final SoftDeleteExpense softDeleteExpense;
+  final PurgeSoftDeleted purgeSoftDeleted;
 
   ExpenseBloc({
     required this.getExpenses,
@@ -40,6 +42,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     required this.deleteExpense,
     required this.syncExpenses,
     required this.softDeleteExpense,
+    required this.purgeSoftDeleted,
   }) : super(ExpenseInitial()) {
     on<LoadExpensesEvent>(_loadExpenses);
     on<LoadExpenseByIdEvent>(_loadExpenseById);
@@ -48,6 +51,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     on<DeleteExpenseEvent>(_deleteExpense);
     on<SoftDeleteExpenseEvent>(_softDeleteExpense);
     on<SyncExpensesEvent>(_syncExpenses);
+    on<PurgeSoftDeletedEvent>(_purgeSoftDeleted);
   }
 
   Future<void> _loadExpenses(
@@ -60,8 +64,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       List<Expense> expenses;
 
       if (event.category != null) {
-        final result =
-        await getExpenseByCategory(CategoryParams(event.category!));
+        final result = await getExpenseByCategory(CategoryParams(event.category!));
         expenses = result.fold((f) => throw Exception(f.message), (e) => e);
       } else if (event.from != null && event.to != null) {
         final result = await getExpenseByDateRange(
@@ -84,7 +87,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       emit(ExpenseError(e.toString()));
     }
   }
-
 
   Future<void> _loadExpenseById(
       LoadExpenseByIdEvent event,
@@ -112,7 +114,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Expense created successfully"));
-        add(SyncExpensesEvent());
         add(LoadExpensesEvent());
       },
     );
@@ -130,7 +131,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Expense updated successfully"));
-        add(SyncExpensesEvent());
         add(LoadExpensesEvent());
       },
     );
@@ -148,7 +148,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Expense deleted successfully"));
-        add(SyncExpensesEvent());
         add(LoadExpensesEvent());
       },
     );
@@ -166,7 +165,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Expense deleted successfully"));
-        add(SyncExpensesEvent());
         add(LoadExpensesEvent());
       },
     );
@@ -176,11 +174,44 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       SyncExpensesEvent event,
       Emitter<ExpenseState> emit,
       ) async {
+    final currentState = state;
+
+    // Don't show loading during background sync
+    if (!event.showLoading) {
+      final result = await syncExpenses(NoParams());
+      result.fold(
+            (f) => null, // Silent fail for background sync
+            (_) => add(LoadExpensesEvent()),
+      );
+      return;
+    }
+
+    emit(ExpenseLoading());
     final result = await syncExpenses(NoParams());
 
     result.fold(
           (f) => emit(ExpenseError(f.message)),
-          (_) => add(LoadExpensesEvent()),
+          (_) {
+        emit(const ExpenseActionSuccess("Sync completed successfully"));
+        add(LoadExpensesEvent());
+      },
+    );
+  }
+
+  Future<void> _purgeSoftDeleted(
+      PurgeSoftDeletedEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    final result = await purgeSoftDeleted(NoParams());
+
+    result.fold(
+          (f) => emit(ExpenseError(f.message)),
+          (_) {
+        emit(const ExpenseActionSuccess("Deleted expenses permanently removed"));
+        add(LoadExpensesEvent());
+      },
     );
   }
 }

@@ -18,5 +18,9 @@ abstract class ExpensesLocalDatasource {
   Future<double?> getTotalByCategory(String category);
   Future<double?> getTotalExpense();
 
+  //For sync operations
+  Future<List<ExpenseModel>> getAllExpensesIncludingDeleted();
+  Future<void> purgeSoftDeleted();
 }
+
 

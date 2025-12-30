@@ -5,4 +5,6 @@ class SupabaseConstants {
   // Table names
   static const String expensesTable = 'expenses';
   static const String usersTable = 'users';
+  static const String budgetTable = 'budgets';
+
 }

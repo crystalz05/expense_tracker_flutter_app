@@ -61,6 +61,13 @@ class LoadExpenseByIdEvent extends ExpenseEvent {
 }
 
 class SyncExpensesEvent extends ExpenseEvent {
-  const SyncExpensesEvent();
+  final bool showLoading;
+  const SyncExpensesEvent({this.showLoading = false});
+
+  @override
+  List<Object?> get props => [showLoading];
 }
 
+class PurgeSoftDeletedEvent extends ExpenseEvent {
+  const PurgeSoftDeletedEvent();
+}

@@ -8,5 +8,8 @@ abstract class ExpenseRemoteDatasource {
   Future<void> deleteExpense(String id, String userId);
   Future<void> softDeleteExpense(String id, String userId, DateTime updatedAt);
   Future<void> upsertExpenses(List<ExpenseModel> expenses, String userId);
-  Future<void> syncExpenses(List<ExpenseModel> expenses, String userId);
+
+  // NEW: Get all expenses including soft-deleted ones for sync
+  Future<List<ExpenseModel>> getAllExpensesIncludingDeleted(String userId);
 }
+

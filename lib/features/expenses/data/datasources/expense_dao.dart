@@ -18,11 +18,17 @@ abstract class ExpenseDao {
   @Query('SELECT * FROM expenses WHERE is_deleted = 0 AND category = :category ORDER BY updated_at DESC')
   Future<List<ExpenseModel>> getExpenseByCategory(String category);
 
-  @insert
-  Future<void> addExpense(ExpenseModel expense);
+  @Query('SELECT SUM(amount) FROM expenses WHERE is_deleted = 0 AND category = :category')
+  Future<double?> getTotalByCategory(String category);
 
   @Query('SELECT * FROM expenses WHERE id = :id AND is_deleted = 0')
   Future<ExpenseModel?> getExpenseById(String id);
+
+  @Query('SELECT SUM(amount) FROM expenses WHERE is_deleted = 0')
+  Future<double?> getTotalExpense();
+
+  @insert
+  Future<void> addExpense(ExpenseModel expense);
 
   @update
   Future<void> updateExpense(ExpenseModel expense);
@@ -33,10 +39,10 @@ abstract class ExpenseDao {
   @Query('UPDATE expenses SET is_deleted = 1, updated_at = :updatedAt WHERE id = :id')
   Future<void> softDeleteExpense(String id, DateTime updatedAt);
 
-  @Query('SELECT SUM(amount) FROM expenses WHERE is_deleted = 0 AND category = :category')
-  Future<double?> getTotalByCategory(String category);
+  @Query('SELECT * FROM expenses ORDER BY updated_at DESC')
+  Future<List<ExpenseModel>> getAllExpensesIncludingDeleted();
 
-  @Query('SELECT SUM(amount) FROM expenses WHERE is_deleted = 0')
-  Future<double?> getTotalExpense();
+  @Query('DELETE FROM expenses WHERE is_deleted = 1')
+  Future<void> purgeSoftDeleted();
 }
 

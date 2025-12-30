@@ -13,6 +13,7 @@ class ExpenseCategory {
 }
 
 class ExpenseCategories {
+
   static const food = ExpenseCategory(
     name: 'Food & Dining',
     icon: Icons.restaurant,

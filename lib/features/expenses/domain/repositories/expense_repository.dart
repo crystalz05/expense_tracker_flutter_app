@@ -16,4 +16,5 @@ abstract class ExpenseRepository {
   Future<Either<Failure, void>> softDeleteExpense(String id, DateTime updatedAt);
   Future<Either<Failure, void>> syncExpenses();
 
+  Future<Either<Failure, void>> purgeSoftDeletedExpenses();
 }

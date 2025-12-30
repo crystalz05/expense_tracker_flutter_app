@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/core/constants/supabase_constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/budget_model.dart';
 import 'budget_remote_datasource.dart';
@@ -10,7 +11,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   @override
   Future<List<BudgetModel>> getBudgets(String userId) async {
     final response = await client
-        .from('budgets')
+        .from(SupabaseConstants.budgetTable)
         .select()
         .eq('user_id', userId)
         .eq('is_deleted', false);
@@ -23,7 +24,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   @override
   Future<BudgetModel?> getBudgetById(String id) async {
     final response = await client
-        .from('budgets')
+        .from(SupabaseConstants.budgetTable)
         .select()
         .eq('id', id)
         .maybeSingle();
@@ -34,14 +35,14 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   @override
   Future<void> createBudget(BudgetModel budget) async {
     await client
-        .from('budgets')
+        .from(SupabaseConstants.budgetTable)
         .insert(budget.toJson());
   }
 
   @override
   Future<void> updateBudget(BudgetModel budget) async {
     await client
-        .from('budgets')
+        .from(SupabaseConstants.budgetTable)
         .update(budget.toJson())
         .eq('id', budget.id);
   }
@@ -50,7 +51,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   Future<void> deleteBudget(String id) async {
     // Soft delete - just mark as deleted
     await client
-        .from('budgets')
+        .from(SupabaseConstants.budgetTable)
         .update({'is_deleted': true})
         .eq('id', id);
   }
@@ -59,7 +60,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   Future<void> permanentlyDeleteBudgets(List<String> ids) async {
     // Hard delete from database
     await client
-        .from('budgets')
+        .from(SupabaseConstants.budgetTable)
         .delete()
         .inFilter('id', ids);
   }
@@ -67,7 +68,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   @override
   Future<List<BudgetModel>> getBudgetsModifiedAfter(DateTime timestamp, String userId) async {
     final response = await client
-        .from('budgets')
+        .from(SupabaseConstants.budgetTable)
         .select()
         .eq('user_id', userId)
         .gte('created_at', timestamp.toIso8601String());
