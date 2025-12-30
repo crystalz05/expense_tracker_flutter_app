@@ -18,6 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   await init();
   runApp(
@@ -41,6 +42,7 @@ Future<void> main() async {
         ],
         child: const MyApp()),
   );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -51,21 +53,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) {
-        // return MaterialApp(
-        //     title: 'Tyro Spend Wise',
-        //     theme: ThemeData(
-        //         useMaterial3: true,
-        //         colorScheme: lightColorScheme,
-        //         scaffoldBackgroundColor: lightColorScheme.surface
-        //     ),
-        //     darkTheme: ThemeData(
-        //         useMaterial3: true,
-        //         colorScheme: darkColorScheme,
-        //         scaffoldBackgroundColor: darkColorScheme.surface
-        //     ),
-        //     themeMode: context.read<ThemeCubit>().themeMode,
-        //     home: SignupPage()
-        // );
         return MaterialApp.router(
           title: 'Tyro Spend Wise',
           theme: ThemeData(

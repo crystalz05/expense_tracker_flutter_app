@@ -132,22 +132,6 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (expenses.isNotEmpty)
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '${expenses.length} items',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
@@ -177,7 +161,7 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
               : RefreshIndicator(
             onRefresh: () async {
               context.read<ExpenseBloc>().add(
-                const SyncExpensesEvent(showLoading: true),
+                const SyncExpensesEvent(),
               );
               await Future.delayed(Duration(seconds: 1));
             },
@@ -192,7 +176,10 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
                 onEdit: (expense) {
                   // TODO: Navigate to edit page
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Edit functionality coming soon')),
+                    SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                        content: Text('Edit functionality coming soon')
+                    ),
                   );
                 },
               ),
@@ -211,7 +198,7 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
           Icon(
             Icons.receipt_long_outlined,
             size: 80,
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
           SizedBox(height: 16),
           Text(
@@ -219,14 +206,14 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
                 ? "No transactions yet"
                 : "No $_activeFilter transactions",
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           SizedBox(height: 8),
           Text(
             "Start tracking your expenses",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ),
         ],

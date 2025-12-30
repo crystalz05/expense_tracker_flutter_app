@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
@@ -22,6 +24,7 @@ class MainPage extends StatefulWidget{
 class _MainPage extends State<MainPage>{
   int currentIndex = 0;
   late final List<Widget> pages; // <-- declare late final
+  Timer? _syncTimer;
 
 
   void _goHome() {
@@ -44,6 +47,35 @@ class _MainPage extends State<MainPage>{
       const ExpensesHistoryPage(),
       const SettingsPage(),
     ];
+
+    _initializeApp();
+
+    _syncTimer = Timer.periodic(
+        const Duration(minutes: 15),
+            (_) {
+          if (mounted) {
+            context.read<ExpenseBloc>().add(
+                const SyncExpensesEvent(showLoading: false)
+            );
+          }
+        }
+    );
+  }
+
+  @override
+  void dispose() {
+    _syncTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initializeApp() async {
+    final bloc = context.read<ExpenseBloc>();
+
+    // Background sync without blocking UI
+    bloc.add(const SyncExpensesEvent(showLoading: false));
+
+    // Load local data immediately
+    bloc.add(LoadExpensesEvent());
   }
 
   @override

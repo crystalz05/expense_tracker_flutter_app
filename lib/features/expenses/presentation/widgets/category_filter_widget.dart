@@ -68,7 +68,7 @@ class _CategoryFilterWidgetState extends State<CategoryFilterWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 40,
       margin: EdgeInsets.only(bottom: 8),
       child: ListView.separated(
         key: const PageStorageKey('category_filter_list'),

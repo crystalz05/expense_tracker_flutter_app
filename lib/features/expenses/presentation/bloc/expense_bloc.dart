@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/core/network/network_info.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expense.dart';
@@ -174,7 +175,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       SyncExpensesEvent event,
       Emitter<ExpenseState> emit,
       ) async {
-    final currentState = state;
 
     // Don't show loading during background sync
     if (!event.showLoading) {
