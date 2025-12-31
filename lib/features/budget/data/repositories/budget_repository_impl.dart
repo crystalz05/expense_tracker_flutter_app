@@ -11,17 +11,12 @@ import '../../domain/repositories/budget_repository.dart';
 import '../datasources/budget_local_datasource.dart';
 import '../datasources/budget_remote_datasource.dart';
 import '../mappers/budget_mappers.dart';
-import '../models/budget_model.dart';
 
 class BudgetRepositoryImpl implements BudgetRepository {
   final BudgetLocalDataSource localDataSource;
   final BudgetRemoteDataSource remoteDataSource;
   final NetworkInfo networkInfo;
   final UserSession userSession;
-
-  bool _isSyncing = false;
-  DateTime? _lastSyncAttempt;
-  static const _minSyncInterval = Duration(seconds: 30);
 
   BudgetRepositoryImpl({
     required this.localDataSource,
@@ -33,15 +28,17 @@ class BudgetRepositoryImpl implements BudgetRepository {
   @override
   Future<Either<Failure, List<Budget>>> getBudgets() async {
     try {
+      // Sync first if online
+      if (await networkInfo.isConnected) {
+        await _fullSync();
+      }
+
       final localBudgets = await localDataSource.getBudgets(userSession.userId);
       final entities = localBudgets.map((e) => e.toEntity()).toList();
-
-      _syncInBackground();
-
       return Right(entities);
     } catch (e) {
-      print('Error in getExpenses(): $e');
-      return Left(DatabaseFailure());
+      print('Error in getBudgets(): $e');
+      return Left(DatabaseFailure('Failed to load budgets'));
     }
   }
 
@@ -51,14 +48,13 @@ class BudgetRepositoryImpl implements BudgetRepository {
       final budget = await localDataSource.getBudgetById(id);
       if (budget == null) return Left(NotFoundFailure());
 
-      // Verify budget belongs to current user
       if (budget.userId != userSession.userId) {
         return Left(PermissionFailure());
       }
 
       return Right(budget.toEntity());
     } catch (e) {
-      return Left(DatabaseFailure());
+      return Left(DatabaseFailure('Failed to load budget'));
     }
   }
 
@@ -67,34 +63,27 @@ class BudgetRepositoryImpl implements BudgetRepository {
     try {
       final model = budget.toModel().copyWith(
         userId: userSession.userId,
-        needsSync: true,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
 
-      await localDataSource.createBudget(model);
-
       if (await networkInfo.isConnected) {
-        try {
-          await remoteDataSource.createBudget(model);
-          await _markAsSynced(model.id);
-        } on PostgrestException catch (e) {
-          _handlePostgrestError(e, 'create');
-        } on TimeoutException {
-          // Will retry in background
-        } catch (e) {
-          print('Sync error: $e');
-        }
+        // Online: Save remote first, then local
+        await remoteDataSource.createBudget(model);
+        await localDataSource.createBudget(model.copyWith(needsSync: false));
+      } else {
+        // Offline: Save locally only
+        await localDataSource.createBudget(model.copyWith(needsSync: true));
       }
 
       return const Right(null);
-    } on DatabaseException catch (e) {
-      if (e.toString().contains('UNIQUE constraint')) {
+    } on PostgrestException catch (e) {
+      if (e.code == '23505') {
         return Left(DuplicateFailure());
       }
-      return Left(DatabaseFailure());
+      return Left(ServerFailure(e.message));
     } catch (e) {
-      return Left(UnknownFailure(e.toString()));
+      return Left(DatabaseFailure('Failed to create budget'));
     }
   }
 
@@ -109,26 +98,21 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
       final model = budget.toModel().copyWith(
         userId: userSession.userId,
-        needsSync: true,
         updatedAt: DateTime.now(),
       );
 
-      await localDataSource.updateBudget(model);
-
       if (await networkInfo.isConnected) {
-        try {
-          await remoteDataSource.updateBudget(model);
-          await _markAsSynced(model.id);
-        } on PostgrestException catch (e) {
-          _handlePostgrestError(e, 'update');
-        } catch (e) {
-          print('Sync error: $e');
-        }
+        // Online: Update remote first, then local
+        await remoteDataSource.updateBudget(model);
+        await localDataSource.updateBudget(model.copyWith(needsSync: false));
+      } else {
+        // Offline: Update locally only
+        await localDataSource.updateBudget(model.copyWith(needsSync: true));
       }
 
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure());
+      return Left(DatabaseFailure('Failed to update budget'));
     }
   }
 
@@ -143,191 +127,183 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
       final model = existing.copyWith(
         isDeleted: true,
-        needsSync: true,
         updatedAt: DateTime.now(),
       );
 
-      await localDataSource.updateBudget(model);
-
       if (await networkInfo.isConnected) {
-        try {
-          await remoteDataSource.deleteBudget(id);
-          await _markAsSynced(id);
-        } catch (e) {
-          print('Sync error: $e');
-        }
+        // Online: Delete from remote first, then local
+        await remoteDataSource.deleteBudget(id);
+        await localDataSource.updateBudget(model.copyWith(needsSync: false));
+      } else {
+        // Offline: Mark deleted locally
+        await localDataSource.updateBudget(model.copyWith(needsSync: true));
       }
 
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure());
+      return Left(DatabaseFailure('Failed to delete budget'));
     }
   }
 
+  @override
+  Future<Either<Failure, void>> syncBudgets() async {
+    try {
+      if (!await networkInfo.isConnected) {
+        return Left(NetworkFailure());
+      }
+
+      await _fullSync();
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure('Sync failed: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> purgeSoftDeletedBudgets() async {
+    try {
+      if (!await networkInfo.isConnected) {
+        return Left(NetworkFailure());
+      }
+
+      final userId = userSession.userId;
+      final cutoffDate = DateTime.now().subtract(const Duration(days: 30));
+      final deletedBudgets = await localDataSource.getDeletedBudgets(userId);
+
+      final idsToDelete = deletedBudgets
+          .where((b) {
+        final deleteTime = b.updatedAt ?? b.createdAt;
+        return deleteTime.isBefore(cutoffDate);
+      })
+          .map((b) => b.id)
+          .toList();
+
+      if (idsToDelete.isNotEmpty) {
+        // Delete from remote first
+        await remoteDataSource.permanentlyDeleteBudgets(idsToDelete);
+
+        // Then from local
+        await localDataSource.permanentlyDeleteBudgets(idsToDelete);
+      }
+
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure('Cleanup failed: $e'));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> clearUserData() async {
     try {
       await localDataSource.clearUserData(userSession.userId);
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure());
+      return Left(DatabaseFailure('Failed to clear user data'));
     }
   }
 
-  Future<void> syncWithRemote() async {
-    if (!await networkInfo.isConnected) return;
+  // Private method for full bidirectional sync
+  Future<void> _fullSync() async {
+    final userId = userSession.userId;
 
-    try {
-      await _pushLocalChanges();
-      await _pullRemoteChanges();
-      await _cleanupDeletedRecords();
-    } catch (e) {
-      print('Sync failed: $e');
-    }
-  }
+    // 1. Get all local budgets (including deleted for conflict resolution)
+    final localBudgets = await localDataSource.getBudgets(userId);
+    final deletedBudgets = await localDataSource.getDeletedBudgets(userId);
+    final allLocalBudgets = [...localBudgets, ...deletedBudgets];
 
-  Future<void> _pushLocalChanges() async {
-    final unsyncedBudgets = await localDataSource.getBudgetsNeedingSync(
-        userSession.userId
-    );
+    // 2. Get all remote budgets
+    final remoteBudgets = await remoteDataSource.getBudgets(userId);
 
-    for (final budget in unsyncedBudgets) {
-      await _syncSingleBudget(budget);
-    }
-  }
+    // 3. Build maps for efficient lookup
+    final localMap = {for (var b in allLocalBudgets) b.id: b};
+    final remoteMap = {for (var b in remoteBudgets) b.id: b};
 
-  Future<void> _syncSingleBudget(BudgetModel budget) async {
-    var retryCount = 0;
-    const maxRetries = 3;
+    // 4. Sync logic using last-write-wins
+    final toUpload = <String>[];
+    final toDownload = <String>[];
 
-    while (retryCount < maxRetries) {
-      try {
-        if (budget.isDeleted) {
-          await remoteDataSource.deleteBudget(budget.id);
-        } else {
-          final remote = await remoteDataSource.getBudgetById(budget.id);
-          if (remote == null) {
-            await remoteDataSource.createBudget(budget);
-          } else {
-            await remoteDataSource.updateBudget(budget);
-          }
+    // Check local items
+    for (final local in allLocalBudgets) {
+      final remote = remoteMap[local.id];
+
+      if (remote == null) {
+        // Exists locally but not remotely - upload
+        toUpload.add(local.id);
+      } else {
+        // Exists in both - compare timestamps
+        final localTime = local.updatedAt ?? local.createdAt;
+        final remoteTime = remote.updatedAt ?? remote.createdAt;
+
+        if (localTime.isAfter(remoteTime)) {
+          toUpload.add(local.id);
+        } else if (remoteTime.isAfter(localTime)) {
+          toDownload.add(remote.id);
         }
-        await _markAsSynced(budget.id);
-        return;
-      } on TimeoutException {
-        retryCount++;
-        if (retryCount < maxRetries) {
-          await Future.delayed(Duration(seconds: 2 * retryCount));
-        }
-      } on PostgrestException catch (e) {
-        if (e.code == '23505') {
-          await _markAsSynced(budget.id);
-          return;
-        }
-        break; // Don't retry other errors
-      } catch (e) {
-        print('Sync failed for ${budget.id}: $e');
-        break;
       }
     }
-  }
 
-  Future<void> _pullRemoteChanges() async {
-    final remoteBudgets = await remoteDataSource.getBudgets(userSession.userId);
-
+    // Check for remote items not in local
     for (final remote in remoteBudgets) {
-      try {
-        final local = await localDataSource.getBudgetById(remote.id);
+      if (!localMap.containsKey(remote.id)) {
+        toDownload.add(remote.id);
+      }
+    }
 
-        if (local == null) {
-          await localDataSource.createBudget(remote.copyWith(
-            needsSync: false,
-            lastSyncedAt: DateTime.now(),
-          ));
-        } else {
-          final remoteTime = remote.updatedAt ?? remote.createdAt;
-          final localTime = local.updatedAt ?? local.createdAt;
+    // 5. Upload local changes to remote
+    if (toUpload.isNotEmpty) {
+      for (final id in toUpload) {
+        final budget = localMap[id]!;
+        try {
+          if (budget.isDeleted) {
+            await remoteDataSource.deleteBudget(id);
+          } else {
+            final remote = await remoteDataSource.getBudgetById(id);
+            if (remote == null) {
+              await remoteDataSource.createBudget(budget);
+            } else {
+              await remoteDataSource.updateBudget(budget);
+            }
+          }
 
-          if (remoteTime.isAfter(localTime) && !local.needsSync) {
-            await localDataSource.updateBudget(remote.copyWith(
+          // Mark as synced
+          await localDataSource.updateBudget(
+            budget.copyWith(
               needsSync: false,
               lastSyncedAt: DateTime.now(),
-            ));
-          }
+            ),
+          );
+        } catch (e) {
+          print('Failed to upload budget $id: $e');
         }
-      } catch (e) {
-        print('Failed to pull budget ${remote.id}: $e');
       }
     }
-  }
 
-  Future<void> _cleanupDeletedRecords() async {
-    final cutoffDate = DateTime.now().subtract(const Duration(days: 30));
-    final deletedBudgets = await localDataSource.getDeletedBudgets(
-        userSession.userId
-    );
+    // 6. Download remote changes to local
+    if (toDownload.isNotEmpty) {
+      for (final id in toDownload) {
+        final remote = remoteMap[id]!;
+        try {
+          final local = localMap[id];
 
-    final idsToDelete = deletedBudgets
-        .where((b) {
-      final deleteTime = b.updatedAt ?? b.createdAt;
-      return deleteTime.isBefore(cutoffDate);
-    })
-        .map((b) => b.id)
-        .toList();
-
-    if (idsToDelete.isNotEmpty) {
-      await localDataSource.permanentlyDeleteBudgets(idsToDelete);
-      try {
-        await remoteDataSource.permanentlyDeleteBudgets(idsToDelete);
-      } catch (e) {
-        print('Failed to cleanup remote records: $e');
+          if (local == null) {
+            await localDataSource.createBudget(
+              remote.copyWith(
+                needsSync: false,
+                lastSyncedAt: DateTime.now(),
+              ),
+            );
+          } else {
+            await localDataSource.updateBudget(
+              remote.copyWith(
+                needsSync: false,
+                lastSyncedAt: DateTime.now(),
+              ),
+            );
+          }
+        } catch (e) {
+          print('Failed to download budget $id: $e');
+        }
       }
-    }
-  }
-
-  Future<void> _markAsSynced(String id) async {
-    final budget = await localDataSource.getBudgetById(id);
-    if (budget != null) {
-      await localDataSource.updateBudget(budget.copyWith(
-        needsSync: false,
-        lastSyncedAt: DateTime.now(),
-      ));
-    }
-  }
-
-  void _syncInBackground() {
-    if (_isSyncing) return;
-
-    if (_lastSyncAttempt != null) {
-      final timeSinceLastSync = DateTime.now().difference(_lastSyncAttempt!);
-      if (timeSinceLastSync < _minSyncInterval) return;
-    }
-
-    _lastSyncAttempt = DateTime.now();
-
-    Future.microtask(() async {
-      if (_isSyncing) return;
-
-      _isSyncing = true;
-      try {
-        await syncWithRemote();
-      } catch (e) {
-        print('Background sync failed: $e');
-      } finally {
-        _isSyncing = false;
-      }
-    });
-  }
-
-  void _handlePostgrestError(PostgrestException e, String operation) {
-    switch (e.code) {
-      case '23505':
-        print('Duplicate entry during $operation');
-      case '42501':
-        print('Permission denied during $operation');
-      case 'PGRST301':
-        print('Row not found during $operation');
-      default:
-        print('Postgrest error during $operation: ${e.message}');
     }
   }
 }

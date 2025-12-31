@@ -25,14 +25,17 @@ class BalanceCardWidget extends StatelessWidget {
             final double fraction = totalSpent / state.monthlyBudget;
             final String percentage = (fraction * 100).toStringAsFixed(1);
 
+            final double remaining = state.monthlyBudget - totalSpent;
+            final bool isOverBudget = totalSpent > state.monthlyBudget;
+            final bool isWarning = fraction > 0.8 && !isOverBudget;
+
+
             return
-            Card(
-              color: Theme.of(context).colorScheme.surfaceContainer,
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4), width: 0.5)
-              ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [Color(0xFF0A2E5D), Color(0xFF2563EB)]),
+                borderRadius: BorderRadius.circular(24),
+            ),
               child: Padding(
                 padding: EdgeInsetsGeometry.all(16),
                 child: Column(
@@ -45,16 +48,16 @@ class BalanceCardWidget extends StatelessWidget {
                           children: [
                             Container(
                               padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer,
+                              decoration: BoxDecoration(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(16)),
-                              child: Icon(Icons.account_balance_wallet, color: Theme.of(context).colorScheme.onPrimary,),
+                              child: Icon(Icons.account_balance_wallet, color: Colors.white,),
                             ),
                             SizedBox(width: 8),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Monthly Budget", style: Theme.of(context).textTheme.bodySmall,),
-                                Text("₦${formatter.format(state.monthlyBudget)}", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))
+                                Text("Monthly Budget", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),),
+                                Text("₦${formatter.format(state.monthlyBudget)}", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.white))
                               ],
                             ),
                           ],
@@ -62,11 +65,11 @@ class BalanceCardWidget extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text("Remaining", style: Theme.of(context).textTheme.bodySmall,),
+                            Text("Remaining", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),),
                             Text("₦${formatter.format(state.monthlyBudget-totalSpent)}", style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface))
+                                color: Colors.white)),
                           ],
                         )
                       ],
@@ -84,7 +87,7 @@ class BalanceCardWidget extends StatelessWidget {
                         widthFactor: fraction,
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(8)
                           ),
                         ),
@@ -94,8 +97,8 @@ class BalanceCardWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("₦${formatter.format(totalSpent)} spent"),
-                        Text("$percentage%")
+                        Text("₦${formatter.format(totalSpent)} spent", style: TextStyle(color: Colors.white)),
+                        Text("$percentage%", style: TextStyle(color: Colors.white))
                       ],
                     )
                   ],

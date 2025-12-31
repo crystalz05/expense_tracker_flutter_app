@@ -1,6 +1,7 @@
-
 import 'dart:async';
 
+import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_bloc.dart';
+import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
@@ -9,23 +10,22 @@ import 'package:expenses_tracker_app/features/expenses/presentation/pages/settin
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home_page.dart';
 
-class MainPage extends StatefulWidget{
+class MainPage extends StatefulWidget {
   const MainPage({super.key});
-
 
   @override
   State<MainPage> createState() => _MainPage();
-
 }
 
-class _MainPage extends State<MainPage>{
+class _MainPage extends State<MainPage> {
   int currentIndex = 0;
-  late final List<Widget> pages; // <-- declare late final
+  late final List<Widget> pages;
   Timer? _syncTimer;
-
+  Timer? _cleanupCheckTimer;
 
   void _goHome() {
     setState(() {
@@ -36,46 +36,91 @@ class _MainPage extends State<MainPage>{
   @override
   void initState() {
     super.initState();
-    context.read<ExpenseBloc>().add(LoadExpensesEvent());
 
-    // Initialize pages here after 'this' is available
+    // Initialize pages
     pages = [
       const HomePage(),
-      AddExpensePage(
-        onExpenseAdded: _goHome, // safe now
-      ),
+      AddExpensePage(onExpenseAdded: _goHome),
       const ExpensesHistoryPage(),
       const SettingsPage(),
     ];
 
+    // Initialize app with sync and cleanup
     _initializeApp();
 
+    // Periodic sync every 15 minutes
     _syncTimer = Timer.periodic(
-        const Duration(minutes: 15),
-            (_) {
-          if (mounted) {
-            context.read<ExpenseBloc>().add(
-                const SyncExpensesEvent(showLoading: false)
-            );
-          }
+      const Duration(minutes: 15),
+          (_) {
+        if (mounted) {
+          _performBackgroundSync();
         }
+      },
+    );
+
+    // Check for cleanup daily
+    _cleanupCheckTimer = Timer.periodic(
+      const Duration(hours: 24),
+          (_) {
+        if (mounted) {
+          _checkAndPerformCleanup();
+        }
+      },
     );
   }
 
   @override
   void dispose() {
     _syncTimer?.cancel();
+    _cleanupCheckTimer?.cancel();
     super.dispose();
   }
 
   Future<void> _initializeApp() async {
-    final bloc = context.read<ExpenseBloc>();
+    final expenseBloc = context.read<ExpenseBloc>();
+    final budgetBloc = context.read<BudgetBloc>();
 
     // Background sync without blocking UI
-    bloc.add(const SyncExpensesEvent(showLoading: false));
+    expenseBloc.add(const SyncExpensesEvent(showLoading: false));
+    budgetBloc.add(const SyncBudgetsEvent());
 
-    // Load local data immediately
-    bloc.add(LoadExpensesEvent());
+    // Load local data immediately for fast UI
+    expenseBloc.add(LoadExpensesEvent());
+    budgetBloc.add(const LoadBudgetsEvent());
+
+    // Check if cleanup is needed (runs once on app start)
+    await _checkAndPerformCleanup();
+  }
+
+  void _performBackgroundSync() {
+    context.read<ExpenseBloc>().add(
+      const SyncExpensesEvent(showLoading: false),
+    );
+    context.read<BudgetBloc>().add(const SyncBudgetsEvent());
+  }
+
+  Future<void> _checkAndPerformCleanup() async {
+    final prefs = await SharedPreferences.getInstance();
+    const lastCleanupKey = 'last_cleanup_date';
+    final lastCleanup = prefs.getString(lastCleanupKey);
+
+    final now = DateTime.now();
+    bool shouldCleanup = false;
+
+    if (lastCleanup == null) {
+      // First time - cleanup after 30 days
+      shouldCleanup = false;
+    } else {
+      final lastCleanupDate = DateTime.parse(lastCleanup);
+      final daysSinceCleanup = now.difference(lastCleanupDate).inDays;
+      shouldCleanup = daysSinceCleanup >= 30;
+    }
+
+    if (shouldCleanup && mounted) {
+      // Perform cleanup silently in background
+      context.read<ExpenseBloc>().add(const PurgeSoftDeletedEvent());
+      await prefs.setString(lastCleanupKey, now.toIso8601String());
+    }
   }
 
   @override
@@ -83,52 +128,88 @@ class _MainPage extends State<MainPage>{
     return Scaffold(
       body: SafeArea(child: pages[currentIndex]),
       bottomNavigationBar: NavigationBarTheme(
-          data: NavigationBarThemeData(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-              labelTextStyle: WidgetStateProperty.resolveWith((states){
-                if(states.contains(WidgetState.selected)){
-                  return TextStyle(
-                      color: Theme.of(context).colorScheme.primary
-                  );
-                }
-                return const TextStyle(
-                    color: Colors.grey
-                );
-              }),
+        data: NavigationBarThemeData(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              );
+            }
+            return TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            );
+          }),
+        ),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            splashFactory: NoSplash.splashFactory,
           ),
-          child: Theme(
-              data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
-              child: NavigationBar(
-                indicatorColor: Colors.transparent,
-                selectedIndex: currentIndex,
-                  onDestinationSelected: (index){
-                  setState(() {
-                    currentIndex = index;
-                  });
-                  if(index == 0){
-                    context.read<ExpenseBloc>().add(LoadExpensesEvent());
-                  }
-                },
-                destinations: [
-                  NavigationDestination(
-                      icon: Icon(Icons.home_outlined, color: Colors.grey,),
-                      selectedIcon: Icon(Icons.home, color: Theme.of(context).colorScheme.primary),
-                      label: "Home"),
-                  NavigationDestination(
-                      icon: const Icon(CupertinoIcons.add_circled, color: Colors.grey,),
-                      selectedIcon: Icon(CupertinoIcons.add_circled_solid, color: Theme.of(context).colorScheme.primary,),
-                      label: "Add"),
-                  NavigationDestination(
-                      icon: Icon(Icons.history_outlined, color: Colors.grey,),
-                      selectedIcon: Icon(Icons.history, color: Theme.of(context).colorScheme.primary),
-                      label: "History"),
-                  NavigationDestination(
-                      icon: Icon(Icons.settings_outlined, color: Colors.grey,),
-                      selectedIcon: Icon(Icons.settings, color: Theme.of(context).colorScheme.primary),
-                      label: "Settings"),
-                ],
-              )
-          )
+          child: NavigationBar(
+            indicatorColor: Colors.transparent,
+            selectedIndex: currentIndex,
+            onDestinationSelected: (index) {
+              setState(() {
+                currentIndex = index;
+              });
+
+              // Refresh data when navigating to Home or History
+              if (index == 0) {
+                context.read<ExpenseBloc>().add(LoadExpensesEvent());
+                context.read<BudgetBloc>().add(const LoadAllBudgetProgress());
+              } else if (index == 2) {
+                context.read<ExpenseBloc>().add(LoadExpensesEvent());
+              }
+            },
+            destinations: [
+              NavigationDestination(
+                icon: Icon(
+                  Icons.home_outlined,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                selectedIcon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: "Home",
+              ),
+              NavigationDestination(
+                icon: Icon(
+                  CupertinoIcons.add_circled,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
+                selectedIcon: Icon(
+                  CupertinoIcons.add_circled_solid,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: "Add",
+              ),
+              NavigationDestination(
+                icon: Icon(
+                  Icons.history_outlined,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
+                selectedIcon: Icon(
+                  Icons.history,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: "History",
+              ),
+              NavigationDestination(
+                icon: Icon(
+                  Icons.settings_outlined,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
+                selectedIcon: Icon(
+                  Icons.settings,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                label: "Settings",
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

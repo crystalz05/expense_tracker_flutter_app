@@ -5,6 +5,9 @@ import '../../domain/usecases/delete_budget.dart';
 import '../../domain/usecases/get_all_budget_progress.dart';
 import '../../domain/usecases/get_budget.dart';
 import '../../domain/usecases/get_budget_progress.dart';
+import '../../domain/usecases/sync_budgets.dart';
+import '../../domain/usecases/purge_soft_deleted_budgets.dart';
+import '../../domain/usecases/clear_user_data.dart';
 import '../../domain/usecases/update_budget.dart';
 import '../bloc/budget_event.dart';
 import '../bloc/budget_state.dart';
@@ -16,6 +19,9 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   final DeleteBudget deleteBudget;
   final GetBudgetProgress getBudgetProgress;
   final GetAllBudgetProgress getAllBudgetProgress;
+  final SyncBudgets syncBudgets;
+  final PurgeSoftDeletedBudgets purgeSoftDeletedBudgets;
+  final ClearUserData clearUserData;
 
   BudgetBloc({
     required this.getBudgets,
@@ -24,6 +30,9 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     required this.deleteBudget,
     required this.getBudgetProgress,
     required this.getAllBudgetProgress,
+    required this.syncBudgets,
+    required this.purgeSoftDeletedBudgets,
+    required this.clearUserData,
   }) : super(const BudgetInitial()) {
     on<LoadBudgetsEvent>(_onLoadBudgets);
     on<CreateBudgetEvent>(_onCreateBudget);
@@ -31,6 +40,9 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     on<DeleteBudgetEvent>(_onDeleteBudget);
     on<LoadBudgetProgress>(_onLoadBudgetProgress);
     on<LoadAllBudgetProgress>(_onLoadAllBudgetProgress);
+    on<SyncBudgetsEvent>(_onSyncBudgets);
+    on<PurgeSoftDeletedBudgetsEvent>(_onPurgeSoftDeleted);
+    on<ClearUserDataEvent>(_onClearUserData);
   }
 
   Future<void> _onLoadBudgets(
@@ -53,11 +65,16 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       ) async {
     emit(const BudgetLoading());
 
-    final result = await createBudget(CreateOrUpdateBudgetParams(budget: event.budget));
+    final result = await createBudget(
+      CreateOrUpdateBudgetParams(budget: event.budget),
+    );
 
     result.fold(
           (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) => emit(const BudgetOperationSuccess('Budget created successfully')),
+          (_) {
+        emit(const BudgetOperationSuccess('Budget created successfully'));
+        add(const LoadBudgetsEvent());
+      },
     );
   }
 
@@ -67,11 +84,16 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
       ) async {
     emit(const BudgetLoading());
 
-    final result = await updateBudget(CreateOrUpdateBudgetParams(budget: event.budget));
+    final result = await updateBudget(
+      CreateOrUpdateBudgetParams(budget: event.budget),
+    );
 
     result.fold(
           (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) => emit(const BudgetOperationSuccess('Budget updated successfully')),
+          (_) {
+        emit(const BudgetOperationSuccess('Budget updated successfully'));
+        add(const LoadBudgetsEvent());
+      },
     );
   }
 
@@ -85,7 +107,10 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
 
     result.fold(
           (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) => emit(const BudgetOperationSuccess('Budget deleted successfully')),
+          (_) {
+        emit(const BudgetOperationSuccess('Budget deleted successfully'));
+        add(const LoadBudgetsEvent());
+      },
     );
   }
 
@@ -114,6 +139,52 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     result.fold(
           (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
           (progressList) => emit(AllBudgetProgressLoaded(progressList)),
+    );
+  }
+
+  Future<void> _onSyncBudgets(
+      SyncBudgetsEvent event,
+      Emitter<BudgetState> emit,
+      ) async {
+    // Don't emit loading for background sync
+    final result = await syncBudgets(NoParams());
+
+    result.fold(
+          (failure) {
+        // Silent fail for background sync
+        print('Budget sync failed: ${_mapFailureToMessage(failure)}');
+      },
+          (_) {
+        // Optionally reload budgets after sync
+        add(const LoadBudgetsEvent());
+      },
+    );
+  }
+
+  Future<void> _onPurgeSoftDeleted(
+      PurgeSoftDeletedBudgetsEvent event,
+      Emitter<BudgetState> emit,
+      ) async {
+    final result = await purgeSoftDeletedBudgets(NoParams());
+
+    result.fold(
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+          (_) {
+        emit(const BudgetOperationSuccess('Deleted budgets purged successfully'));
+        add(const LoadBudgetsEvent());
+      },
+    );
+  }
+
+  Future<void> _onClearUserData(
+      ClearUserDataEvent event,
+      Emitter<BudgetState> emit,
+      ) async {
+    final result = await clearUserData(NoParams());
+
+    result.fold(
+          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+          (_) => emit(const BudgetOperationSuccess('User data cleared')),
     );
   }
 

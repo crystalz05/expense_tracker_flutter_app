@@ -10,11 +10,14 @@ import 'data/datasources/budget_remote_datasource.dart';
 import 'data/datasources/budget_remote_datasource_impl.dart';
 import 'data/repositories/budget_repository_impl.dart';
 import 'domain/repositories/budget_repository.dart';
+import 'domain/usecases/clear_user_data.dart';
 import 'domain/usecases/create_budget.dart';
 import 'domain/usecases/delete_budget.dart';
 import 'domain/usecases/get_all_budget_progress.dart';
 import 'domain/usecases/get_budget.dart';
 import 'domain/usecases/get_budget_progress.dart';
+import 'domain/usecases/purge_soft_deleted_budgets.dart';
+import 'domain/usecases/sync_budgets.dart';
 import 'domain/usecases/update_budget.dart';
 import 'presentation/bloc/budget_bloc.dart';
 
@@ -62,15 +65,22 @@ Future<void> initBudget(GetIt sl) async {
     ),
   );
 
+  sl.registerLazySingleton(() => SyncBudgets(sl()));
+  sl.registerLazySingleton(() => PurgeSoftDeletedBudgets(sl()));
+  sl.registerLazySingleton(() => ClearUserData(sl()));
+
   // Bloc
   sl.registerFactory(
         () => BudgetBloc(
-      getBudgets: sl(),
-      createBudget: sl(),
-      updateBudget: sl(),
-      deleteBudget: sl(),
-      getBudgetProgress: sl(),
-      getAllBudgetProgress: sl(),
+          getBudgets: sl(),
+          createBudget: sl(),
+          updateBudget: sl(),
+          deleteBudget: sl(),
+          getBudgetProgress: sl(),
+          getAllBudgetProgress: sl(),
+          syncBudgets: sl(),
+          purgeSoftDeletedBudgets: sl(),
+          clearUserData: sl(),
     ),
   );
 }

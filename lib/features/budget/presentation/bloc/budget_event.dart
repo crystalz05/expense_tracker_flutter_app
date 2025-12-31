@@ -52,6 +52,15 @@ class LoadAllBudgetProgress extends BudgetEvent {
   const LoadAllBudgetProgress();
 }
 
+// NEW EVENTS
 class SyncBudgetsEvent extends BudgetEvent {
   const SyncBudgetsEvent();
+}
+
+class PurgeSoftDeletedBudgetsEvent extends BudgetEvent {
+  const PurgeSoftDeletedBudgetsEvent();
+}
+
+class ClearUserDataEvent extends BudgetEvent {
+  const ClearUserDataEvent();
 }

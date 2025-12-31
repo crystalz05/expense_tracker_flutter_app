@@ -9,5 +9,9 @@ abstract class BudgetRepository {
   Future<Either<Failure, void>> createBudget(Budget budget);
   Future<Either<Failure, void>> updateBudget(Budget budget);
   Future<Either<Failure, void>> deleteBudget(String id);
+
+  Future<Either<Failure, void>> syncBudgets();
+  Future<Either<Failure, void>> purgeSoftDeletedBudgets();
+  Future<Either<Failure, void>> clearUserData();
 }
 
