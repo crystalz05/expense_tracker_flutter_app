@@ -8,11 +8,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AddExpensePage extends StatefulWidget {
-  final VoidCallback onExpenseAdded;
-
-  const AddExpensePage({super.key, required this.onExpenseAdded});
+  const AddExpensePage({super.key});
 
   @override
   State<StatefulWidget> createState() => _AddExpensePageState();
@@ -65,7 +64,6 @@ class _AddExpensePageState extends State<AddExpensePage> {
               ),
             ),
           );
-          widget.onExpenseAdded();
         } else if (state is ExpenseError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -85,78 +83,68 @@ class _AddExpensePageState extends State<AddExpensePage> {
           );
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      child: Scaffold(
+        appBar: AppBar(
+            title: Text("Add Expense", style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold)),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () => context.pop(),
+            )
         ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  _buildHeader(context),
-                  const SizedBox(height: 32),
+        body: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    _buildHeader(context),
+                    const SizedBox(height: 32),
 
-                  // Amount Section
-                  _buildAmountField(context),
-                  const SizedBox(height: 24),
+                    // Amount Section
+                    _buildAmountField(context),
+                    const SizedBox(height: 24),
 
-                  // Description Section
-                  _buildDescriptionField(context),
-                  const SizedBox(height: 24),
+                    // Description Section
+                    _buildDescriptionField(context),
+                    const SizedBox(height: 24),
 
-                  // Payment Method Section
-                  _buildPaymentMethodSection(context),
-                  const SizedBox(height: 28),
+                    // Payment Method Section
+                    _buildPaymentMethodSection(context),
+                    const SizedBox(height: 28),
 
-                  // Category Section
-                  _buildCategorySection(context),
-                  const SizedBox(height: 32),
+                    // Category Section
+                    _buildCategorySection(context),
+                    const SizedBox(height: 32),
 
-                  // Submit Button
-                  _buildSubmitButton(context),
-                  const SizedBox(height: 16),
-                ],
+                    // Submit Button
+                    _buildSubmitButton(context),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+      )
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Icon(
-            CupertinoIcons.plus_circle_fill,
-            color: Theme.of(context).colorScheme.onPrimary,
-            size: 28,
-          ),
-        ),
-        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Add Expense",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
               Text(
                 "Record a new transaction",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(

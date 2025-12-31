@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants/supabase_constants.dart';
 import 'core/presentation/cubit/budget_cubit.dart';
 import 'core/presentation/cubit/theme_cubit.dart';
+import 'core/presentation/cubit/offline_mode_cubit.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -38,6 +39,7 @@ import 'features/expenses/domain/usecases/get_total_spent.dart';
 import 'features/expenses/domain/usecases/purge_soft_delete.dart';
 import 'features/expenses/domain/usecases/update_expense.dart';
 import 'features/expenses/presentation/bloc/expense_bloc.dart';
+import 'features/analytics/analytics_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -73,6 +75,7 @@ Future<void> init() async {
   // Cubits
   sl.registerLazySingleton(() => ThemeCubit(sl()));
   sl.registerLazySingleton(() => BudgetCubit(prefs: sl()));
+  sl.registerLazySingleton(() => OfflineModeCubit(sl())); // NEW
 
   // Data sources
   sl.registerLazySingleton<ExpensesLocalDatasource>(
@@ -89,9 +92,9 @@ Future<void> init() async {
           () => ExpenseRemoteDatasourceImpl(Supabase.instance.client)
   );
 
-  // Network
+  // Network - UPDATED to include SharedPreferences
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl(), sl()));
 
   // Repository
   sl.registerLazySingleton<ExpenseRepository>(
@@ -129,13 +132,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetExpenseByDateRange(sl()));
   sl.registerLazySingleton(() => SyncExpenses(sl()));
   sl.registerLazySingleton(() => SoftDeleteExpense(sl()));
-  sl.registerLazySingleton(() => PurgeSoftDeleted(sl())); // NEW
+  sl.registerLazySingleton(() => PurgeSoftDeleted(sl()));
 
   // Use case classes without repository dependencies
   sl.registerLazySingleton(() => GetTotalSpent());
   sl.registerLazySingleton(() => GetCategoryTotals());
 
   await initBudget(sl);
+  await initAnalytics(sl); // NEW
 
   // Bloc
   sl.registerFactory(() => ExpenseBloc(
@@ -150,6 +154,6 @@ Future<void> init() async {
     getCategoryTotals: sl(),
     syncExpenses: sl(),
     softDeleteExpense: sl(),
-    purgeSoftDeleted: sl(), // NEW
+    purgeSoftDeleted: sl(),
   ));
 }

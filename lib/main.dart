@@ -1,7 +1,9 @@
 import 'package:expenses_tracker_app/core/colors/colors.dart';
 import 'package:expenses_tracker_app/core/navigation/app_router.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/budget_cubit.dart';
+import 'package:expenses_tracker_app/core/presentation/cubit/offline_mode_cubit.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/theme_cubit.dart';
+import 'package:expenses_tracker_app/features/analytics/presentation/bloc/analytics_bloc.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/login_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/signup_page.dart';
@@ -38,7 +40,13 @@ Future<void> main() async {
           ),
           BlocProvider(
               create: (_) => sl<BudgetBloc>()
-          )
+          ),
+          BlocProvider(
+              create: (_) => sl<AnalyticsBloc>()
+          ),
+          BlocProvider(
+              create: (_) => sl<OfflineModeCubit>()
+          ),
         ],
         child: const MyApp()),
   );

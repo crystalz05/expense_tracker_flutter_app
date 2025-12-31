@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:expenses_tracker_app/features/analytics/presentation/pages/analytics_page.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
-import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/expenses_history_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/settings_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,7 +40,7 @@ class _MainPage extends State<MainPage> {
     // Initialize pages
     pages = [
       const HomePage(),
-      AddExpensePage(onExpenseAdded: _goHome),
+      AnalyticsPage(),
       const ExpensesHistoryPage(),
       const SettingsPage(),
     ];
@@ -176,19 +176,19 @@ class _MainPage extends State<MainPage> {
               ),
               NavigationDestination(
                 icon: Icon(
-                  CupertinoIcons.add_circled,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  CupertinoIcons.chart_pie,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 selectedIcon: Icon(
-                  CupertinoIcons.add_circled_solid,
+                  CupertinoIcons.chart_pie_fill,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                label: "Add",
+                label: "Analytics",
               ),
               NavigationDestination(
                 icon: Icon(
                   Icons.history_outlined,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 selectedIcon: Icon(
                   Icons.history,
@@ -199,7 +199,7 @@ class _MainPage extends State<MainPage> {
               NavigationDestination(
                 icon: Icon(
                   Icons.settings_outlined,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 selectedIcon: Icon(
                   Icons.settings,

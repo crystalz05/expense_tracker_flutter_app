@@ -1,3 +1,4 @@
+import 'package:expenses_tracker_app/core/presentation/cubit/offline_mode_cubit.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_bloc.dart';
@@ -345,32 +346,36 @@ class _SyncCardState extends State<_SyncCard> {
               ),
             ),
             const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    size: 14,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            BlocBuilder<OfflineModeCubit, bool>(
+              builder: (context, isOffline) {
+                return Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(6),
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Auto-syncs every 15 minutes',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.6),
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isOffline ? Icons.cloud_off : Icons.access_time,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isOffline ? 'Offline mode enabled' : 'Auto-syncs every 15 minutes',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.6),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -636,6 +641,37 @@ class _PreferencesCard extends StatelessWidget {
                   onChanged: (newValue) {
                     context.read<ThemeCubit>().setTheme(
                       newValue ? ThemeState.dark : ThemeState.light,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          const Divider(height: 1, indent: 72),
+          // NEW: Offline Mode Toggle
+          _PreferenceItem(
+            icon: Icons.cloud_off,
+            title: 'Offline Mode',
+            subtitle: 'Disable cloud sync',
+            trailing: BlocBuilder<OfflineModeCubit, bool>(
+              builder: (context, isOffline) {
+                return Switch(
+                  value: isOffline,
+                  onChanged: (newValue) {
+                    context.read<OfflineModeCubit>().setOfflineMode(newValue);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          newValue
+                              ? 'Offline mode enabled - App will not sync with cloud'
+                              : 'Offline mode disabled - App will sync with cloud',
+                        ),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     );
                   },
                 );

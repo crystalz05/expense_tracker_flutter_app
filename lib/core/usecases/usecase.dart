@@ -119,3 +119,24 @@ class CreateOrUpdateBudgetParams extends Equatable {
   List<Object?> get props => [budget];
 }
 
+class MonthComparisonParams extends Equatable {
+  final DateTime currentMonth;
+  final DateTime previousMonth;
+
+  const MonthComparisonParams({
+    required this.currentMonth,
+    required this.previousMonth,
+  });
+
+  @override
+  List<Object?> get props => [currentMonth, previousMonth];
+}
+
+class TrendParams extends Equatable {
+  final int monthsBack;
+
+  const TrendParams({required this.monthsBack});
+
+  @override
+  List<Object?> get props => [monthsBack];
+}

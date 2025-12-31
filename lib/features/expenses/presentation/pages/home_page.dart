@@ -60,11 +60,28 @@ class _HomePageState extends State<HomePage> {
       DateTime.now().month + monthOffset,
     );
 
+    // Prevent navigating to future months
+    final now = DateTime.now();
+    final currentMonth = DateTime(now.year, now.month);
+
+    if (newMonth.isAfter(currentMonth)) {
+      // Jump back to current month without animation
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _pageController.jumpToPage(_initialPage);
+      });
+      return;
+    }
+
     setState(() {
       _selectedMonth = newMonth;
     });
 
-    _loadExpensesForMonth(newMonth);
+    // Delay data loading until page transition completes
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) {
+        _loadExpensesForMonth(newMonth);
+      }
+    });
   }
 
   void _showMonthPicker() async {
@@ -72,7 +89,7 @@ class _HomePageState extends State<HomePage> {
       context: context,
       initialDate: _selectedMonth,
       firstDate: DateTime(2020),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      lastDate: DateTime.now(), // Restrict to current date
       initialDatePickerMode: DatePickerMode.year,
       builder: (context, child) {
         return Theme(
@@ -107,6 +124,23 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
+      floatingActionButton: InkWell(
+        onTap: () {
+          context.push('/add-expense');
+        },
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            CupertinoIcons.plus_circle_fill,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 28,
+          ),
+        ),
+      ),
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: SafeArea(
         child: Column(
@@ -117,6 +151,7 @@ class _HomePageState extends State<HomePage> {
               child: PageView.builder(
                 controller: _pageController,
                 onPageChanged: _onPageChanged,
+                physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
                 itemBuilder: (context, index) {
                   return _buildMonthContent(context, topCategories);
                 },
@@ -190,8 +225,7 @@ class _HomePageState extends State<HomePage> {
                     child: InkWell(
                       onTap: () {
                         _pageController.animateToPage(
-                          //move to current month
-                          1000,
+                          _initialPage, // Fixed: use _initialPage instead of hardcoded 1000
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.easeInOut,
                         );
@@ -212,13 +246,18 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               IconButton(
-                onPressed: () {
+                onPressed: isCurrentMonth ? null : () {
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
                 },
-                icon: const Icon(CupertinoIcons.chevron_right),
+                icon: Icon(
+                  CupertinoIcons.chevron_right,
+                  color: isCurrentMonth
+                      ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+                      : null,
+                ),
                 iconSize: 20,
               ),
             ],
@@ -372,11 +411,15 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(2),
+        padding: const EdgeInsets.all(2),
         child: CircleAvatar(
           radius: 22,
           backgroundColor: Colors.white,
-          child: Icon(CupertinoIcons.person_fill, size: 24, color: Theme.of(context).colorScheme.primary,),
+          child: Icon(
+            CupertinoIcons.person_fill,
+            size: 24,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ),
     );

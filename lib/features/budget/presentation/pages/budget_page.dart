@@ -31,7 +31,8 @@ class _BudgetPageState extends State<BudgetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Budget'),
+        title: Text('Budget', style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () => context.pop(),

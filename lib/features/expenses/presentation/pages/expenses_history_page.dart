@@ -3,6 +3,7 @@ import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense
 import 'package:expenses_tracker_app/features/expenses/presentation/widgets/category_filter_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../bloc/expense_bloc.dart';
 import '../bloc/expense_state.dart';
@@ -128,7 +129,7 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
                   children: [
                     Text(
                       "Transaction History",
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -174,13 +175,7 @@ class _ExpensesHistoryPage extends State<ExpensesHistoryPage> {
                   _showDeleteConfirmation(context, id);
                 },
                 onEdit: (expense) {
-                  // TODO: Navigate to edit page
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                        content: Text('Edit functionality coming soon')
-                    ),
-                  );
+                  context.push('/edit-expense', extra: expense);
                 },
               ),
             ),

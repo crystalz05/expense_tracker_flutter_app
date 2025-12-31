@@ -6,8 +6,11 @@ import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart
 import 'package:expenses_tracker_app/features/budget/presentation/pages/add_budget.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/pages/budget_detail_page.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/pages/budget_page.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../features/analytics/presentation/pages/analytics_page.dart';
 
 final GoRouter router = GoRouter(
     initialLocation: '/login',
@@ -42,6 +45,14 @@ final GoRouter router = GoRouter(
       GoRoute(
         path: '/add-budget-page',
         builder: (context, state) => const AddBudget(),
+      ),
+      GoRoute(
+        path: '/analytics',
+        builder: (context, state) => const AnalyticsPage()
+      ),
+      GoRoute(
+          path: '/add-expense',
+          builder: (context, state) => const AddExpensePage()
       ),
     ]
 );
