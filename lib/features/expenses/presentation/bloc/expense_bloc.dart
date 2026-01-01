@@ -64,7 +64,11 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     try {
       List<Expense> expenses;
 
-      if (event.category != null) {
+      if (event.category != null && event.from != null && event.to != null) {
+        final result = await getExpenseByCategoryandDateRange(
+            CategoryDateRangeParams(category: event.category));
+        expenses = result.fold((f) => throw Exception(f.message), (e) => e);
+      }else if (event.category != null) {
         final result = await getExpenseByCategory(CategoryParams(event.category!));
         expenses = result.fold((f) => throw Exception(f.message), (e) => e);
       } else if (event.from != null && event.to != null) {

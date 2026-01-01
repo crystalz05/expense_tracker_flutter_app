@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/expenses_categories.dart';
+import '../../../../core/utils/format_date.dart';
 import '../../domain/entities/expense.dart';
 import '../misc/formatter.dart';
 
@@ -144,7 +145,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
                           ),
                         ),
                         Text(
-                          _formatDate(transaction.updatedAt),
+                          formatDate(transaction.updatedAt),
                           style: Theme
                               .of(context)
                               .textTheme
@@ -268,19 +269,5 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    if (difference.inDays == 0) {
-      return "Today";
-    } else if (difference.inDays == 1) {
-      return "Yesterday";
-    } else if (difference.inDays < 7) {
-      return "${difference.inDays}d ago";
-    } else {
-      return "${date.day}/${date.month}/${date.year}";
-    }
   }
 }

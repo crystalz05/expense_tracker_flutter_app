@@ -68,6 +68,21 @@ class CategoryParams extends Equatable {
   List<Object?> get props => [category];
 }
 
+class CategoryDateRangeParams extends Equatable {
+  final String? category;
+  final DateTime? start;
+  final DateTime? end;
+
+  const CategoryDateRangeParams({
+    this.category,
+    this.start,
+    this.end,
+  });
+
+  @override
+  List<Object?> get props => [start, end];
+}
+
 class DateRangeParams extends Equatable {
   final DateTime start;
   final DateTime end;

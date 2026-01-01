@@ -4,10 +4,15 @@ import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+import '../widgets/add_edit_expense_widgets/category_selector.dart';
+import '../widgets/add_edit_expense_widgets/expense_amount_field.dart';
+import '../widgets/add_edit_expense_widgets/expense_date_field.dart';
+import '../widgets/add_edit_expense_widgets/expense_description_field.dart';
+import '../widgets/add_edit_expense_widgets/payment_method_dropdown.dart';
 
 class EditExpensePage extends StatefulWidget {
   final Expense expense;
@@ -39,7 +44,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
   @override
   void initState() {
     super.initState();
-
     _amountController = TextEditingController(
       text: widget.expense.amount.toStringAsFixed(2),
     );
@@ -116,7 +120,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
         body: CustomScrollView(
           slivers: [
-            // Modern App Bar
             SliverAppBar(
               expandedHeight: 150,
               pinned: true,
@@ -160,8 +163,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
                 ),
               ),
             ),
-
-            // Form Content
             SliverToBoxAdapter(
               child: Form(
                 key: _formKey,
@@ -170,49 +171,30 @@ class _EditExpensePageState extends State<EditExpensePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Amount Field
-                      _SectionTitle(title: 'Amount'),
-                      const SizedBox(height: 12),
-                      _AmountField(controller: _amountController),
-
+                      ExpenseAmountField(controller: _amountController),
                       const SizedBox(height: 24),
-
-                      // Category Selection
-                      _SectionTitle(title: 'Category'),
-                      const SizedBox(height: 12),
-                      _CategoryGrid(
+                      CategorySelector(
                         selectedCategory: _selectedCategory,
                         onCategorySelected: (category) {
                           setState(() => _selectedCategory = category);
                         },
+                        style: CategorySelectorStyle.compact,
                       ),
-
                       const SizedBox(height: 24),
-
-                      // Description Field
-                      _SectionTitle(title: 'Description'),
-                      const SizedBox(height: 12),
-                      _DescriptionField(controller: _descriptionController),
-
+                      ExpenseDescriptionField(
+                        controller: _descriptionController,
+                        maxLines: 3,
+                      ),
                       const SizedBox(height: 24),
-
-                      // Payment Method
-                      _SectionTitle(title: 'Payment Method'),
-                      const SizedBox(height: 12),
-                      _PaymentMethodDropdown(
+                      PaymentMethodDropdown(
                         value: _selectedPaymentMethod,
                         items: _paymentMethods,
                         onChanged: (value) {
                           setState(() => _selectedPaymentMethod = value!);
                         },
                       ),
-
                       const SizedBox(height: 24),
-
-                      // Date Field
-                      _SectionTitle(title: 'Date'),
-                      const SizedBox(height: 12),
-                      _DateField(
+                      ExpenseDateField(
                         controller: _dateController,
                         selectedDate: _selectedDate,
                         onDateSelected: (date) {
@@ -223,10 +205,7 @@ class _EditExpensePageState extends State<EditExpensePage> {
                           });
                         },
                       ),
-
                       const SizedBox(height: 32),
-
-                      // Action Buttons
                       BlocBuilder<ExpenseBloc, ExpenseState>(
                         builder: (context, state) {
                           final isLoading = state is ExpenseLoading;
@@ -234,9 +213,12 @@ class _EditExpensePageState extends State<EditExpensePage> {
                             children: [
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: isLoading ? null : () => context.pop(),
+                                  onPressed:
+                                  isLoading ? null : () => context.pop(),
                                   style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: const Text('Cancel'),
                                 ),
@@ -246,7 +228,9 @@ class _EditExpensePageState extends State<EditExpensePage> {
                                 child: FilledButton(
                                   onPressed: isLoading ? null : _submitForm,
                                   style: FilledButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: isLoading
                                       ? const SizedBox(
@@ -254,7 +238,8 @@ class _EditExpensePageState extends State<EditExpensePage> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                      valueColor:
+                                      AlwaysStoppedAnimation<Color>(
                                         Colors.white,
                                       ),
                                     ),
@@ -266,7 +251,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
                           );
                         },
                       ),
-
                       const SizedBox(height: 32),
                     ],
                   ),
@@ -275,265 +259,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  final String title;
-
-  const _SectionTitle({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-}
-
-class _AmountField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const _AmountField({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-        ),
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-        ],
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
-        decoration: InputDecoration(
-          prefixText: '₦ ',
-          prefixStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          hintText: '0.00',
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(20),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter an amount';
-          }
-          final amount = double.tryParse(value);
-          if (amount == null || amount <= 0) {
-            return 'Please enter a valid amount';
-          }
-          return null;
-        },
-      ),
-    );
-  }
-}
-
-class _CategoryGrid extends StatelessWidget {
-  final String selectedCategory;
-  final ValueChanged<String> onCategorySelected;
-
-  const _CategoryGrid({
-    required this.selectedCategory,
-    required this.onCategorySelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final categories = ExpenseCategories.all;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 0.9,
-        ),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final isSelected = selectedCategory == category.name;
-
-          return InkWell(
-            onTap: () => onCategorySelected(category.name),
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? category.color.withOpacity(0.15)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected
-                      ? category.color
-                      : Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                  width: isSelected ? 2 : 1,
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    category.icon,
-                    color: isSelected
-                        ? category.color
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                    size: 28,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    category.name,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? category.color : null,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _DescriptionField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const _DescriptionField({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-        ),
-      ),
-      child: TextFormField(
-        controller: controller,
-        maxLines: 3,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: const InputDecoration(
-          hintText: 'Add a description (optional)',
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.all(20),
-        ),
-      ),
-    );
-  }
-}
-
-class _PaymentMethodDropdown extends StatelessWidget {
-  final String value;
-  final List<String> items;
-  final ValueChanged<String?> onChanged;
-
-  const _PaymentMethodDropdown({
-    required this.value,
-    required this.items,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-        ),
-      ),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        items: items
-            .map((method) => DropdownMenuItem(
-          value: method,
-          child: Text(method),
-        ))
-            .toList(),
-        onChanged: onChanged,
-        decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.payment),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        ),
-      ),
-    );
-  }
-}
-
-class _DateField extends StatelessWidget {
-  final TextEditingController controller;
-  final DateTime selectedDate;
-  final ValueChanged<DateTime> onDateSelected;
-
-  const _DateField({
-    required this.controller,
-    required this.selectedDate,
-    required this.onDateSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-        ),
-      ),
-      child: TextFormField(
-        controller: controller,
-        readOnly: true,
-        decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.calendar_today),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        ),
-        onTap: () async {
-          final picked = await showDatePicker(
-            context: context,
-            initialDate: selectedDate,
-            firstDate: DateTime(2020),
-            lastDate: DateTime.now(),
-          );
-          if (picked != null) {
-            onDateSelected(picked);
-          }
-        },
       ),
     );
   }

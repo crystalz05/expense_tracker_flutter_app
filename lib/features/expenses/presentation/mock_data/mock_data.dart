@@ -31,20 +31,3 @@ Map<DateTime, List<Map<String, dynamic>>> groupByDay(
   }
   return grouped;
 }
-
-Map<DateTime, List<Expense>> groupByDayFinal(
-    List<Expense> recentTransactions
-    ) {
-
-  final Map<DateTime, List<Expense>> grouped = {};
-
-  for(final tx in recentTransactions) {
-    final DateTime date = tx.updatedAt;
-
-    final day = DateTime(date.year, date.month, date.day);
-
-    grouped.putIfAbsent(day, ()=> []);
-    grouped[day]!.add(tx);
-  }
-  return grouped;
-}
