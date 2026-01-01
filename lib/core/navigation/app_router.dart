@@ -6,7 +6,11 @@ import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart
 import 'package:expenses_tracker_app/features/budget/presentation/pages/add_budget.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/pages/budget_detail_page.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/pages/budget_page.dart';
+import 'package:expenses_tracker_app/features/budget/presentation/pages/edit_budget_page.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/pages/edit_expense_page.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/pages/expense_detail_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
 import 'package:go_router/go_router.dart';
 
@@ -44,7 +48,14 @@ final GoRouter router = GoRouter(
       ),
       GoRoute(
         path: '/add-budget-page',
-        builder: (context, state) => const AddBudget(),
+        builder: (context, state) => const AddBudgetPage(),
+      ),
+      GoRoute(
+        path: '/edit-budget-page',
+        builder: (context, state) {
+          final budget = state.extra as Budget;
+          return EditBudgetPage(budget: budget);
+        }
       ),
       GoRoute(
         path: '/analytics',
@@ -53,6 +64,20 @@ final GoRouter router = GoRouter(
       GoRoute(
           path: '/add-expense',
           builder: (context, state) => const AddExpensePage()
+      ),
+      GoRoute(
+          path: '/edit-expense',
+          builder: (context, state) {
+            final expense = state.extra as Expense;
+            return EditExpensePage(expense: expense);
+          }
+      ),
+      GoRoute(
+          path: '/expense-detail-page',
+          builder: (context, state) {
+            final expense = state.extra as Expense;
+            return ExpenseDetailPage(expense: expense);
+          }
       ),
     ]
 );

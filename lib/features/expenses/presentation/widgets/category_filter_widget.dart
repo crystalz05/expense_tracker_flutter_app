@@ -166,77 +166,249 @@ class CategoryCard extends StatelessWidget {
   }
 }
 
-class HistorySection extends StatefulWidget {
+// class HistorySection extends StatefulWidget {
+//   final List<Expense> expenses;
+//   final ValueChanged<String> onDelete;
+//   final ValueChanged<Expense>? onEdit;
+//
+//   const HistorySection({
+//     super.key,
+//     required this.expenses,
+//     required this.onDelete,
+//     this.onEdit,
+//   });
+//
+//   @override
+//   State<HistorySection> createState() => _HistorySectionState();
+// }
+//
+// class _HistorySectionState extends State<HistorySection> {
+//   String? _selectedIndex;
+//   Timer? _clearTimer;
+//
+//   @override
+//   void dispose() {
+//     _clearTimer?.cancel();
+//     super.dispose();
+//   }
+//
+//   void _handleSelection(String id) {
+//     _clearTimer?.cancel();
+//
+//     setState(() {
+//       _selectedIndex = id;
+//     });
+//
+//     _clearTimer = Timer(const Duration(seconds: 5), () {
+//       if (mounted) {
+//         setState(() {
+//           _selectedIndex = null;
+//         });
+//       }
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final groupTransactions = groupByDayFinal(widget.expenses);
+//     final sorted = groupTransactions.keys.toList()
+//       ..sort((a, b) => b.compareTo(a));
+//
+//     if (groupTransactions.isEmpty) {
+//       return SizedBox.shrink();
+//     }
+//
+//     return Column(
+//       children: sorted.asMap().entries.map((entry) {
+//         final day = entry.value;
+//         final dayTransactions = groupTransactions[day]!;
+//         final isToday = _isToday(day);
+//         final isYesterday = _isYesterday(day);
+//
+//         String dayLabel;
+//         if (isToday) {
+//           dayLabel = 'Today';
+//         } else if (isYesterday) {
+//           dayLabel = 'Yesterday';
+//         } else {
+//           dayLabel = DateFormat('dd MMM yyyy').format(day);
+//         }
+//
+//         return Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+//               child: Row(
+//                 children: [
+//                   Container(
+//                     width: 4,
+//                     height: 20,
+//                     decoration: BoxDecoration(
+//                       color: Theme.of(context).colorScheme.primary,
+//                       borderRadius: BorderRadius.circular(2),
+//                     ),
+//                   ),
+//                   SizedBox(width: 8),
+//                   Text(
+//                     dayLabel,
+//                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
+//                       fontWeight: FontWeight.w600,
+//                     ),
+//                   ),
+//                   Spacer(),
+//                   Text(
+//                     '${dayTransactions.length} ${dayTransactions.length == 1 ? 'transaction' : 'transactions'}',
+//                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
+//                       color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Card(
+//               color: Theme.of(context).colorScheme.surface,
+//               elevation: 0,
+//               shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(12),
+//                 side: BorderSide(
+//                   color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+//                   width: 1,
+//                 ),
+//               ),
+//               child: ClipRRect(
+//                 borderRadius: BorderRadius.circular(12),
+//                 child: Column(
+//                   children: List.generate(dayTransactions.length, (index) {
+//                     final tx = dayTransactions[index];
+//                     final isSelected = _selectedIndex == tx.id;
+//
+//                     return Dismissible(
+//
+//                       key: ValueKey(tx.id),
+//                       direction: DismissDirection.horizontal,
+//                       confirmDismiss: (direction) async {
+//                         if (direction == DismissDirection.startToEnd) {
+//                           // Swipe right → Edit
+//                           widget.onEdit?.call(tx);
+//                           return false; // don’t dismiss
+//                         } else {
+//                           // Swipe left → Delete
+//                           widget.onDelete(tx.id);
+//                           return true; // dismiss item
+//                         }
+//                       },
+//                       background: _SwipeAction(
+//                         color: Colors.blue,
+//                         icon: Icons.edit_outlined,
+//                         alignment: Alignment.centerLeft,
+//                       ),
+//                       secondaryBackground: _SwipeAction(
+//                         color: Colors.red,
+//                         icon: Icons.delete_outline,
+//                         alignment: Alignment.centerRight,
+//                       ),
+//                       child: Padding(
+//                         padding: const EdgeInsets.symmetric(
+//                           horizontal: 16,
+//                           vertical: 12,
+//                         ),
+//                         child: TransactionWidget(
+//                           icon: _getCategoryIcon(tx.category),
+//                           description: tx.description ?? "No description",
+//                           category: tx.category,
+//                           date: tx.updatedAt,
+//                           amount: formatter.format(tx.amount),
+//                         ),
+//                       ),
+//                     );
+//                   }),
+//                 ),
+//               ),
+//             ),
+//             SizedBox(height: 16),
+//           ],
+//         );
+//       }).toList(),
+//     );
+//   }
+//
+//   bool _isToday(DateTime date) {
+//     final now = DateTime.now();
+//     return date.year == now.year &&
+//         date.month == now.month &&
+//         date.day == now.day;
+//   }
+//
+//   bool _isYesterday(DateTime date) {
+//     final yesterday = DateTime.now().subtract(Duration(days: 1));
+//     return date.year == yesterday.year &&
+//         date.month == yesterday.month &&
+//         date.day == yesterday.day;
+//   }
+//
+//   IconData _getCategoryIcon(String category) {
+//     final categoryMap = {
+//       'Food': Icons.restaurant_outlined,
+//       'Transport': Icons.directions_car_outlined,
+//       'Shopping': Icons.shopping_bag_outlined,
+//       'Entertainment': Icons.movie_outlined,
+//       'Health': Icons.local_hospital_outlined,
+//       'Bills': Icons.receipt_outlined,
+//       'Education': Icons.school_outlined,
+//       'Other': Icons.more_horiz,
+//     };
+//     return categoryMap[category] ?? Icons.payment_outlined;
+//   }
+// }
+
+class HistorySection extends StatelessWidget {
   final List<Expense> expenses;
+
+  final bool selectionMode;
+  final Set<String> selectedIds;
+
+  final ValueChanged<String> onToggleSelect;
   final ValueChanged<String> onDelete;
-  final ValueChanged<Expense>? onEdit;
+  final ValueChanged<Expense> onEdit;
 
   const HistorySection({
     super.key,
     required this.expenses,
+    required this.selectionMode,
+    required this.selectedIds,
+    required this.onToggleSelect,
     required this.onDelete,
-    this.onEdit,
+    required this.onEdit,
   });
 
   @override
-  State<HistorySection> createState() => _HistorySectionState();
-}
-
-class _HistorySectionState extends State<HistorySection> {
-  String? _selectedIndex;
-  Timer? _clearTimer;
-
-  @override
-  void dispose() {
-    _clearTimer?.cancel();
-    super.dispose();
-  }
-
-  void _handleSelection(String id) {
-    _clearTimer?.cancel();
-
-    setState(() {
-      _selectedIndex = id;
-    });
-
-    _clearTimer = Timer(const Duration(seconds: 5), () {
-      if (mounted) {
-        setState(() {
-          _selectedIndex = null;
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final groupTransactions = groupByDayFinal(widget.expenses);
-    final sorted = groupTransactions.keys.toList()
+    final grouped = groupByDayFinal(expenses);
+    final sortedDays = grouped.keys.toList()
       ..sort((a, b) => b.compareTo(a));
 
-    if (groupTransactions.isEmpty) {
-      return SizedBox.shrink();
+    if (grouped.isEmpty) {
+      return const SizedBox.shrink();
     }
 
     return Column(
-      children: sorted.asMap().entries.map((entry) {
-        final day = entry.value;
-        final dayTransactions = groupTransactions[day]!;
+      children: sortedDays.map((day) {
+        final dayTransactions = grouped[day]!;
+
         final isToday = _isToday(day);
         final isYesterday = _isYesterday(day);
 
-        String dayLabel;
-        if (isToday) {
-          dayLabel = 'Today';
-        } else if (isYesterday) {
-          dayLabel = 'Yesterday';
-        } else {
-          dayLabel = DateFormat('dd MMM yyyy').format(day);
-        }
+        final dayLabel = isToday
+            ? 'Today'
+            : isYesterday
+            ? 'Yesterday'
+            : DateFormat('dd MMM yyyy').format(day);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ===== DAY HEADER =====
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
               child: Row(
@@ -249,89 +421,118 @@ class _HistorySectionState extends State<HistorySection> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
                     dayLabel,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Text(
                     '${dayTransactions.length} ${dayTransactions.length == 1 ? 'transaction' : 'transactions'}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
                     ),
                   ),
                 ],
               ),
             ),
+
+            // ===== TRANSACTION CARD =====
             Card(
-              color: Theme.of(context).colorScheme.surface,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
                 side: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                  width: 1,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .outline
+                      .withOpacity(0.2),
                 ),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Column(
-                  children: List.generate(dayTransactions.length, (index) {
-                    final tx = dayTransactions[index];
-                    final isSelected = _selectedIndex == tx.id;
+                  children: dayTransactions.map((tx) {
+                    final isSelected = selectedIds.contains(tx.id);
 
-                    return Dismissible(
-
-                      key: ValueKey(tx.id),
-                      direction: DismissDirection.horizontal,
-                      confirmDismiss: (direction) async {
-                        if (direction == DismissDirection.startToEnd) {
-                          // Swipe right → Edit
-                          widget.onEdit?.call(tx);
-                          return false; // don’t dismiss
-                        } else {
-                          // Swipe left → Delete
-                          widget.onDelete(tx.id);
-                          return true; // dismiss item
+                    return GestureDetector(
+                      onLongPress: () => onToggleSelect(tx.id),
+                      onTap: () {
+                        if (selectionMode) {
+                          onToggleSelect(tx.id);
                         }
                       },
-                      background: _SwipeAction(
-                        color: Colors.blue,
-                        icon: Icons.edit_outlined,
-                        alignment: Alignment.centerLeft,
-                      ),
-                      secondaryBackground: _SwipeAction(
-                        color: Colors.red,
-                        icon: Icons.delete_outline,
-                        alignment: Alignment.centerRight,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                      child: Dismissible(
+                        key: ValueKey(tx.id),
+                        direction: selectionMode
+                            ? DismissDirection.none
+                            : DismissDirection.horizontal,
+                        confirmDismiss: (direction) async {
+                          if (direction == DismissDirection.startToEnd) {
+                            onEdit(tx);
+                            return false;
+                          } else {
+                            onDelete(tx.id);
+                            return true;
+                          }
+                        },
+                        background: _SwipeAction(
+                          color: Colors.blue,
+                          icon: Icons.edit_outlined,
+                          alignment: Alignment.centerLeft,
                         ),
-                        child: TransactionWidget(
-                          icon: _getCategoryIcon(tx.category),
-                          description: tx.description ?? "No description",
-                          category: tx.category,
-                          date: tx.updatedAt,
-                          amount: formatter.format(tx.amount),
+                        secondaryBackground: _SwipeAction(
+                          color: Colors.red,
+                          icon: Icons.delete_outline,
+                          alignment: Alignment.centerRight,
                         ),
-                      ),
+                        child: InkWell(
+                          // 👇 THIS is the fix
+                          onLongPress: () => onToggleSelect(tx.id),
+                          onTap: selectionMode
+                              ? () => onToggleSelect(tx.id)
+                              : null,
+
+                          child: Container(
+                            color: isSelected
+                                ? Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.12)
+                                : null,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: TransactionWidget(
+                              icon: _getCategoryIcon(tx.category),
+                              description: tx.description ?? 'No description',
+                              category: tx.category,
+                              date: tx.updatedAt,
+                              amount: formatter.format(tx.amount),
+                            ),
+                          ),
+                        ),
+                      )
                     );
-                  }),
+                  }).toList(),
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
           ],
         );
       }).toList(),
     );
   }
+
+  // ===== HELPERS =====
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
@@ -341,14 +542,14 @@ class _HistorySectionState extends State<HistorySection> {
   }
 
   bool _isYesterday(DateTime date) {
-    final yesterday = DateTime.now().subtract(Duration(days: 1));
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
     return date.year == yesterday.year &&
         date.month == yesterday.month &&
         date.day == yesterday.day;
   }
 
   IconData _getCategoryIcon(String category) {
-    final categoryMap = {
+    const map = {
       'Food': Icons.restaurant_outlined,
       'Transport': Icons.directions_car_outlined,
       'Shopping': Icons.shopping_bag_outlined,
@@ -358,9 +559,10 @@ class _HistorySectionState extends State<HistorySection> {
       'Education': Icons.school_outlined,
       'Other': Icons.more_horiz,
     };
-    return categoryMap[category] ?? Icons.payment_outlined;
+    return map[category] ?? Icons.payment_outlined;
   }
 }
+
 
 class _ActionButton extends StatelessWidget {
   final IconData icon;

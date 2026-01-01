@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/expenses_categories.dart';
 import '../../domain/entities/expense.dart';
@@ -41,7 +42,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
                   .of(context)
                   .colorScheme
                   .outline
-                  .withOpacity(0.1),
+                  .withValues(alpha: 0.1),
             ),
           ),
           child: ListView.separated(
@@ -57,7 +58,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
                       .of(context)
                       .colorScheme
                       .outline
-                      .withOpacity(0.1),
+                      .withValues(alpha: 0.1),
                 ),
             itemBuilder: (context, index) {
               return _buildTransactionItem(context, visibleItems[index]);
@@ -75,7 +76,11 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          context.push(
+            "/expense-detail-page", extra: transaction
+          );
+        },
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(16),

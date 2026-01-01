@@ -1,65 +1,62 @@
 import 'package:expenses_tracker_app/core/utils/expenses_categories.dart';
-import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_state.dart';
 import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_event.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_state.dart';
-import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
-import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
+import 'package:expenses_tracker_app/features/budget/presentation/pages/add_budget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 
-// Period enum (if not already defined in add_budget.dart)
-enum Period {
-  weekly,
-  monthly,
-  yearly,
-}
+class EditBudgetPage extends StatefulWidget {
+  final Budget budget;
 
-extension PeriodX on Period {
-  String get label {
-    switch (this) {
-      case Period.weekly:
-        return 'Weekly';
-      case Period.monthly:
-        return 'Monthly';
-      case Period.yearly:
-        return 'Yearly';
-    }
-  }
-}
-
-class AddBudgetPage extends StatefulWidget {
-  const AddBudgetPage({super.key});
+  const EditBudgetPage({super.key, required this.budget});
 
   @override
-  State<AddBudgetPage> createState() => _AddBudgetPageState();
+  State<EditBudgetPage> createState() => _EditBudgetPageState();
 }
 
-class _AddBudgetPageState extends State<AddBudgetPage> {
+class _EditBudgetPageState extends State<EditBudgetPage> {
   final _formKey = GlobalKey<FormState>();
-  final _amountController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _startDateController = TextEditingController();
-  final _endDateController = TextEditingController();
+  late TextEditingController _amountController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _startDateController;
+  late TextEditingController _endDateController;
 
-  String? _selectedCategory;
-  Period _period = Period.monthly;
-  bool _isRecurring = false;
-  double? _alertThreshold = 80.0;
-  DateTime? _startDate;
-  DateTime? _endDate;
+  late String _selectedCategory;
+  late Period _period;
+  late bool _isRecurring;
+  late double? _alertThreshold;
+  late DateTime _startDate;
+  late DateTime _endDate;
 
   @override
   void initState() {
     super.initState();
-    _startDate = DateTime.now();
-    _startDateController.text = DateFormat('EEEE, MMMM d, yyyy').format(_startDate!);
+    _amountController = TextEditingController(
+      text: widget.budget.amount.toStringAsFixed(2),
+    );
+    _descriptionController = TextEditingController(
+      text: widget.budget.description,
+    );
+    _selectedCategory = widget.budget.category;
+    _period = Period.values.firstWhere(
+          (p) => p.name == widget.budget.period,
+      orElse: () => Period.monthly,
+    );
+    _isRecurring = widget.budget.isRecurring;
+    _alertThreshold = widget.budget.alertThreshold;
+    _startDate = widget.budget.startDate;
+    _endDate = widget.budget.endDate;
+    _startDateController = TextEditingController(
+      text: DateFormat('EEEE, MMMM d, yyyy').format(_startDate),
+    );
+    _endDateController = TextEditingController(
+      text: DateFormat('EEEE, MMMM d, yyyy').format(_endDate),
+    );
   }
 
   @override
@@ -72,47 +69,41 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
   }
 
   void _submitForm() {
-    if (_formKey.currentState!.validate() && _selectedCategory != null) {
-      final authState = context.read<AuthBloc>().state;
-      if (authState is! AuthAuthenticated) return;
-
-      final budget = Budget(
-        id: const Uuid().v4(),
-        userId: authState.user.id,
-        category: _selectedCategory!,
+    if (_formKey.currentState!.validate()) {
+      final updatedBudget = Budget(
+        id: widget.budget.id,
+        userId: widget.budget.userId,
+        category: _selectedCategory,
         description: _descriptionController.text.trim(),
         amount: double.parse(_amountController.text),
-        startDate: _startDate!,
-        endDate: _endDate!,
+        startDate: _startDate,
+        endDate: _endDate,
         period: _period.name,
         isRecurring: _isRecurring,
         alertThreshold: _alertThreshold,
-        createdAt: DateTime.now(),
+        createdAt: widget.budget.createdAt,
+        updatedAt: DateTime.now(),
+        isDeleted: widget.budget.isDeleted,
       );
 
-      context.read<BudgetBloc>().add(CreateBudgetEvent(budget));
-    } else if (_selectedCategory == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a category'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      context.read<BudgetBloc>().add(UpdateBudgetEvent(updatedBudget));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final categoryData = ExpenseCategories.fromName(_selectedCategory);
+
     return BlocListener<BudgetBloc, BudgetState>(
       listener: (context, state) {
         if (state is BudgetOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
-                children: const [
-                  Icon(Icons.check_circle, color: Colors.white),
-                  SizedBox(width: 12),
-                  Text('Budget created successfully!'),
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Text(state.message),
                 ],
               ),
               backgroundColor: Colors.green,
@@ -120,8 +111,6 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             ),
           );
           context.pop();
-          context.read<ExpenseBloc>().add(const LoadExpensesEvent());
-          context.read<BudgetBloc>().add(LoadAllBudgetProgress());
         } else if (state is BudgetError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -139,7 +128,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             SliverAppBar(
               expandedHeight: 150,
               pinned: true,
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: categoryData.color,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => context.pop(),
@@ -151,8 +140,8 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                        categoryData.color,
+                        categoryData.color.withOpacity(0.7),
                       ],
                     ),
                   ),
@@ -161,13 +150,13 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                     children: [
                       const SizedBox(height: 40),
                       Icon(
-                        Icons.add_circle_outline,
+                        Icons.edit_note,
                         size: 48,
                         color: Colors.white.withOpacity(0.9),
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Create Budget',
+                        'Edit Budget',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -220,8 +209,8 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                       _startDate = date;
                                       _startDateController.text =
                                           DateFormat('EEEE, MMMM d, yyyy').format(date);
-                                      if (_endDate != null && _endDate!.isBefore(_startDate!)) {
-                                        _endDate = null;
+                                      if (_endDate.isBefore(_startDate)) {
+                                        _endDate = _startDate;
                                         _endDateController.clear();
                                       }
                                     });
@@ -249,7 +238,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                           DateFormat('EEEE, MMMM d, yyyy').format(date);
                                     });
                                   },
-                                  firstDate: _startDate ?? DateTime.now(),
+                                  firstDate: _startDate,
                                   lastDate: DateTime(2100),
                                 ),
                               ],
@@ -306,7 +295,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                       ),
                                     ),
                                   )
-                                      : const Text('Create Budget'),
+                                      : const Text('Save Changes'),
                                 ),
                               ),
                             ],
@@ -326,6 +315,9 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
   }
 }
 
+
+// ==================== HELPER WIDGETS FOR BUDGET FORMS ====================
+// Add these to your edit_budget_page.dart or create a separate widgets file
 
 // ==================== SECTION TITLE ====================
 class _SectionTitle extends StatelessWidget {
