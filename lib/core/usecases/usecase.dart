@@ -69,14 +69,14 @@ class CategoryParams extends Equatable {
 }
 
 class CategoryDateRangeParams extends Equatable {
-  final String? category;
-  final DateTime? start;
-  final DateTime? end;
+  final String category;
+  final DateTime start;
+  final DateTime end;
 
   const CategoryDateRangeParams({
-    this.category,
-    this.start,
-    this.end,
+    required this.category,
+    required this.start,
+    required this.end,
   });
 
   @override

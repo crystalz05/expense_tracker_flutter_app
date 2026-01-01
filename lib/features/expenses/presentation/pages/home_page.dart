@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   void _loadExpensesForMonth(DateTime month) {
     final firstDay = DateTime(month.year, month.month, 1);
     final lastDay = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
-    context.read<ExpenseBloc>().add(LoadExpensesEvent(from: firstDay, to: lastDay));
+    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
   }
 
   void _onPageChanged(int page) {

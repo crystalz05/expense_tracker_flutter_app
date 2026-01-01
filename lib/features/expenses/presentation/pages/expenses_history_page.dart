@@ -38,6 +38,13 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<ExpenseBloc>().add(LoadExpensesEvent());
+  }
+
   void _toggleSelectionMode() {
     setState(() {
       _isSelectionMode = !_isSelectionMode;

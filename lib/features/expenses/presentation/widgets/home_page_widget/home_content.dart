@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../bloc/expense_bloc.dart';
 import '../../bloc/expense_state.dart';
@@ -17,7 +18,7 @@ class HomeContent extends StatelessWidget {
       builder: (context, state) {
         if (state is ExpenseLoading) {
           return const HomeLoadingState();
-        } else if (state is ExpensesLoaded) {
+        } else if (state is ExpensesByPeriodLoaded) {
           return HomeLoadedContent(state: state);
         }
         return const SizedBox.shrink();

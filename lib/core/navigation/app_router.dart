@@ -1,4 +1,5 @@
 
+import 'package:expenses_tracker_app/core/navigation/route_observer.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/login_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/splash_page.dart';
@@ -17,6 +18,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/analytics/presentation/pages/analytics_page.dart';
 
 final GoRouter router = GoRouter(
+    observers: [
+      routeObserver
+    ],
     initialLocation: '/login',
     routes: [
       GoRoute(
@@ -79,5 +83,5 @@ final GoRouter router = GoRouter(
             return ExpenseDetailPage(expense: expense);
           }
       ),
-    ]
+    ],
 );

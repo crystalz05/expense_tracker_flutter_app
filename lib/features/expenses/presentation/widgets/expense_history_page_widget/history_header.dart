@@ -88,7 +88,7 @@ class _NormalHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Transaction History",
+                "Transactions",
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -96,7 +96,7 @@ class _NormalHeader extends StatelessWidget {
               if (hasActiveFilters) ...[
                 SizedBox(height: 4),
                 Text(
-                  '$visibleCount of $totalCount transactions',
+                  '$visibleCount transactions',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),

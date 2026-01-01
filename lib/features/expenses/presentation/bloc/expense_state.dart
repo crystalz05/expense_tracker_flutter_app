@@ -61,3 +61,14 @@ class ExpensesByCategoryLoaded extends ExpenseState {
   @override
   List<Object?> get props => [category, expenses, total];
 }
+
+class ExpensesByPeriodLoaded extends ExpenseState {
+  final List<Expense> expenses;
+  final double totalSpent;
+  final Map<String, double> categoryTotals;
+
+  const ExpensesByPeriodLoaded(this.expenses, this.totalSpent, this.categoryTotals);
+
+  @override
+  List<Object?> get props => [expenses, totalSpent, categoryTotals];
+}

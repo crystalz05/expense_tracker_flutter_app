@@ -10,7 +10,7 @@ import 'modern_category_grid.dart';
 import 'home_section_header.dart';
 
 class HomeLoadedContent extends StatelessWidget {
-  final ExpensesLoaded state;
+  final ExpensesByPeriodLoaded state;
 
   const HomeLoadedContent({
     super.key,

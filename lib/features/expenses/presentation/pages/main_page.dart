@@ -9,6 +9,7 @@ import 'package:expenses_tracker_app/features/expenses/presentation/pages/expens
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/settings_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -125,92 +126,109 @@ class _MainPage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(child: pages[currentIndex]),
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          labelTextStyle: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              );
-            }
-            return TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            );
-          }),
-        ),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            splashFactory: NoSplash.splashFactory,
-          ),
-          child: NavigationBar(
-            indicatorColor: Colors.transparent,
-            selectedIndex: currentIndex,
-            onDestinationSelected: (index) {
-              setState(() {
-                currentIndex = index;
-              });
 
-              // Refresh data when navigating to Home or History
-              if (index == 0) {
-                context.read<ExpenseBloc>().add(LoadExpensesEvent());
-                context.read<BudgetBloc>().add(const LoadAllBudgetProgress());
-              } else if (index == 2) {
-                context.read<ExpenseBloc>().add(LoadExpensesEvent());
+    DateTime? _lastBackPressed;
+
+    return PopScope(
+      canPop: false, // we control popping manually
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+
+        final now = DateTime.now();
+
+        if (_lastBackPressed == null ||
+            now.difference(_lastBackPressed!) > const Duration(seconds: 2)) {
+          _lastBackPressed = now;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Press back again to exit'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        } else {
+          SystemNavigator.pop(); // second press → pop
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(child: pages[currentIndex]),
+        bottomNavigationBar: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                );
               }
-            },
-            destinations: [
-              NavigationDestination(
-                icon: Icon(
-                  Icons.home_outlined,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              return TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              );
+            }),
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              splashFactory: NoSplash.splashFactory,
+            ),
+            child: NavigationBar(
+              indicatorColor: Colors.transparent,
+              selectedIndex: currentIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+              destinations: [
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.home_outlined,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                  selectedIcon: Icon(
+                    Icons.home,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  label: "Home",
                 ),
-                selectedIcon: Icon(
-                  Icons.home,
-                  color: Theme.of(context).colorScheme.primary,
+                NavigationDestination(
+                  icon: Icon(
+                    CupertinoIcons.chart_pie,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                  selectedIcon: Icon(
+                    CupertinoIcons.chart_pie_fill,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  label: "Analytics",
                 ),
-                label: "Home",
-              ),
-              NavigationDestination(
-                icon: Icon(
-                  CupertinoIcons.chart_pie,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.history_outlined,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                  selectedIcon: Icon(
+                    Icons.history,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  label: "History",
                 ),
-                selectedIcon: Icon(
-                  CupertinoIcons.chart_pie_fill,
-                  color: Theme.of(context).colorScheme.primary,
+                NavigationDestination(
+                  icon: Icon(
+                    Icons.settings_outlined,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                  selectedIcon: Icon(
+                    Icons.settings,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  label: "Settings",
                 ),
-                label: "Analytics",
-              ),
-              NavigationDestination(
-                icon: Icon(
-                  Icons.history_outlined,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-                selectedIcon: Icon(
-                  Icons.history,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                label: "History",
-              ),
-              NavigationDestination(
-                icon: Icon(
-                  Icons.settings_outlined,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-                selectedIcon: Icon(
-                  Icons.settings,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                label: "Settings",
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }

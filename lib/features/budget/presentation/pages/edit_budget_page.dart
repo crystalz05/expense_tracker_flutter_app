@@ -105,20 +105,7 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
     return BlocListener<BudgetBloc, BudgetState>(
       listener: (context, state) {
         if (state is BudgetOperationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(Icons.check_circle, color: Colors.white),
-                  const SizedBox(width: 12),
-                  Text(state.message),
-                ],
-              ),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-          context.pop();
+          context.pushReplacement('/budget-detail-page/${widget.budget.id}');
         } else if (state is BudgetError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -136,7 +123,7 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
             SliverAppBar(
               expandedHeight: 150,
               pinned: true,
-              backgroundColor: categoryData.color,
+              backgroundColor: Color(0xFF0A2E5D),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => context.pop(),
@@ -148,8 +135,8 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        categoryData.color,
-                        categoryData.color.withOpacity(0.7),
+                        Color(0xFF0A2E5D),
+                        Color(0xFF0A2E5D).withValues(alpha: 0.7),
                       ],
                     ),
                   ),

@@ -33,6 +33,14 @@ class _BudgetPageState extends State<BudgetPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    // DateTime selectedMonth = DateTime.now();
+    //
+    // void loadExpensesForMonth(DateTime month) {
+    //   final firstDay = DateTime(month.year, month.month, 1);
+    //   final lastDay = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
+    //   context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+    // }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: CustomScrollView(
@@ -41,32 +49,32 @@ class _BudgetPageState extends State<BudgetPage> {
           SliverAppBar(
             floating: false,
             pinned: true,
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () => context.pop(),
+              onPressed: () => context.go("/main-page"),
             ),
             title: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Budget Manager',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Budget Manager',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  Text(
-                    'Track your spending goals',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.6),
-                    ),
+                ),
+                Text(
+                  'Track your spending goals',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
           ),
 
           // Total Spending Summary Card

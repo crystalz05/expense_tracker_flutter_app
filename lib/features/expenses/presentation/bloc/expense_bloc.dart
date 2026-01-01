@@ -1,4 +1,5 @@
 import 'package:expenses_tracker_app/core/network/network_info.dart';
+import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_by_category_and_period.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/add_expense.dart';
@@ -30,6 +31,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final SyncExpenses syncExpenses;
   final SoftDeleteExpense softDeleteExpense;
   final PurgeSoftDeleted purgeSoftDeleted;
+  final GetByCategoryAndPeriod getByCategoryAndPeriod;
 
   ExpenseBloc({
     required this.getExpenses,
@@ -44,6 +46,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     required this.syncExpenses,
     required this.softDeleteExpense,
     required this.purgeSoftDeleted,
+    required this.getByCategoryAndPeriod,
   }) : super(ExpenseInitial()) {
     on<LoadExpensesEvent>(_loadExpenses);
     on<LoadExpenseByIdEvent>(_loadExpenseById);
@@ -53,6 +56,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     on<SoftDeleteExpenseEvent>(_softDeleteExpense);
     on<SyncExpensesEvent>(_syncExpenses);
     on<PurgeSoftDeletedEvent>(_purgeSoftDeleted);
+    on<LoadExpensesByPeriodEvent>(_loadExpensesByPeriod);
   }
 
   Future<void> _loadExpenses(
@@ -65,8 +69,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       List<Expense> expenses;
 
       if (event.category != null && event.from != null && event.to != null) {
-        final result = await getExpenseByCategoryandDateRange(
-            CategoryDateRangeParams(category: event.category));
+        final result = await getByCategoryAndPeriod(CategoryDateRangeParams(category: event.category!, start: event.from!, end: event.to!));
         expenses = result.fold((f) => throw Exception(f.message), (e) => e);
       }else if (event.category != null) {
         final result = await getExpenseByCategory(CategoryParams(event.category!));
@@ -87,6 +90,30 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           getTotalSpent(expenses),
           getCategoryTotals(expenses),
         ),
+      );
+    } catch (e) {
+      emit(ExpenseError(e.toString()));
+    }
+  }
+
+  Future<void> _loadExpensesByPeriod(
+      LoadExpensesByPeriodEvent event,
+      Emitter<ExpenseState> emit,
+      ) async {
+    emit(ExpenseLoading());
+
+    try {
+      List<Expense> expenses;
+
+      final result = await getExpenseByDateRange(DateRangeParams(start: event.from!, end: event.to!));
+      expenses = result.fold((f) => throw Exception(f.message), (e) => e);
+
+      emit(
+          ExpensesByPeriodLoaded(
+            expenses,
+            getTotalSpent(expenses),
+            getCategoryTotals(expenses),
+          )
       );
     } catch (e) {
       emit(ExpenseError(e.toString()));

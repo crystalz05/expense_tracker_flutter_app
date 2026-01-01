@@ -20,6 +20,16 @@ class LoadExpensesEvent extends ExpenseEvent {
   List<Object?> get props => [category, from, to];
 }
 
+class LoadExpensesByPeriodEvent extends ExpenseEvent {
+  final DateTime? from;
+  final DateTime? to;
+
+  const LoadExpensesByPeriodEvent({this.from, this.to});
+
+  @override
+  List<Object?> get props => [from, to];
+}
+
 class AddExpenseEvent extends ExpenseEvent {
   final ExpenseParams params;
   const AddExpenseEvent(this.params);
