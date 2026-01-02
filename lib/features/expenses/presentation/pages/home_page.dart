@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/utils/format_date.dart';
 import '../bloc/expense_bloc.dart';
 import '../bloc/expense_event.dart';
 import '../widgets/home_page_widget/home_app_bar.dart';
@@ -95,11 +96,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _refreshPage(){
+    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: HomeFab(
-        onTap: () => context.push('/add-expense'),
+        onTap: () async {
+          final success = await context.push('/add-expense');
+          print("printing test item outside");
+          if(success == true && mounted){
+            print("printing test item inside");
+            _refreshPage();
+          }
+        },
       ),
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: SafeArea(

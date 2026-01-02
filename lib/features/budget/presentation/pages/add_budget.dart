@@ -114,9 +114,9 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
               behavior: SnackBarBehavior.floating,
             ),
           );
-          context.pop();
-          context.read<ExpenseBloc>().add(const LoadExpensesEvent());
-          context.read<BudgetBloc>().add(LoadAllBudgetProgress());
+          context.pop(true);
+          // context.read<ExpenseBloc>().add(const LoadExpensesEvent());
+          // context.read<BudgetBloc>().add(LoadAllBudgetProgress());
         } else if (state is BudgetError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -134,7 +134,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             SliverAppBar(
               expandedHeight: 150,
               pinned: true,
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Color(0xFF0A2E5D),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => context.pop(),
@@ -146,8 +146,8 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                        Color(0xFF0A2E5D),
+                        Color(0xFF0A2E5D).withValues(alpha: 0.7),
                       ],
                     ),
                   ),

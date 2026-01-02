@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/utils/expenses_categories.dart';
 import '../../../../core/utils/currency_formatter.dart';
+import '../../../../core/utils/format_date.dart';
 import '../widgets/budget_page_widgets/budget_card.dart';
 import '../widgets/budget_page_widgets/empty_budget.dart';
 import '../widgets/budget_page_widgets/error_widget.dart';
@@ -29,18 +30,12 @@ class _BudgetPageState extends State<BudgetPage> {
     super.initState();
     context.read<ExpenseBloc>().add(const LoadExpensesEvent());
     context.read<BudgetBloc>().add(LoadAllBudgetProgress());
+    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
   }
 
   @override
   Widget build(BuildContext context) {
 
-    // DateTime selectedMonth = DateTime.now();
-    //
-    // void loadExpensesForMonth(DateTime month) {
-    //   final firstDay = DateTime(month.year, month.month, 1);
-    //   final lastDay = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
-    //   context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
-    // }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: CustomScrollView(
@@ -52,7 +47,7 @@ class _BudgetPageState extends State<BudgetPage> {
             backgroundColor: Theme.of(context).colorScheme.surface,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () => context.go("/main-page"),
+              onPressed: () => context.pop(),
             ),
             title: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -83,7 +78,7 @@ class _BudgetPageState extends State<BudgetPage> {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
               child: BlocBuilder<ExpenseBloc, ExpenseState>(
                 builder: (context, state) {
-                  final totalSpent = state is ExpensesLoaded ? state.totalSpent : 0.0;
+                  final totalSpent = state is ExpensesByPeriodLoaded ? state.totalSpent : 0.0;
                   return TotalSpendingCard(totalSpent: totalSpent);
                 },
               ),

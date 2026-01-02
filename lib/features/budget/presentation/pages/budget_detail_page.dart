@@ -1,5 +1,6 @@
 import 'package:expenses_tracker_app/core/utils/currency_formatter.dart';
 import 'package:expenses_tracker_app/core/utils/expenses_categories.dart';
+import 'package:expenses_tracker_app/core/utils/format_date.dart';
 import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:expenses_tracker_app/features/budget/presentation/bloc/budget_event.dart';
@@ -28,85 +29,98 @@ class BudgetDetailPage extends StatefulWidget {
 }
 
 class _BudgetDetailPageState extends State<BudgetDetailPage> {
+
   @override
   void initState() {
     super.initState();
     context.read<BudgetBloc>().add(LoadBudgetProgress(widget.budgetId));
   }
 
+  bool _popListenerAdded = false;
+
+  @override void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (_popListenerAdded) return;
+
+    ModalRoute.of(context)?.addScopedWillPopCallback(() async {
+      _onPopToBudgetPage();
+      return true;
+    });
+
+    _popListenerAdded = true;
+  }
+
+  void _onPopToBudgetPage(){
+    context.read<ExpenseBloc>().add(const LoadExpensesEvent());
+    context.read<BudgetBloc>().add(LoadAllBudgetProgress());
+    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop) {
-          context.read<ExpenseBloc>().add(const LoadExpensesEvent());
-          context.read<BudgetBloc>().add(LoadAllBudgetProgress());
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
-        body: BlocConsumer<BudgetBloc, BudgetState>(
-          listener: (context, state) {
-            if (state is BudgetError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-              );
-            }
-            if (state is BudgetOperationSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      const Icon(Icons.check_circle, color: Colors.white),
-                      const SizedBox(width: 12),
-                      Text(state.message),
-                    ],
-                  ),
-                  backgroundColor: Colors.green,
-                  behavior: SnackBarBehavior.floating,
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+      body: BlocConsumer<BudgetBloc, BudgetState>(
+        listener: (context, state) {
+          if (state is BudgetError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+            );
+          }
+          if (state is BudgetOperationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Text(state.message),
+                  ],
                 ),
-              );
-              context.pop();
-            }
-            if (state is BudgetProgressLoaded) {
-              final budget = state.progress.budget;
-              context.read<ExpenseBloc>().add(
-                LoadExpensesEvent(
-                  category: budget.category,
-                  from: budget.startDate,
-                  to: budget.endDate,
-                ),
-              );
-            }
-          },
-          builder: (context, budgetState) {
-            if (budgetState is BudgetLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+            context.pop();
+          }
+          if (state is BudgetProgressLoaded) {
+            final budget = state.progress.budget;
+            context.read<ExpenseBloc>().add(
+              LoadExpensesEvent(
+                category: budget.category,
+                from: budget.startDate,
+                to: budget.endDate,
+              ),
+            );
+          }
+        },
+        builder: (context, budgetState) {
+          if (budgetState is BudgetLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            if (budgetState is BudgetProgressLoaded) {
-              final progress = budgetState.progress;
-              final budget = progress.budget;
+          if (budgetState is BudgetProgressLoaded) {
+            final progress = budgetState.progress;
+            final budget = progress.budget;
 
-              return BlocBuilder<ExpenseBloc, ExpenseState>(
-                builder: (context, expenseState) {
-                  final expenses = expenseState is ExpensesLoaded
-                  ? expenseState.expenses
-                      : <Expense>[];
+            return BlocBuilder<ExpenseBloc, ExpenseState>(
+              builder: (context, expenseState) {
+                final expenses = expenseState is ExpensesLoaded
+                    ? expenseState.expenses
+                    : <Expense>[];
 
-                  return _buildContent(context, budget, progress, expenses);
-                },
-              );
-            }
+                return _buildContent(context, budget, progress, expenses);
+              },
+            );
+          }
 
-            if (budgetState is BudgetError) {
-              return _buildErrorState(context, budgetState.message);
-            }
+          if (budgetState is BudgetError) {
+            return _buildErrorState(context, budgetState.message);
+          }
 
-            return const SizedBox();
-          },
-        ),
+          return const SizedBox();
+        },
       ),
     );
   }
@@ -128,12 +142,17 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
           backgroundColor: Color(0xFF0A2E5D),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-            onPressed: () => context.pop(),
+            onPressed: () {
+              _onPopToBudgetPage();
+              context.pop();
+            },
           ),
           actions: [
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.white),
-              onPressed: () => context.push('/edit-budget-page', extra: budget),
+              onPressed: () {
+                context.push('/edit-budget-page', extra: budget);
+              }
             ),
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.white),

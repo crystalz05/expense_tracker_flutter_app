@@ -11,3 +11,9 @@ String formatDate(DateTime date) {
     return "${date.day}/${date.month}/${date.year}";
   }
 }
+
+
+DateTime month = DateTime.now();
+
+DateTime firstDay = DateTime(month.year, month.month, 1);
+DateTime lastDay = DateTime(month.year, month.month + 1, 0, 23, 59, 59);

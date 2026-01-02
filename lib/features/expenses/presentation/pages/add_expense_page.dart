@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/utils/format_date.dart';
 import '../widgets/add_edit_expense_widgets/category_selector.dart';
 import '../widgets/add_edit_expense_widgets/expense_amount_field.dart';
 import '../widgets/add_edit_expense_widgets/expense_description_field.dart';
@@ -54,7 +55,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
       listener: (context, state) {
         if (state is ExpenseActionSuccess) {
           _showSuccessSnackBar(context, state.message);
-          context.pop();
+          context.pop(true);
         } else if (state is ExpenseError) {
           _showErrorSnackBar(context, state.message);
         }
