@@ -54,7 +54,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
   void initState() {
     super.initState();
     _startDate = DateTime.now();
-    _startDateController.text = DateFormat('EEEE, MMMM d, yyyy').format(_startDate!);
+    _startDateController.text = DateFormat('MMM d, yyyy').format(_startDate!);
   }
 
   @override
@@ -115,8 +115,6 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             ),
           );
           context.pop(true);
-          // context.read<ExpenseBloc>().add(const LoadExpensesEvent());
-          // context.read<BudgetBloc>().add(LoadAllBudgetProgress());
         } else if (state is BudgetError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -214,7 +212,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                     setState(() {
                                       _startDate = date;
                                       _startDateController.text =
-                                          DateFormat('EEEE, MMMM d, yyyy').format(date);
+                                          DateFormat('MMM d, yyyy').format(date);
                                       if (_endDate != null && _endDate!.isBefore(_startDate!)) {
                                         _endDate = null;
                                         _endDateController.clear();
@@ -241,7 +239,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                     setState(() {
                                       _endDate = date;
                                       _endDateController.text =
-                                          DateFormat('EEEE, MMMM d, yyyy').format(date);
+                                          DateFormat('MMM d, yyyy').format(date);
                                     });
                                   },
                                   firstDate: _startDate ?? DateTime.now(),

@@ -29,6 +29,10 @@ class _BudgetPageState extends State<BudgetPage> {
   void initState() {
     super.initState();
     context.read<ExpenseBloc>().add(const LoadExpensesEvent());
+    _reload();
+  }
+
+  void _reload(){
     context.read<BudgetBloc>().add(LoadAllBudgetProgress());
     context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
   }
@@ -99,7 +103,12 @@ class _BudgetPageState extends State<BudgetPage> {
                     ),
                   ),
                   FilledButton.icon(
-                    onPressed: () => context.push('/add-budget-page'),
+                    onPressed: () async {
+                      final success = await context.push('/add-budget-page');
+                      if(success == true && mounted){
+                        _reload();
+                      }
+                    },
                     icon: const Icon(Icons.add, size: 20),
                     label: const Text('Create'),
                     style: FilledButton.styleFrom(

@@ -13,8 +13,12 @@ class HistoryContent extends StatelessWidget {
   final bool hasActiveFilters;
   final String categoryFilter;
   final ValueChanged<String> onToggleSelection;
+  final ValueChanged<bool> toggleSelectionMode;
   final Future<void> Function() onRefresh;
   final VoidCallback onClearFilters;
+  final ValueChanged<String> onSwipeDelete;
+  final ValueChanged<Expense> onSwipeEdit;
+
 
   const HistoryContent({
     super.key,
@@ -24,8 +28,11 @@ class HistoryContent extends StatelessWidget {
     required this.hasActiveFilters,
     required this.categoryFilter,
     required this.onToggleSelection,
+    required this.toggleSelectionMode,
     required this.onRefresh,
     required this.onClearFilters,
+    required this.onSwipeDelete,
+    required this.onSwipeEdit
   });
 
   @override
@@ -48,8 +55,15 @@ class HistoryContent extends StatelessWidget {
           selectionMode: isSelectionMode,
           selectedIds: selectedIds,
           onToggleSelect: onToggleSelection,
-          onDelete: (id) {}, // Handled by parent
-          onEdit: (expense) {}, // Handled by parent
+          onDelete: (id) {
+            onSwipeDelete(id);
+            }, // Handled by parent
+          onEdit: (expense) {
+            onSwipeEdit(expense);
+            },
+          toggleSelectionMode: (bool value) {
+            toggleSelectionMode(value);
+            }, // Handled by parent
         ),
       ),
     );

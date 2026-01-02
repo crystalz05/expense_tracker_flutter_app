@@ -100,34 +100,37 @@ class CategoryGrid extends StatelessWidget {
                       width: isSelected ? 2 : 1,
                     ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        category.icon,
-                        color: isSelected
-                            ? category.color
-                            : Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.6),
-                        size: 28,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        category.name,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? category.color : null,
-                          fontSize: 11,
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.symmetric(horizontal: 3),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          category.icon,
+                          color: isSelected
+                              ? category.color
+                              : Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
+                          size: 28,
                         ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 6),
+                        Text(
+                          category.name,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected ? category.color : null,
+                            fontSize: 11,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  )
                 ),
               );
             },

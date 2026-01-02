@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/expense.dart';
 import '../bloc/expense_bloc.dart';
@@ -91,6 +92,16 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
           _isSelectionMode = false;
         });
       },
+    );
+  }
+
+  void _deleteExpense(String id){
+    showSingleDeleteConfirmationDialog(
+        context: context,
+        onConfirm: (){
+          context.read<ExpenseBloc>().add(SoftDeleteExpenseEvent(id));
+        },
+        onCancel: (){}
     );
   }
 
@@ -298,6 +309,13 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
               await Future.delayed(const Duration(seconds: 1));
             },
             onClearFilters: _clearAllFilters,
+            onSwipeDelete: (id) {
+              _deleteExpense(id);
+              },
+            onSwipeEdit: (expense) {
+              context.push("/edit-expense", extra: expense);
+            },
+            toggleSelectionMode: (bool value) { _isSelectionMode = value; },
           ),
         ),
       ],

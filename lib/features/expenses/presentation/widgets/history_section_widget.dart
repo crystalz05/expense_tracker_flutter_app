@@ -12,6 +12,7 @@ class HistorySection extends StatelessWidget {
   final List<Expense> expenses;
 
   final bool selectionMode;
+  final ValueChanged<bool> toggleSelectionMode;
   final Set<String> selectedIds;
 
   final ValueChanged<String> onToggleSelect;
@@ -22,6 +23,7 @@ class HistorySection extends StatelessWidget {
     super.key,
     required this.expenses,
     required this.selectionMode,
+    required this.toggleSelectionMode,
     required this.selectedIds,
     required this.onToggleSelect,
     required this.onDelete,
@@ -108,7 +110,12 @@ class HistorySection extends StatelessWidget {
                     final isSelected = selectedIds.contains(tx.id);
 
                     return GestureDetector(
-                        onLongPress: () => onToggleSelect(tx.id),
+                        onLongPress: () {
+                          if(!selectionMode){
+                            toggleSelectionMode(true);
+                          }
+                              onToggleSelect(tx.id);
+                        },
                         onTap: () {
                           if (selectionMode) {
                             onToggleSelect(tx.id);
@@ -125,7 +132,7 @@ class HistorySection extends StatelessWidget {
                               return false;
                             } else {
                               onDelete(tx.id);
-                              return true;
+                              return false;
                             }
                           },
                           background: SwipeAction(
@@ -140,7 +147,12 @@ class HistorySection extends StatelessWidget {
                           ),
                           child: InkWell(
                             // 👇 THIS is the fix
-                            onLongPress: () => onToggleSelect(tx.id),
+                            onLongPress: () {
+                              if(!selectionMode){
+                                toggleSelectionMode(true);
+                              }
+                              onToggleSelect(tx.id);
+                            },
                             onTap: selectionMode
                                 ? () => onToggleSelect(tx.id)
                                 : null,
