@@ -12,21 +12,25 @@ class UserProfileCacheDatasourceImpl implements UserProfileCacheDataSource {
 
 
   @override
-  Future<void> cacheProfile(UserProfileModel profile) {
-    // TODO: implement cacheProfile
-    throw UnimplementedError();
+  Future<void> cacheProfile(UserProfileModel profile) async {
+    await sharedPreferences.setString(_cacheKey, profile.toJsonString());
   }
 
   @override
-  Future<void> clearCache() {
-    // TODO: implement clearCache
-    throw UnimplementedError();
+  Future<void> clearCache() async {
+    await sharedPreferences.remove(_cacheKey);
   }
 
   @override
-  Future<UserProfileModel?> getCachedProfile(String userId) {
-    // TODO: implement getCachedProfile
-    throw UnimplementedError();
+  Future<UserProfileModel?> getCachedProfile(String userId) async {
+    try {
+      final jsonString = sharedPreferences.getString('_cacheKey');
+      if(jsonString != null){
+        return UserProfileModel.fromJsonString(jsonString);
+      }
+      return null;
+    }catch(e){
+      return null;
+    }
   }
-
 }
