@@ -52,10 +52,6 @@ class HomeAppBar extends StatelessWidget {
                 onTap: () => context.push("/budget-page"),
               ),
               const SizedBox(width: 12),
-              _AppBarIconButton(
-                icon: CupertinoIcons.bell_fill,
-                onTap: () {},
-              ),
               const SizedBox(width: 16),
               const _ProfileAvatar(),
             ],
