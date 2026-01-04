@@ -24,7 +24,7 @@ class UserProfileCacheDatasourceImpl implements UserProfileCacheDataSource {
   @override
   Future<UserProfileModel?> getCachedProfile(String userId) async {
     try {
-      final jsonString = sharedPreferences.getString('_cacheKey');
+      final jsonString = sharedPreferences.getString(_cacheKey);
       if(jsonString != null){
         return UserProfileModel.fromJsonString(jsonString);
       }

@@ -58,7 +58,7 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
 
     result.fold(
         (failure) => emit(UserProfileError(failure.message)),
-        (profile) => emit(UserProfileLoaded(profile));
+        (profile) => emit(UserProfileLoaded(profile))
     );
   }
   Future<void> _onUpdateUserProfile(

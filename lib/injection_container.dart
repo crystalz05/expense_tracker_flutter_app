@@ -4,6 +4,7 @@ import 'package:expenses_tracker_app/features/budget/budget_injection.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/get_by_category_and_period.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/soft_delete_expense.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/usecases/sync_expenses.dart';
+import 'package:expenses_tracker_app/features/user_profile/user_profile_injection.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -142,6 +143,7 @@ Future<void> init() async {
 
   await initBudget(sl);
   await initAnalytics(sl);
+  await initUserProfile(sl);
 
   // Bloc
   sl.registerFactory(() => ExpenseBloc(

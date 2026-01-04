@@ -13,6 +13,7 @@ import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/home_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
+import 'package:expenses_tracker_app/features/user_profile/presentation/bloc/user_profile_bloc.dart';
 import 'package:expenses_tracker_app/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,6 +48,10 @@ Future<void> main() async {
           BlocProvider(
               create: (_) => sl<OfflineModeCubit>()
           ),
+          BlocProvider(
+              create: (_) => sl<UserProfileBloc>()
+          ),
+
         ],
         child: const MyApp()),
   );

@@ -4,11 +4,13 @@ import 'package:expenses_tracker_app/features/user_profile/data/data_sources/use
 import 'package:expenses_tracker_app/features/user_profile/data/models/user_profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/error/exceptions.dart';
+
 class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
 
   final SupabaseClient supabaseClient;
 
-  UserProfileRemoteDatasourceImpl(this.supabaseClient);
+  UserProfileRemoteDatasourceImpl({required this.supabaseClient});
 
   @override
   Future<UserProfileModel> getUserProfile(String userId) async {
@@ -21,7 +23,7 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
 
       return UserProfileModel.fromJson(response);
     }catch(e){
-      throw Exception('Failed to fetch user profile: $e');
+      throw ServerException('Failed to fetch user profile: $e');
     }
   }
 
@@ -35,7 +37,7 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
 
       return UserProfileModel.fromJson(response);
     }catch(e){
-      throw Exception('Failed to create user profile: $e');
+      throw ServerException('Failed to fetch user profile: $e');
     }
   }
 
@@ -54,7 +56,7 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
 
       return UserProfileModel.fromJson(response);
     }catch(e){
-      throw Exception('Failed to update user profile: $e');
+      throw ServerException('Failed to fetch user profile: $e');
     }
   }
 
@@ -68,7 +70,7 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
           .from('profile_photos')
           .remove(['$userId/$path']);
     }catch(e){
-      throw Exception('Failed to delete profile photo: $e');
+      throw ServerException('Failed to fetch user profile: $e');
     }
   }
 
@@ -101,7 +103,7 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
 
       return UserProfileModel.fromJson(response);
     }catch(e){
-      throw Exception('Failed to upload profile photo: $e');
+      throw ServerException('Failed to fetch user profile: $e');
     }
   }
 

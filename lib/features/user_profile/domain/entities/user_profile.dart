@@ -17,19 +17,6 @@ class UserProfile extends Equatable {
     this.updatedAt
   });
 
-  // UserProfile copyWith({
-  //   String? profilePhotoUrl,
-  //   String? phoneNumber,
-  //   DateTime? updatedAt,
-  // }) {
-  //   return UserProfile(
-  //       userId: userId,
-  //       profilePhotoUrl: profilePhotoUrl ?? this.profilePhotoUrl,
-  //       phoneNumber: phoneNumber ?? this.phoneNumber,
-  //       createAt: createAt,
-  //       updatedAt: updatedAt ?? this.updatedAt,
-  //   );
-  // }
 
   @override
   // TODO: implement props

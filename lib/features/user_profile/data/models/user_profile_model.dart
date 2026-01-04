@@ -50,7 +50,7 @@ class UserProfileModel{
         userId: json['user_id'] as String,
         profilePhotoUrl: json['profile_photo_url'] as String?,
         phoneNumber: json['phone_number'] as String?,
-        createAt: DateTime.parse(json['create_at'] as String),
+        createAt: DateTime.parse(json['created_at'] as String),
         updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
   }
@@ -75,7 +75,7 @@ class UserProfileModel{
     return UserProfileModel(
         userId: userId ?? this.userId,
         profilePhotoUrl: profilePhotoUrl ?? this.profilePhotoUrl,
-        phoneNumber: phoneNumber ?? this.profilePhotoUrl,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
         createAt: createAt ?? this.createAt,
         updatedAt: updatedAt ?? this.updatedAt
     );
