@@ -79,34 +79,42 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<Either<Failure, UserProfile>> updateUserProfile(UserProfile profile) async {
-
-    if(await networkInfo.isConnected){
-      try{
-        final profileModel = UserProfileModel.fromEntity(profile);
-        final updatedProfile = await remoteDataSource.updateUserProfile(profileModel);
-        await cacheDataSource.cacheProfile(updatedProfile);
-
-        return Right(updatedProfile.toEntity());
-      }catch(e){
-        return Left(ServerFailure(e.toString()));
-      }
-    }else{
+    if (!await networkInfo.isConnected) {
       return Left(NetworkFailure('No internet connection'));
+    }
+
+    try {
+      final model = UserProfileModel.fromEntity(profile);
+      final updated = await remoteDataSource.updateUserProfile(model);
+
+      await cacheDataSource.cacheProfile(updated);
+
+      return Right(updated.toEntity());
+    } on ServerException catch (e, stack) {
+      _logError('Update profile failed', e, stack);
+      return Left(ServerFailure(e.message));
+    } catch (e, stack) {
+      _logError('Unexpected error', e, stack);
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
   @override
   Future<Either<Failure, UserProfile>> uploadProfilePhoto(File photoFile) async {
 
-    if(await networkInfo.isConnected){
-      try{
-        final profileModel = await remoteDataSource.uploadProfilePhoto(userSession.userId, photoFile);
-        return Right(profileModel.toEntity());
-      }catch(e){
-        return Left(ServerFailure());
-      }
-    }else{
+    if(!await networkInfo.isConnected) {
       return Left(NetworkFailure('No internet connection'));
+    }
+    try{
+      final profileModel = await remoteDataSource.uploadProfilePhoto(userSession.userId, photoFile);
+      await cacheDataSource.cacheProfile(profileModel);
+      return Right(profileModel.toEntity());
+    }on ServerException catch(e, stack){
+      _logError("Profile photo upload failed", e, stack);
+      return Left(ServerFailure(e.message));
+    }catch(e, stack){
+      _logError("Unexpected error", e, stack);
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
@@ -135,15 +143,19 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<Either<Failure, void>> deleteProfilePhoto(String photoUrl) async {
-    if (await networkInfo.isConnected) {
-      try {
-        await remoteDataSource.deleteProfilePhoto(userSession.userId, photoUrl);
-        return const Right(null);
-      } catch (e) {
-        return Left(ServerFailure(e.toString()));
-      }
-    } else {
+    if (!await networkInfo.isConnected) {
       return Left(NetworkFailure('No internet connection'));
+    }
+    try {
+      await remoteDataSource.deleteProfilePhoto(userSession.userId, photoUrl);
+      await cacheDataSource.clearCache();
+      return const Right(null);
+    } on ServerException catch (e, stack) {
+      _logError('Delete profile photo failed', e, stack);
+      return Left(ServerFailure(e.message));
+    } catch (e, stack){
+      _logError('Unexpected error', e, stack);
+      return Left(UnknownFailure(e.toString()));
     }
   }
 }

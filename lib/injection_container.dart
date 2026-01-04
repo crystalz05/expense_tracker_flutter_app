@@ -141,7 +141,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCategoryTotals());
 
   await initBudget(sl);
-  await initAnalytics(sl); // NEW
+  await initAnalytics(sl);
 
   // Bloc
   sl.registerFactory(() => ExpenseBloc(
