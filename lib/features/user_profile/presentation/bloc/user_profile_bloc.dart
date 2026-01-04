@@ -54,7 +54,7 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
       ) async {
     emit(const UserProfileLoading());
 
-    final result = await createUserProfile(event.profile);
+    final result = await createUserProfile(NoParams());
 
     result.fold(
         (failure) => emit(UserProfileError(failure.message)),

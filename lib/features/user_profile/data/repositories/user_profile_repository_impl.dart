@@ -54,9 +54,15 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfile>> createUserProfile(UserProfile profile) async {
+  Future<Either<Failure, UserProfile>> createUserProfile() async {
 
     try{
+
+      final profile = UserProfile(
+          userId: userSession.userId,
+          createAt: DateTime.now()
+      );
+
       if(await networkInfo.isConnected){
 
         final profileModel = UserProfileModel.fromEntity(profile);

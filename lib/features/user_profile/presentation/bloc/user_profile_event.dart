@@ -18,12 +18,10 @@ class LoadUserProfileEvent extends UserProfileEvent{
 
 class CreateUserProfileEvent extends UserProfileEvent{
 
-  final UserProfile profile;
-
-  const CreateUserProfileEvent(this.profile);
+  const CreateUserProfileEvent();
 
   @override
-  List<Object?> get props => [profile];
+  List<Object?> get props => [];
 }
 
 class UpdateUserProfileEvent extends UserProfileEvent {

@@ -51,7 +51,7 @@ dependencies:
   go_router: ^14.0.0
   shared_preferences: ^2.2.2
   supabase_flutter: ^2.0.0
-  connectivity_plus: ^5.0.2
+  connectivity_plus: ^7.0.0
 
 
 dev_dependencies:

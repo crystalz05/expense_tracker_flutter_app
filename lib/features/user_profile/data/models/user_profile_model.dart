@@ -7,7 +7,7 @@ import '../../../../core/utils/date_time_converter.dart';
 import '../../domain/entities/user_profile.dart';
 
 @TypeConverters([DateTimeConverter, NullableDateTimeConverter])
-@Entity(tableName: "user_profile")
+@Entity(tableName: "user_profiles")
 class UserProfileModel{
 
   @primaryKey

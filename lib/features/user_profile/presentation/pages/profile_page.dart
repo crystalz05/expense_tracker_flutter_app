@@ -48,6 +48,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 behavior: SnackBarBehavior.floating,
               ),
             );
+            if (state.message.contains("No cached") || state.message.contains("not found")) {
+              final authState = context.read<AuthBloc>().state;
+              if (authState is AuthAuthenticated) {
+                context.read<UserProfileBloc>().add(CreateUserProfileEvent());
+              }
+            }
           } else if (state is UserProfilePhotoUploaded) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -93,9 +99,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 : (state as UserProfileUpdated).profile;
             return _buildProfileContent(context, profile);
           }
-
           // Initial state or error - show basic UI
-          return context.read<UserProfileBloc>().add(CreateUserProfileEvent());
+          return _buildEmptyState(context);
         },
       ),
     );

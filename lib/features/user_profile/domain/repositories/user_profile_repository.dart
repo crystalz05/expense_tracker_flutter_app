@@ -7,7 +7,7 @@ import '../../../../core/error/failures.dart';
 
 abstract class UserProfileRepository {
   Future<Either<Failure, UserProfile>> getUserProfile();
-  Future<Either<Failure, UserProfile>> createUserProfile(UserProfile profile);
+  Future<Either<Failure, UserProfile>> createUserProfile();
   Future<Either<Failure, UserProfile>> updateUserProfile(UserProfile profile);
   Future<Either<Failure, UserProfile>> uploadProfilePhoto(File photoFile);
   Future<Either<Failure, void>> deleteProfilePhoto(String photoUrl);
