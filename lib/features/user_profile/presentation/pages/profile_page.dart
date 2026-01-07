@@ -97,6 +97,9 @@ class _ProfilePageState extends State<ProfilePage> {
             final profile = state is UserProfileLoaded
                 ? state.profile
                 : (state as UserProfileUpdated).profile;
+
+            print(profile.profilePhotoUrl);
+
             return _buildProfileContent(context, profile);
           }
           // Initial state or error - show basic UI
@@ -263,22 +266,26 @@ class _ProfilePhotoSection extends StatelessWidget {
   Future<void> _pickAndUploadPhoto(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
 
+    if (!context.mounted) return;
+
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
+      builder: (bottomSheetContext) => SafeArea(
         child: Wrap(
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
               title: const Text('Take Photo'),
               onTap: () async {
-                Navigator.pop(context);
+                Navigator.pop(bottomSheetContext);
+
                 final XFile? image = await picker.pickImage(
                   source: ImageSource.camera,
                   maxWidth: 1024,
                   maxHeight: 1024,
                   imageQuality: 85,
                 );
+
                 if (image != null && context.mounted) {
                   context.read<UserProfileBloc>().add(
                     UploadProfilePhotoEvent(File(image.path)),
@@ -290,13 +297,15 @@ class _ProfilePhotoSection extends StatelessWidget {
               leading: const Icon(Icons.photo_library),
               title: const Text('Choose from Gallery'),
               onTap: () async {
-                Navigator.pop(context);
+                Navigator.pop(bottomSheetContext);
+
                 final XFile? image = await picker.pickImage(
                   source: ImageSource.gallery,
                   maxWidth: 1024,
                   maxHeight: 1024,
                   imageQuality: 85,
                 );
+
                 if (image != null && context.mounted) {
                   context.read<UserProfileBloc>().add(
                     UploadProfilePhotoEvent(File(image.path)),
@@ -309,10 +318,13 @@ class _ProfilePhotoSection extends StatelessWidget {
                 leading: const Icon(Icons.delete, color: Colors.red),
                 title: const Text('Remove Photo', style: TextStyle(color: Colors.red)),
                 onTap: () {
-                  Navigator.pop(context);
-                  context.read<UserProfileBloc>().add(
-                    DeleteProfilePhotoEvent(profile.profilePhotoUrl!),
-                  );
+                  Navigator.pop(bottomSheetContext);
+
+                  if (context.mounted) {
+                    context.read<UserProfileBloc>().add(
+                      DeleteProfilePhotoEvent(profile.profilePhotoUrl!),
+                    );
+                  }
                 },
               ),
           ],
@@ -706,7 +718,7 @@ class _DangerZoneSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.05),
+        color: Colors.red.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.red.withOpacity(0.2)),
       ),
@@ -744,8 +756,12 @@ class _DangerZoneSection extends StatelessWidget {
                       FilledButton(
                         onPressed: () {
                           Navigator.pop(dialogContext);
-                          context.read<AuthBloc>().add(AuthSignOutRequested());
-                          context.go('/login');
+
+                          // Use the outer context which is still valid
+                          if (context.mounted) {
+                            context.read<AuthBloc>().add(AuthSignOutRequested());
+                            context.go('/login');
+                          }
                         },
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.red,

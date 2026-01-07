@@ -52,7 +52,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
   }
 
   void _onPopToBudgetPage(){
-    context.read<ExpenseBloc>().add(const LoadExpensesEvent());
+    // context.read<ExpenseBloc>().add(const LoadExpensesEvent());
     context.read<BudgetBloc>().add(LoadAllBudgetProgress());
     context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
   }

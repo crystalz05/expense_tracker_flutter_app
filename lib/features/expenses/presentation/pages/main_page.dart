@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/utils/format_date.dart';
 import 'home_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -86,7 +87,8 @@ class _MainPage extends State<MainPage> {
     budgetBloc.add(const SyncBudgetsEvent());
 
     // Load local data immediately for fast UI
-    expenseBloc.add(LoadExpensesEvent());
+    // expenseBloc.add(LoadExpensesEvent());
+    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
     budgetBloc.add(const LoadBudgetsEvent());
 
     // Check if cleanup is needed (runs once on app start)

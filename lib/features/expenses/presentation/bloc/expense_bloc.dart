@@ -212,7 +212,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       final result = await syncExpenses(NoParams());
       result.fold(
             (f) => null, // Silent fail for background sync
-            (_) => add(LoadExpensesEvent()),
+            (_) => null,
       );
       return;
     }
@@ -224,7 +224,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           (f) => emit(ExpenseError(f.message)),
           (_) {
         emit(const ExpenseActionSuccess("Sync completed successfully"));
-        add(LoadExpensesEvent());
       },
     );
   }

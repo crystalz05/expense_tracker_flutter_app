@@ -13,6 +13,8 @@ import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_ex
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/edit_expense_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/expense_detail_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
+import 'package:expenses_tracker_app/features/user_profile/domain/entities/user_profile.dart';
+import 'package:expenses_tracker_app/features/user_profile/presentation/pages/edit_profile_page.dart';
 import 'package:expenses_tracker_app/features/user_profile/presentation/pages/profile_page.dart';
 import 'package:go_router/go_router.dart';
 
@@ -87,6 +89,13 @@ final GoRouter router = GoRouter(
       GoRoute(
         path: '/profile-page',
         builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: '/edit-profile',
+        builder: (context, state) {
+          final profile = state.extra as UserProfile;
+          return EditProfilePage(profile: profile);
+        }
       ),
     ],
 );

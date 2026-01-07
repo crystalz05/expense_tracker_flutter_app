@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/utils/expenses_categories.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -28,7 +29,7 @@ class _BudgetPageState extends State<BudgetPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ExpenseBloc>().add(const LoadExpensesEvent());
+    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
     _reload();
   }
 
@@ -150,8 +151,26 @@ class _BudgetPageState extends State<BudgetPage> {
             },
             builder: (context, state) {
               if (state is BudgetLoading) {
-                return const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
+                // Show skeleton with mock BudgetCard structure
+                return SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Skeletonizer(
+                            enabled: true,
+                            child: BudgetCard(
+                              progress: _createMockProgress(),
+                              onTap: () {},
+                            ),
+                          ),
+                        );
+                      },
+                      childCount: 3, // Show 3 skeleton cards
+                    ),
+                  ),
                 );
               }
 
@@ -206,4 +225,63 @@ class _BudgetPageState extends State<BudgetPage> {
       ),
     );
   }
+
+  // Create mock progress data for skeleton
+  dynamic _createMockProgress() {
+    return _MockBudgetProgress(
+      budget: _MockBudget(
+        id: 'skeleton-id',
+        category: 'Shopping',
+        description: 'Monthly shopping budget',
+        amount: 50000.0,
+        period: 'monthly',
+        startDate: DateTime.now(),
+        endDate: DateTime.now().add(const Duration(days: 30)),
+      ),
+      spent: 25000.0,
+      remaining: 25000.0,
+      percentageUsed: 50.0,
+      isOverBudget: false,
+      shouldAlert: false,
+    );
+  }
+}
+
+// Mock classes for skeleton loading
+class _MockBudget {
+  final String id;
+  final String category;
+  final String description;
+  final double amount;
+  final String period;
+  final DateTime startDate;
+  final DateTime endDate;
+
+  _MockBudget({
+    required this.id,
+    required this.category,
+    required this.description,
+    required this.amount,
+    required this.period,
+    required this.startDate,
+    required this.endDate,
+  });
+}
+
+class _MockBudgetProgress {
+  final _MockBudget budget;
+  final double spent;
+  final double remaining;
+  final double percentageUsed;
+  final bool isOverBudget;
+  final bool shouldAlert;
+
+  _MockBudgetProgress({
+    required this.budget,
+    required this.spent,
+    required this.remaining,
+    required this.percentageUsed,
+    required this.isOverBudget,
+    required this.shouldAlert,
+  });
 }
