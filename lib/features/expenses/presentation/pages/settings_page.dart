@@ -1,5 +1,4 @@
 import 'package:expenses_tracker_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:expenses_tracker_app/features/expenses/presentation/pages/sign_out_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -84,10 +83,6 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 12),
               AboutCard(),
               const SizedBox(height: 32),
-
-              // Sign Out Button
-              SignOutButton(),
-              const SizedBox(height: 16),
             ],
           ),
         ),

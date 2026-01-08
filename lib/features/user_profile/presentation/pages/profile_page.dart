@@ -73,11 +73,11 @@ class _ProfilePageState extends State<ProfilePage> {
           } else if (state is UserProfileUpdated) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Row(
+                content: Row(
                   children: [
                     Icon(Icons.check_circle, color: Colors.white),
-                    SizedBox(width: 12),
-                    Text('Profile updated successfully'),
+                    const SizedBox(width: 12),
+                    const Text('Profile updated successfully'),
                   ],
                 ),
                 backgroundColor: Colors.green,
@@ -189,19 +189,11 @@ class _ModernProfileAppBar extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: 280,
       pinned: true,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Color(0xFF0A2E5D),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         onPressed: () => context.pop(),
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.white),
-          onPressed: () {
-            context.push('/edit-profile', extra: profile);
-          },
-        ),
-      ],
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
@@ -209,8 +201,8 @@ class _ModernProfileAppBar extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                Color(0xFF0A2E5D),
+                Color(0xFF0A2E5D).withValues(alpha: 0.7),
               ],
             ),
           ),
@@ -382,10 +374,10 @@ class _ProfilePhotoSection extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.camera_alt,
                   size: 20,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary
                 ),
               ),
             ),
@@ -577,7 +569,7 @@ class _ActionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [

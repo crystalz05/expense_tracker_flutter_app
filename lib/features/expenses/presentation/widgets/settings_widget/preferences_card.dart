@@ -69,26 +69,6 @@ class PreferencesCard extends StatelessWidget {
               },
             ),
           ),
-          const Divider(height: 1, indent: 72),
-          _PreferenceItem(
-            icon: Icons.privacy_tip_outlined,
-            title: 'Privacy Policy',
-            subtitle: 'How we handle your data',
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              // Navigate to privacy policy
-            },
-          ),
-          const Divider(height: 1, indent: 72),
-          _PreferenceItem(
-            icon: Icons.description_outlined,
-            title: 'Terms of Service',
-            subtitle: 'App terms and conditions',
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              // Navigate to terms
-            },
-          ),
         ],
       ),
     );
