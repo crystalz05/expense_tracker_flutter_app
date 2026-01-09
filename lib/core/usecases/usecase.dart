@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../error/failures.dart';
@@ -154,4 +155,19 @@ class TrendParams extends Equatable {
 
   @override
   List<Object?> get props => [monthsBack];
+}
+
+class BudgetDateParams extends Equatable {
+  final String month;
+  final String year;
+  final double amount;
+
+  const BudgetDateParams({
+    required this.month,
+    required this.year,
+    required this.amount,
+  });
+
+  @override
+  List<Object?> get props => [month, year, amount];
 }
