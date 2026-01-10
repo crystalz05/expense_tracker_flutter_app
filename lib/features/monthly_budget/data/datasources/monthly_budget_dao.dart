@@ -1,35 +1,45 @@
-
-import 'package:expenses_tracker_app/features/monthly_budget/data/models/monthly_budget_model.dart';
-import 'package:expenses_tracker_app/features/monthly_budget/domain/entities/monthly_budget.dart';
 import 'package:floor/floor.dart';
 
-import '../../../../core/usecases/usecase.dart';
+import '../models/monthly_budget_model.dart';
 
 @dao
 abstract class MonthlyBudgetDao {
+  @Query('SELECT * FROM monthly_budgets WHERE is_deleted = 0 AND user_id = :userId ORDER BY year DESC, month DESC')
+  Future<List<MonthlyBudgetModel>> getAllMonthlyBudgets(String userId);
 
-  @Query('SELECT * FROM monthly_budgets WHERE month = :month AND year = :year')
-  Future<MonthlyBudgetModel> getMonthlyBudgetByDate(String month, String year);
-  
-  @Query('SELECT * FROM monthly_budgets')
-  Future<List<MonthlyBudgetModel>> getAllMonthlyBudgets();
+  @Query('SELECT * FROM monthly_budgets WHERE id = :id')
+  Future<MonthlyBudgetModel?> getMonthlyBudgetById(String id);
+
+  @Query('SELECT * FROM monthly_budgets WHERE user_id = :userId AND month = :month AND year = :year AND is_deleted = 0')
+  Future<MonthlyBudgetModel?> getMonthlyBudgetByMonthYear(String userId, int month, int year);
+
+  @Query('SELECT * FROM monthly_budgets WHERE user_id = :userId AND year = :year AND is_deleted = 0 ORDER BY month ASC')
+  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsByYear(String userId, int year);
+
+  @insert
+  Future<void> insertMonthlyBudget(MonthlyBudgetModel monthlyBudget);
 
   @update
-  Future<MonthlyBudgetModel> updateMonthlyBudget(MonthlyBudgetModel model);
+  Future<void> updateMonthlyBudget(MonthlyBudgetModel monthlyBudget);
 
-  @Query('DELETE FROM monthly_budgets where month = :month AND year = :year')
-  Future<void> deleteMonthlyBudgetByDate(String month, String year);
+  @Query('DELETE FROM monthly_budgets WHERE id = :id')
+  Future<void> deleteMonthlyBudget(String id);
 
-  Future<void> syncMonthlyBudgets();
+  @Query('SELECT * FROM monthly_budgets WHERE needs_sync = 1 AND user_id = :userId')
+  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsNeedingSync(String userId);
 
+  @Query('SELECT * FROM monthly_budgets WHERE is_deleted = 1 AND user_id = :userId')
+  Future<List<MonthlyBudgetModel>> getDeletedMonthlyBudgets(String userId);
+
+  @Query('DELETE FROM monthly_budgets WHERE is_deleted = 1 AND id IN (:ids)')
+  Future<void> permanentlyDeleteMonthlyBudgets(List<String> ids);
+
+  @Query('UPDATE monthly_budgets SET needs_sync = 0, last_synced_at = :syncTime WHERE id = :id')
+  Future<void> markAsSynced(String id, DateTime syncTime);
+
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> insertMonthlyBudgets(List<MonthlyBudgetModel> budgets);
+
+  @Query('DELETE FROM monthly_budgets WHERE user_id = :userId')
+  Future<void> clearUserData(String userId);
 }
-
-
-
-// Future<Either<Failure, MonthlyBudget>> getMonthlyBudgetByDate(BudgetDateParams param);
-// Future<Either<Failure, List<MonthlyBudget>>> getAllMonthlyBudgets();
-// Future<Either<Failure, MonthlyBudget>> updateMonthlyBudget(BudgetDateParams param);
-// Future<Either<Failure, MonthlyBudget>> updateMonthlyBudgetById(String id);
-// Future<Either<Failure, void>> deleteMonthlyBudgetByDate(BudgetDateParams param);
-//
-// Future<Either<Failure, void>> syncMonthlyBudgets();

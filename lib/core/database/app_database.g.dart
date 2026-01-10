@@ -76,6 +76,8 @@ class _$AppDatabase extends AppDatabase {
 
   BudgetDao? _budgetDaoInstance;
 
+  MonthlyBudgetDao? _monthlyBudgetDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -101,6 +103,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `expenses` (`id` TEXT NOT NULL, `amount` REAL NOT NULL, `category` TEXT NOT NULL, `description` TEXT, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `payment_method` TEXT NOT NULL, `is_deleted` INTEGER NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `budgets` (`id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `amount` REAL NOT NULL, `start_date` INTEGER NOT NULL, `end_date` INTEGER NOT NULL, `period` TEXT NOT NULL, `is_recurring` INTEGER NOT NULL, `alert_threshold` REAL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER, `is_deleted` INTEGER NOT NULL, `needs_sync` INTEGER NOT NULL, `last_synced_at` INTEGER, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `monthly_budgets` (`id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `month` INTEGER NOT NULL, `year` INTEGER NOT NULL, `amount` REAL NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER, `is_deleted` INTEGER NOT NULL, `needs_sync` INTEGER NOT NULL, `last_synced_at` INTEGER, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -116,6 +120,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   BudgetDao get budgetDao {
     return _budgetDaoInstance ??= _$BudgetDao(database, changeListener);
+  }
+
+  @override
+  MonthlyBudgetDao get monthlyBudgetDao {
+    return _monthlyBudgetDaoInstance ??=
+        _$MonthlyBudgetDao(database, changeListener);
   }
 }
 
@@ -522,6 +532,206 @@ class _$BudgetDao extends BudgetDao {
   @override
   Future<void> updateBudget(BudgetModel budget) async {
     await _budgetModelUpdateAdapter.update(budget, OnConflictStrategy.abort);
+  }
+}
+
+class _$MonthlyBudgetDao extends MonthlyBudgetDao {
+  _$MonthlyBudgetDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _monthlyBudgetModelInsertionAdapter = InsertionAdapter(
+            database,
+            'monthly_budgets',
+            (MonthlyBudgetModel item) => <String, Object?>{
+                  'id': item.id,
+                  'user_id': item.userId,
+                  'month': item.month,
+                  'year': item.year,
+                  'amount': item.amount,
+                  'created_at': _dateTimeConverter.encode(item.createdAt),
+                  'updated_at':
+                      _nullableDateTimeConverter.encode(item.updatedAt),
+                  'is_deleted': item.isDeleted ? 1 : 0,
+                  'needs_sync': item.needsSync ? 1 : 0,
+                  'last_synced_at':
+                      _nullableDateTimeConverter.encode(item.lastSyncedAt)
+                }),
+        _monthlyBudgetModelUpdateAdapter = UpdateAdapter(
+            database,
+            'monthly_budgets',
+            ['id'],
+            (MonthlyBudgetModel item) => <String, Object?>{
+                  'id': item.id,
+                  'user_id': item.userId,
+                  'month': item.month,
+                  'year': item.year,
+                  'amount': item.amount,
+                  'created_at': _dateTimeConverter.encode(item.createdAt),
+                  'updated_at':
+                      _nullableDateTimeConverter.encode(item.updatedAt),
+                  'is_deleted': item.isDeleted ? 1 : 0,
+                  'needs_sync': item.needsSync ? 1 : 0,
+                  'last_synced_at':
+                      _nullableDateTimeConverter.encode(item.lastSyncedAt)
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<MonthlyBudgetModel>
+      _monthlyBudgetModelInsertionAdapter;
+
+  final UpdateAdapter<MonthlyBudgetModel> _monthlyBudgetModelUpdateAdapter;
+
+  @override
+  Future<List<MonthlyBudgetModel>> getAllMonthlyBudgets(String userId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM monthly_budgets WHERE is_deleted = 0 AND user_id = ?1 ORDER BY year DESC, month DESC',
+        mapper: (Map<String, Object?> row) => MonthlyBudgetModel(id: row['id'] as String, userId: row['user_id'] as String, month: row['month'] as int, year: row['year'] as int, amount: row['amount'] as double, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _nullableDateTimeConverter.decode(row['updated_at'] as int?), isDeleted: (row['is_deleted'] as int) != 0, needsSync: (row['needs_sync'] as int) != 0, lastSyncedAt: _nullableDateTimeConverter.decode(row['last_synced_at'] as int?)),
+        arguments: [userId]);
+  }
+
+  @override
+  Future<MonthlyBudgetModel?> getMonthlyBudgetById(String id) async {
+    return _queryAdapter.query('SELECT * FROM monthly_budgets WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => MonthlyBudgetModel(
+            id: row['id'] as String,
+            userId: row['user_id'] as String,
+            month: row['month'] as int,
+            year: row['year'] as int,
+            amount: row['amount'] as double,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt:
+                _nullableDateTimeConverter.decode(row['updated_at'] as int?),
+            isDeleted: (row['is_deleted'] as int) != 0,
+            needsSync: (row['needs_sync'] as int) != 0,
+            lastSyncedAt: _nullableDateTimeConverter
+                .decode(row['last_synced_at'] as int?)),
+        arguments: [id]);
+  }
+
+  @override
+  Future<MonthlyBudgetModel?> getMonthlyBudgetByMonthYear(
+    String userId,
+    int month,
+    int year,
+  ) async {
+    return _queryAdapter.query(
+        'SELECT * FROM monthly_budgets WHERE user_id = ?1 AND month = ?2 AND year = ?3 AND is_deleted = 0',
+        mapper: (Map<String, Object?> row) => MonthlyBudgetModel(id: row['id'] as String, userId: row['user_id'] as String, month: row['month'] as int, year: row['year'] as int, amount: row['amount'] as double, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _nullableDateTimeConverter.decode(row['updated_at'] as int?), isDeleted: (row['is_deleted'] as int) != 0, needsSync: (row['needs_sync'] as int) != 0, lastSyncedAt: _nullableDateTimeConverter.decode(row['last_synced_at'] as int?)),
+        arguments: [userId, month, year]);
+  }
+
+  @override
+  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsByYear(
+    String userId,
+    int year,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM monthly_budgets WHERE user_id = ?1 AND year = ?2 AND is_deleted = 0 ORDER BY month ASC',
+        mapper: (Map<String, Object?> row) => MonthlyBudgetModel(id: row['id'] as String, userId: row['user_id'] as String, month: row['month'] as int, year: row['year'] as int, amount: row['amount'] as double, createdAt: _dateTimeConverter.decode(row['created_at'] as int), updatedAt: _nullableDateTimeConverter.decode(row['updated_at'] as int?), isDeleted: (row['is_deleted'] as int) != 0, needsSync: (row['needs_sync'] as int) != 0, lastSyncedAt: _nullableDateTimeConverter.decode(row['last_synced_at'] as int?)),
+        arguments: [userId, year]);
+  }
+
+  @override
+  Future<void> deleteMonthlyBudget(String id) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM monthly_budgets WHERE id = ?1',
+        arguments: [id]);
+  }
+
+  @override
+  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsNeedingSync(
+      String userId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM monthly_budgets WHERE needs_sync = 1 AND user_id = ?1',
+        mapper: (Map<String, Object?> row) => MonthlyBudgetModel(
+            id: row['id'] as String,
+            userId: row['user_id'] as String,
+            month: row['month'] as int,
+            year: row['year'] as int,
+            amount: row['amount'] as double,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt:
+                _nullableDateTimeConverter.decode(row['updated_at'] as int?),
+            isDeleted: (row['is_deleted'] as int) != 0,
+            needsSync: (row['needs_sync'] as int) != 0,
+            lastSyncedAt: _nullableDateTimeConverter
+                .decode(row['last_synced_at'] as int?)),
+        arguments: [userId]);
+  }
+
+  @override
+  Future<List<MonthlyBudgetModel>> getDeletedMonthlyBudgets(
+      String userId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM monthly_budgets WHERE is_deleted = 1 AND user_id = ?1',
+        mapper: (Map<String, Object?> row) => MonthlyBudgetModel(
+            id: row['id'] as String,
+            userId: row['user_id'] as String,
+            month: row['month'] as int,
+            year: row['year'] as int,
+            amount: row['amount'] as double,
+            createdAt: _dateTimeConverter.decode(row['created_at'] as int),
+            updatedAt:
+                _nullableDateTimeConverter.decode(row['updated_at'] as int?),
+            isDeleted: (row['is_deleted'] as int) != 0,
+            needsSync: (row['needs_sync'] as int) != 0,
+            lastSyncedAt: _nullableDateTimeConverter
+                .decode(row['last_synced_at'] as int?)),
+        arguments: [userId]);
+  }
+
+  @override
+  Future<void> permanentlyDeleteMonthlyBudgets(List<String> ids) async {
+    const offset = 1;
+    final _sqliteVariablesForIds =
+        Iterable<String>.generate(ids.length, (i) => '?${i + offset}')
+            .join(',');
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM monthly_budgets WHERE is_deleted = 1 AND id IN (' +
+            _sqliteVariablesForIds +
+            ')',
+        arguments: [...ids]);
+  }
+
+  @override
+  Future<void> markAsSynced(
+    String id,
+    DateTime syncTime,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE monthly_budgets SET needs_sync = 0, last_synced_at = ?2 WHERE id = ?1',
+        arguments: [id, _dateTimeConverter.encode(syncTime)]);
+  }
+
+  @override
+  Future<void> clearUserData(String userId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM monthly_budgets WHERE user_id = ?1',
+        arguments: [userId]);
+  }
+
+  @override
+  Future<void> insertMonthlyBudget(MonthlyBudgetModel monthlyBudget) async {
+    await _monthlyBudgetModelInsertionAdapter.insert(
+        monthlyBudget, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertMonthlyBudgets(List<MonthlyBudgetModel> budgets) async {
+    await _monthlyBudgetModelInsertionAdapter.insertList(
+        budgets, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> updateMonthlyBudget(MonthlyBudgetModel monthlyBudget) async {
+    await _monthlyBudgetModelUpdateAdapter.update(
+        monthlyBudget, OnConflictStrategy.abort);
   }
 }
 

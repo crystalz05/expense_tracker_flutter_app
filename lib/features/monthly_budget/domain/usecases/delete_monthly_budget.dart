@@ -4,13 +4,13 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../repositories/monthly_budget_repository.dart';
 
-class SyncMonthlyBudgets implements UseCase<void, NoParams> {
+class DeleteMonthlyBudget implements UseCase<void, IdParams> {
   final MonthlyBudgetRepository repository;
 
-  SyncMonthlyBudgets(this.repository);
+  DeleteMonthlyBudget(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(NoParams params) async {
-    return await repository.syncMonthlyBudgets();
+  Future<Either<Failure, void>> call(IdParams params) async {
+    return await repository.deleteMonthlyBudget(params.id);
   }
 }

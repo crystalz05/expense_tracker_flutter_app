@@ -6,5 +6,5 @@ class SupabaseConstants {
   static const String expensesTable = 'expenses';
   static const String usersTable = 'users';
   static const String budgetTable = 'budgets';
-
+  static const String monthlyBudgetTable = 'monthly_budgets';
 }

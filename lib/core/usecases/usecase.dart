@@ -8,6 +8,7 @@ import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.d
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../features/monthly_budget/domain/entities/monthly_budget.dart';
 import '../error/failures.dart';
 
 abstract class UseCase<Type, Params> {
@@ -157,17 +158,30 @@ class TrendParams extends Equatable {
   List<Object?> get props => [monthsBack];
 }
 
-class BudgetDateParams extends Equatable {
-  final String month;
-  final String year;
-  final double amount;
+class MonthYearParams extends Equatable {
+  final int month;
+  final int year;
 
-  const BudgetDateParams({
-    required this.month,
-    required this.year,
-    required this.amount,
-  });
+  const MonthYearParams({required this.month, required this.year});
 
   @override
-  List<Object?> get props => [month, year, amount];
+  List<Object?> get props => [month, year];
+}
+
+class YearParams extends Equatable {
+  final int year;
+
+  const YearParams({required this.year});
+
+  @override
+  List<Object?> get props => [year];
+}
+
+class MonthlyBudgetParams extends Equatable {
+  final MonthlyBudget monthlyBudget;
+
+  const MonthlyBudgetParams({required this.monthlyBudget});
+
+  @override
+  List<Object?> get props => [monthlyBudget];
 }

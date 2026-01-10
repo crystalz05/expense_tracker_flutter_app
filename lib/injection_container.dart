@@ -42,6 +42,7 @@ import 'features/expenses/domain/usecases/purge_soft_delete.dart';
 import 'features/expenses/domain/usecases/update_expense.dart';
 import 'features/expenses/presentation/bloc/expense_bloc.dart';
 import 'features/analytics/analytics_injection.dart';
+import 'features/monthly_budget/monthly_budget_injection.dart';
 
 final sl = GetIt.instance;
 
@@ -144,6 +145,8 @@ Future<void> init() async {
   await initBudget(sl);
   await initAnalytics(sl);
   await initUserProfile(sl);
+  await initMonthlyBudget(sl);
+
 
   // Bloc
   sl.registerFactory(() => ExpenseBloc(
