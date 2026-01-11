@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
-import '../widgets/settings_widget/budget_card.dart';
+import '../widgets/settings_widget/monthly_budget_card.dart';
 import '../widgets/settings_widget/about_card.dart';
 import '../widgets/settings_widget/cleanup_card.dart';
 import '../widgets/settings_widget/preferences_card.dart';
@@ -52,7 +52,13 @@ class SettingsPage extends StatelessWidget {
                 title: 'BUDGET',
               ),
               const SizedBox(height: 12),
-              BudgetCard(),
+              const MonthlyBudgetCard(),
+              TextButton(
+                  onPressed: () {
+                    context.push('/all-monthly-budget');
+                  },
+                  child: Text("Show more")
+              ),
               const SizedBox(height: 32),
 
               // Data Management Section

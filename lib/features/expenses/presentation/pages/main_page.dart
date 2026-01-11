@@ -7,6 +7,8 @@ import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/expenses_history_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/settings_page.dart';
+import 'package:expenses_tracker_app/features/monthly_budget/presentation/bloc/monthly_budget_bloc.dart';
+import 'package:expenses_tracker_app/features/monthly_budget/presentation/bloc/monthly_budget_event.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -100,6 +102,7 @@ class _MainPage extends State<MainPage> {
       const SyncExpensesEvent(showLoading: false),
     );
     context.read<BudgetBloc>().add(const SyncBudgetsEvent());
+    context.read<MonthlyBudgetBloc>().add(SyncMonthlyBudgetsEvent());
   }
 
   Future<void> _checkAndPerformCleanup() async {

@@ -10,6 +10,7 @@ import 'package:expenses_tracker_app/features/budget/presentation/pages/budget_p
 import 'package:expenses_tracker_app/features/budget/presentation/pages/edit_budget_page.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/add_expense_page.dart';
+import 'package:expenses_tracker_app/features/expenses/presentation/pages/all_monthly_budget_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/edit_expense_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/expense_detail_page.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/pages/main_page.dart';
@@ -96,6 +97,10 @@ final GoRouter router = GoRouter(
           final profile = state.extra as UserProfile;
           return EditProfilePage(profile: profile);
         }
+      ),
+      GoRoute(
+          path: '/all-monthly-budget',
+          builder: (context, state) => const AllMonthlyBudgetsPage()
       ),
     ],
 );
