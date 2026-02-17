@@ -24,9 +24,9 @@ class TransactionsSection extends StatelessWidget {
         children: [
           Text(
             'Recent Transactions',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           if (expenses.isEmpty)
@@ -44,7 +44,9 @@ class TransactionsSection extends StatelessWidget {
               separatorBuilder: (context, index) => const Divider(height: 24),
               itemBuilder: (context, index) {
                 final expense = expenses[index];
-                final categoryData = ExpenseCategories.fromName(expense.category);
+                final categoryData = ExpenseCategories.fromName(
+                  expense.category,
+                );
                 return _TransactionItem(
                   expense: expense,
                   categoryData: categoryData,
@@ -61,10 +63,7 @@ class _TransactionItem extends StatelessWidget {
   final Expense expense;
   final ExpenseCategory categoryData;
 
-  const _TransactionItem({
-    required this.expense,
-    required this.categoryData,
-  });
+  const _TransactionItem({required this.expense, required this.categoryData});
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +75,7 @@ class _TransactionItem extends StatelessWidget {
             color: categoryData.color.withOpacity(0.15),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            categoryData.icon,
-            color: categoryData.color,
-            size: 20,
-          ),
+          child: Icon(categoryData.icon, color: categoryData.color, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -89,16 +84,18 @@ class _TransactionItem extends StatelessWidget {
             children: [
               Text(
                 expense.description ?? 'No description',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 DateFormat('MMM d, yyyy • h:mm a').format(expense.createdAt),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
             ],
@@ -106,9 +103,9 @@ class _TransactionItem extends StatelessWidget {
         ),
         Text(
           formatNaira(expense.amount),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
     );

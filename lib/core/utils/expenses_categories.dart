@@ -13,7 +13,6 @@ class ExpenseCategory {
 }
 
 class ExpenseCategories {
-
   static const food = ExpenseCategory(
     name: 'Food & Dining',
     icon: Icons.restaurant,
@@ -75,9 +74,8 @@ class ExpenseCategories {
 
   static ExpenseCategory fromName(String name) {
     return ExpenseCategories.all.firstWhere(
-          (c) => c.name == name,
+      (c) => c.name == name,
       orElse: () => ExpenseCategories.others,
     );
   }
-
 }

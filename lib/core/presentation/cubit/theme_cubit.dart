@@ -17,10 +17,12 @@ class ThemeCubit extends Cubit<ThemeState> {
   void _loadTheme() {
     final themeString = prefs.getString(_themeKey);
     if (themeString != null) {
-      emit(ThemeState.values.firstWhere(
-            (e) => e.toString() == themeString,
-        orElse: () => ThemeState.system,
-      ));
+      emit(
+        ThemeState.values.firstWhere(
+          (e) => e.toString() == themeString,
+          orElse: () => ThemeState.system,
+        ),
+      );
     }
   }
 

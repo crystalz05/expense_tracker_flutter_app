@@ -33,7 +33,7 @@ class Budget extends Equatable {
     this.updatedAt,
     this.isDeleted = false,
     this.needsSync = false,
-    this.lastSyncedAt
+    this.lastSyncedAt,
   });
 
   @override

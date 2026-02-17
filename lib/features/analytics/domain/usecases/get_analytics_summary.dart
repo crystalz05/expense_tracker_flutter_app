@@ -5,7 +5,8 @@ import '../../../../core/usecases/usecase.dart';
 import '../entities/analytics_summary.dart';
 import '../repositories/analytics_repository.dart';
 
-class GetAnalyticsSummary implements UseCase<AnalyticsSummary, DateRangeParams> {
+class GetAnalyticsSummary
+    implements UseCase<AnalyticsSummary, DateRangeParams> {
   final AnalyticsRepository repository;
 
   GetAnalyticsSummary(this.repository);

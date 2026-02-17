@@ -32,10 +32,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     final endOfMonth = DateTime(now.year, now.month + 1, 0);
 
     context.read<AnalyticsBloc>().add(
-      LoadAnalyticsSummaryEvent(
-        startDate: startOfMonth,
-        endDate: endOfMonth,
-      ),
+      LoadAnalyticsSummaryEvent(startDate: startOfMonth, endDate: endOfMonth),
     );
   }
 
@@ -89,9 +86,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 return _buildAnalyticsContent(context, state.summary);
               }
 
-              return const Center(
-                child: Text('No data available'),
-              );
+              return const Center(child: Text('No data available'));
             },
           ),
         ),
@@ -99,7 +94,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     );
   }
 
-  Widget _buildAnalyticsContent(BuildContext context, AnalyticsSummary summary) {
+  Widget _buildAnalyticsContent(
+    BuildContext context,
+    AnalyticsSummary summary,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -108,9 +106,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           // Header
           Text(
             'Analytics',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
@@ -125,7 +123,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           if (summary.insights.isNotEmpty) ...[
             _SectionHeader(title: 'Insights', icon: Icons.lightbulb_outline),
             const SizedBox(height: 12),
-            ...summary.insights.map((insight) => _InsightCard(insight: insight)),
+            ...summary.insights.map(
+              (insight) => _InsightCard(insight: insight),
+            ),
             const SizedBox(height: 24),
           ],
 
@@ -141,7 +141,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
           // Monthly Comparison
           if (summary.monthComparison != null) ...[
-            _SectionHeader(title: 'Month Comparison', icon: Icons.compare_arrows),
+            _SectionHeader(
+              title: 'Month Comparison',
+              icon: Icons.compare_arrows,
+            ),
             const SizedBox(height: 12),
             _MonthComparisonCard(comparison: summary.monthComparison!),
             const SizedBox(height: 24),
@@ -168,17 +171,13 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
-          size: 20,
-        ),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
         const SizedBox(width: 8),
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -221,9 +220,7 @@ class _InsightCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: color.withOpacity(0.3),
-        ),
+        side: BorderSide(color: color.withOpacity(0.3)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -256,10 +253,9 @@ class _InsightCard extends StatelessWidget {
                   Text(
                     insight.description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -371,10 +367,7 @@ class _CategoryList extends StatelessWidget {
             leading: Container(
               width: 12,
               height: 12,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             title: Text(
               category.category,
@@ -395,7 +388,9 @@ class _CategoryList extends StatelessWidget {
                 Text(
                   '${category.percentage.toStringAsFixed(1)}%',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
                     fontSize: 12,
                   ),
                 ),
@@ -426,7 +421,7 @@ class _MonthComparisonCard extends StatelessWidget {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.year}';
   }
@@ -460,7 +455,9 @@ class _MonthComparisonCard extends StatelessWidget {
                   ),
                 ),
                 Icon(
-                  comparison.isIncrease ? Icons.trending_up : Icons.trending_down,
+                  comparison.isIncrease
+                      ? Icons.trending_up
+                      : Icons.trending_down,
                   color: comparison.isIncrease ? Colors.red : Colors.green,
                   size: 32,
                 ),
@@ -496,7 +493,9 @@ class _MonthComparisonCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    comparison.isIncrease ? Icons.arrow_upward : Icons.arrow_downward,
+                    comparison.isIncrease
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward,
                     color: comparison.isIncrease ? Colors.red : Colors.green,
                     size: 20,
                   ),
@@ -517,35 +516,39 @@ class _MonthComparisonCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Category Changes',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
               ...comparison.categoryComparisons.values
                   .where((c) => c.percentageChange > 5)
                   .take(5)
-                  .map((c) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    Expanded(child: Text(c.category)),
-                    Icon(
-                      c.isIncrease ? Icons.arrow_upward : Icons.arrow_downward,
-                      size: 16,
-                      color: c.isIncrease ? Colors.red : Colors.green,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${c.percentageChange.toStringAsFixed(1)}%',
-                      style: TextStyle(
-                        color: c.isIncrease ? Colors.red : Colors.green,
-                        fontWeight: FontWeight.w600,
+                  .map(
+                    (c) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Expanded(child: Text(c.category)),
+                          Icon(
+                            c.isIncrease
+                                ? Icons.arrow_upward
+                                : Icons.arrow_downward,
+                            size: 16,
+                            color: c.isIncrease ? Colors.red : Colors.green,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${c.percentageChange.toStringAsFixed(1)}%',
+                            style: TextStyle(
+                              color: c.isIncrease ? Colors.red : Colors.green,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              )),
+                  ),
             ],
           ],
         ),
@@ -560,7 +563,20 @@ class _SpendingTrendChart extends StatelessWidget {
   const _SpendingTrendChart({required this.trend});
 
   String _formatMonth(DateTime date) {
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return months[date.month - 1];
   }
 
@@ -602,8 +618,12 @@ class _SpendingTrendChart extends StatelessWidget {
                         },
                       ),
                     ),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -612,7 +632,9 @@ class _SpendingTrendChart extends StatelessWidget {
                             return const SizedBox.shrink();
                           }
                           return Text(
-                            _formatMonth(trend.monthlyData[value.toInt()].month),
+                            _formatMonth(
+                              trend.monthlyData[value.toInt()].month,
+                            ),
                             style: const TextStyle(fontSize: 10),
                           );
                         },
@@ -633,7 +655,9 @@ class _SpendingTrendChart extends StatelessWidget {
                       dotData: FlDotData(show: true),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.1),
                       ),
                     ),
                   ],
@@ -648,10 +672,7 @@ class _SpendingTrendChart extends StatelessWidget {
                   label: 'Average',
                   value: '₦${formatter.format(trend.averageMonthlySpending)}',
                 ),
-                _TrendStat(
-                  label: 'Top Category',
-                  value: trend.topCategory,
-                ),
+                _TrendStat(label: 'Top Category', value: trend.topCategory),
                 _TrendStat(
                   label: 'Trend',
                   value: trend.overallTrend == TrendDirection.increasing
@@ -679,11 +700,7 @@ class _TrendStat extends StatelessWidget {
   final String value;
   final Color? color;
 
-  const _TrendStat({
-    required this.label,
-    required this.value,
-    this.color,
-  });
+  const _TrendStat({required this.label, required this.value, this.color});
 
   @override
   Widget build(BuildContext context) {

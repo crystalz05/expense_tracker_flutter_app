@@ -47,8 +47,4 @@ enum InsightType {
   savingsOpportunity,
 }
 
-enum InsightSeverity {
-  info,
-  warning,
-  critical,
-}
+enum InsightSeverity { info, warning, critical }

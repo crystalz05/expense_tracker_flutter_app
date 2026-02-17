@@ -14,4 +14,3 @@ abstract class BudgetRepository {
   Future<Either<Failure, void>> purgeSoftDeletedBudgets();
   Future<Either<Failure, void>> clearUserData();
 }
-

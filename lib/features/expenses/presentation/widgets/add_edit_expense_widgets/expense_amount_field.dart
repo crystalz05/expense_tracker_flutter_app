@@ -27,9 +27,9 @@ class ExpenseAmountField extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               "Amount",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -39,23 +39,23 @@ class ExpenseAmountField extends StatelessWidget {
           maxLines: 1,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
           ],
           validator: isRequired
               ? (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter an amount';
-            }
-            final amount = double.tryParse(value);
-            if (amount == null || amount <= 0) {
-              return 'Please enter a valid amount';
-            }
-            return null;
-          }
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an amount';
+                  }
+                  final amount = double.tryParse(value);
+                  if (amount == null || amount <= 0) {
+                    return 'Please enter a valid amount';
+                  }
+                  return null;
+                }
               : null,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w400,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w400),
           decoration: InputDecoration(
             hintText: "0.00",
             hintStyle: TextStyle(
@@ -72,10 +72,9 @@ class ExpenseAmountField extends StatelessWidget {
               ),
             ),
             filled: true,
-            fillColor: Theme.of(context)
-                .colorScheme
-                .surfaceContainerHighest
-                .withValues(alpha: 0.5),
+            fillColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,

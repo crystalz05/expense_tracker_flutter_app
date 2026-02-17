@@ -16,8 +16,8 @@ class BudgetProgress extends Equatable {
     required double percentageUsed,
     required this.isOverBudget,
     required this.shouldAlert,
-  })  : remaining = remaining < 0 ? 0 : remaining,
-        percentageUsed = percentageUsed > 100 ? 100 : percentageUsed;
+  }) : remaining = remaining < 0 ? 0 : remaining,
+       percentageUsed = percentageUsed > 100 ? 100 : percentageUsed;
 
   @override
   List<Object?> get props => [

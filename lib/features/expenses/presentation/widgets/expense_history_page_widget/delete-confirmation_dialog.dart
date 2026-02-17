@@ -10,9 +10,7 @@ void showDeleteConfirmationDialog({
   showDialog(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: Text(
-        'Delete $count Transaction${count > 1 ? 's' : ''}',
-      ),
+      title: Text('Delete $count Transaction${count > 1 ? 's' : ''}'),
       content: Text(
         'Are you sure you want to delete $count transaction${count > 1 ? 's' : ''}?',
       ),
@@ -70,9 +68,7 @@ void showSingleDeleteConfirmationDialog({
             Navigator.pop(dialogContext);
             onConfirm();
           },
-          style: FilledButton.styleFrom(
-            backgroundColor: Colors.red,
-          ),
+          style: FilledButton.styleFrom(backgroundColor: Colors.red),
           child: Text('Delete'),
         ),
       ],

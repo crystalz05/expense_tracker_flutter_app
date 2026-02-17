@@ -7,7 +7,8 @@ class PeriodSelector extends StatelessWidget {
   final Period selectedPeriod;
   final ValueChanged<Period> onPeriodChanged;
 
-  const PeriodSelector({super.key,
+  const PeriodSelector({
+    super.key,
     required this.selectedPeriod,
     required this.onPeriodChanged,
   });
@@ -17,17 +18,10 @@ class PeriodSelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme
-            .of(context)
-            .colorScheme
-            .surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme
-              .of(context)
-              .colorScheme
-              .outline
-              .withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
         ),
         boxShadow: [
           BoxShadow(
@@ -45,24 +39,14 @@ class PeriodSelector extends StatelessWidget {
               Icon(
                 Icons.loop,
                 size: 20,
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(width: 8),
               Text(
                 'Budget Period',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .primary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ],
@@ -81,26 +65,17 @@ class PeriodSelector extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? Theme
-                            .of(context)
-                            .colorScheme
-                            .primary
-                            : Theme
-                            .of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
-                              ? Theme
-                              .of(context)
-                              .colorScheme
-                              .primary
-                              : Theme
-                              .of(context)
-                              .colorScheme
-                              .outline
-                              .withOpacity(0.2),
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.outline.withOpacity(0.2),
                         ),
                       ),
                       child: Column(
@@ -109,33 +84,23 @@ class PeriodSelector extends StatelessWidget {
                             _getPeriodIcon(period),
                             size: 24,
                             color: isSelected
-                                ? Theme
-                                .of(context)
-                                .colorScheme
-                                .onPrimary
-                                : Theme
-                                .of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.6),
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.6),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             period.label,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodySmall
+                            style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
-                              fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected
-                                  ? Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .onPrimary
-                                  : null,
-                            ),
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : null,
+                                ),
                           ),
                         ],
                       ),
@@ -149,6 +114,7 @@ class PeriodSelector extends StatelessWidget {
       ),
     );
   }
+
   IconData _getPeriodIcon(Period period) {
     switch (period) {
       case Period.weekly:

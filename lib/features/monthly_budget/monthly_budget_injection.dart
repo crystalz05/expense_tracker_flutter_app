@@ -27,16 +27,16 @@ Future<void> initMonthlyBudget(GetIt sl) async {
 
   // Data sources
   sl.registerLazySingleton<MonthlyBudgetLocalDataSource>(
-        () => MonthlyBudgetLocalDataSourceImpl(sl()),
+    () => MonthlyBudgetLocalDataSourceImpl(sl()),
   );
 
   sl.registerLazySingleton<MonthlyBudgetRemoteDataSource>(
-        () => MonthlyBudgetRemoteDataSourceImpl(sl()),
+    () => MonthlyBudgetRemoteDataSourceImpl(sl()),
   );
 
   // Repository
   sl.registerLazySingleton<MonthlyBudgetRepository>(
-        () => MonthlyBudgetRepositoryImpl(
+    () => MonthlyBudgetRepositoryImpl(
       localDataSource: sl(),
       remoteDataSource: sl(),
       networkInfo: sl<NetworkInfo>(),
@@ -58,7 +58,7 @@ Future<void> initMonthlyBudget(GetIt sl) async {
 
   // Bloc
   sl.registerFactory(
-        () => MonthlyBudgetBloc(
+    () => MonthlyBudgetBloc(
       getMonthlyBudgets: sl(),
       getMonthlyBudgetByMonthYear: sl(),
       getMonthlyBudgetsByYear: sl(),

@@ -12,7 +12,6 @@ import '../widgets/home_page_widget/home_content.dart';
 import '../widgets/home_page_widget/home_fab_widget.dart';
 import '../widgets/home_page_widget/home_month_navigation.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -41,7 +40,9 @@ class _HomePageState extends State<HomePage> {
   void _loadExpensesForMonth(DateTime month) {
     final firstDay = DateTime(month.year, month.month, 1);
     final lastDay = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
-    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+    context.read<ExpenseBloc>().add(
+      LoadExpensesByPeriodEvent(from: firstDay, to: lastDay),
+    );
   }
 
   void _onPageChanged(int page) {
@@ -72,14 +73,13 @@ class _HomePageState extends State<HomePage> {
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
       initialDatePickerMode: DatePickerMode.year,
-      builder: (context, child) => Theme(
-        data: Theme.of(context),
-        child: child!,
-      ),
+      builder: (context, child) =>
+          Theme(data: Theme.of(context), child: child!),
     );
 
     if (picked != null) {
-      final monthOffset = (picked.year - DateTime.now().year) * 12 +
+      final monthOffset =
+          (picked.year - DateTime.now().year) * 12 +
           (picked.month - DateTime.now().month);
 
       setState(() => _selectedMonth = picked);
@@ -96,8 +96,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _refreshPage(){
-    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+  void _refreshPage() {
+    context.read<ExpenseBloc>().add(
+      LoadExpensesByPeriodEvent(from: firstDay, to: lastDay),
+    );
   }
 
   @override
@@ -106,9 +108,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: HomeFab(
         onTap: () async {
           final success = await context.push('/add-expense');
-          print("printing test item outside");
-          if(success == true && mounted){
-            print("printing test item inside");
+          if (success == true && mounted) {
             _refreshPage();
           }
         },

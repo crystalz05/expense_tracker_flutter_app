@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 class HomeFab extends StatelessWidget {
   final VoidCallback onTap;
 
-  const HomeFab({
-    super.key,
-    required this.onTap,
-  });
+  const HomeFab({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

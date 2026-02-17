@@ -9,10 +9,7 @@ import '../../bloc/expense_state.dart';
 class HistorySnackbarListener extends StatelessWidget {
   final Widget child;
 
-  const HistorySnackbarListener({
-    super.key,
-    required this.child,
-  });
+  const HistorySnackbarListener({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +39,7 @@ class HistorySnackbarListener extends StatelessWidget {
         ),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -61,9 +56,7 @@ class HistorySnackbarListener extends StatelessWidget {
         ),
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

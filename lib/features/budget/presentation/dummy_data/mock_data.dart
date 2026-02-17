@@ -1,5 +1,3 @@
-
-
 import '../../domain/entities/budget.dart';
 
 final List<Budget> budgets = [

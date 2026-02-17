@@ -16,8 +16,8 @@ class GetAllBudgetProgress {
 
     if (budgetsEither.isLeft()) {
       return budgetsEither.fold(
-            (failure) => Left(failure),
-            (_) => throw Exception('Unreachable'),
+        (failure) => Left(failure),
+        (_) => throw Exception('Unreachable'),
       );
     }
 
@@ -32,19 +32,26 @@ class GetAllBudgetProgress {
       );
 
       return expensesEither.fold(
-            (failure) => Left<Failure, BudgetProgress>(failure),
-            (expenses) {
-          final spent = expenses.fold(0.0, (sum, expense) => sum + expense.amount);
-          final percentage = budget.amount == 0 ? 0.0 : (spent / budget.amount) * 100;
+        (failure) => Left<Failure, BudgetProgress>(failure),
+        (expenses) {
+          final spent = expenses.fold(
+            0.0,
+            (sum, expense) => sum + expense.amount,
+          );
+          final percentage = budget.amount == 0
+              ? 0.0
+              : (spent / budget.amount) * 100;
 
-          return Right<Failure, BudgetProgress>(BudgetProgress(
-            budget: budget,
-            spent: spent,
-            remaining: budget.amount - spent,
-            percentageUsed: percentage,
-            isOverBudget: spent > budget.amount,
-            shouldAlert: percentage >= (budget.alertThreshold ?? 80),
-          ));
+          return Right<Failure, BudgetProgress>(
+            BudgetProgress(
+              budget: budget,
+              spent: spent,
+              remaining: budget.amount - spent,
+              percentageUsed: percentage,
+              isOverBudget: spent > budget.amount,
+              shouldAlert: percentage >= (budget.alertThreshold ?? 80),
+            ),
+          );
         },
       );
     }).toList();
@@ -55,15 +62,18 @@ class GetAllBudgetProgress {
     for (final result in results) {
       if (result.isLeft()) {
         return result.fold(
-              (failure) => Left(failure),
-              (_) => throw Exception('Unreachable'),
+          (failure) => Left(failure),
+          (_) => throw Exception('Unreachable'),
         );
       }
     }
 
     // All succeeded - extract values
     final progressList = results
-        .map((either) => either.getOrElse(() => throw Exception('Unexpected Left')))
+        .map(
+          (either) =>
+              either.getOrElse(() => throw Exception('Unexpected Left')),
+        )
         .toList();
 
     return Right(progressList);

@@ -73,10 +73,14 @@ class MonthlyBudgetModel {
       year: json['year'] as int,
       amount: (json['amount'] as num).toDouble(),
       createdAt: DateTime.parse(json['created_at']),
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : null,
       isDeleted: json['is_deleted'] ?? false,
       needsSync: json['needs_sync'] ?? false,
-      lastSyncedAt: json['last_synced_at'] != null ? DateTime.parse(json['last_synced_at']) : null,
+      lastSyncedAt: json['last_synced_at'] != null
+          ? DateTime.parse(json['last_synced_at'])
+          : null,
     );
   }
 

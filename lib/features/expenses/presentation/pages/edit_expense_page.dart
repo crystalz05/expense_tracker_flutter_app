@@ -38,7 +38,7 @@ class _EditExpensePageState extends State<EditExpensePage> {
     'Card',
     'Bank Transfer',
     'Mobile Money',
-    'Other'
+    'Other',
   ];
 
   @override
@@ -200,8 +200,9 @@ class _EditExpensePageState extends State<EditExpensePage> {
                         onDateSelected: (date) {
                           setState(() {
                             _selectedDate = date;
-                            _dateController.text =
-                                DateFormat('EEEE, MMMM d, yyyy').format(date);
+                            _dateController.text = DateFormat(
+                              'EEEE, MMMM d, yyyy',
+                            ).format(date);
                           });
                         },
                       ),
@@ -213,8 +214,9 @@ class _EditExpensePageState extends State<EditExpensePage> {
                             children: [
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed:
-                                  isLoading ? null : () => context.pop(),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => context.pop(),
                                   style: OutlinedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 16,
@@ -234,16 +236,16 @@ class _EditExpensePageState extends State<EditExpensePage> {
                                   ),
                                   child: isLoading
                                       ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor:
-                                      AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                          ),
+                                        )
                                       : const Text('Save Changes'),
                                 ),
                               ),

@@ -11,9 +11,11 @@ class BudgetCubit extends Cubit<BudgetStateSecondary> {
   static const String _budgetKey = 'monthly_budget';
 
   BudgetCubit({required this.prefs})
-      : super(BudgetStateSecondary(
-    monthlyBudget: prefs.getDouble(_budgetKey) ?? 200000,
-  ));
+    : super(
+        BudgetStateSecondary(
+          monthlyBudget: prefs.getDouble(_budgetKey) ?? 200000,
+        ),
+      );
 
   void setBudget(double newBudget) {
     // Save to SharedPreferences

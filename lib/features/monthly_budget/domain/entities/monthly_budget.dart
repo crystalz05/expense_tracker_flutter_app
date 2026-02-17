@@ -1,8 +1,6 @@
-
 import 'package:equatable/equatable.dart';
 
 class MonthlyBudget extends Equatable {
-
   final String id;
   final String userId;
   final int month; // 1-12
@@ -29,8 +27,18 @@ class MonthlyBudget extends Equatable {
 
   String get monthName {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }
@@ -38,8 +46,18 @@ class MonthlyBudget extends Equatable {
   // Helper to get short month name
   String get shortMonthName {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month - 1];
   }
@@ -58,4 +76,3 @@ class MonthlyBudget extends Equatable {
     lastSyncedAt,
   ];
 }
-

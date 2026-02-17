@@ -3,7 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/monthly_budget_model.dart';
 import 'monthly_budget_remote_datasource.dart';
 
-class MonthlyBudgetRemoteDataSourceImpl implements MonthlyBudgetRemoteDataSource {
+class MonthlyBudgetRemoteDataSourceImpl
+    implements MonthlyBudgetRemoteDataSource {
   final SupabaseClient client;
   static const String tableName = 'monthly_budgets';
 
@@ -36,7 +37,11 @@ class MonthlyBudgetRemoteDataSourceImpl implements MonthlyBudgetRemoteDataSource
   }
 
   @override
-  Future<MonthlyBudgetModel?> getMonthlyBudgetByMonthYear(String userId, int month, int year) async {
+  Future<MonthlyBudgetModel?> getMonthlyBudgetByMonthYear(
+    String userId,
+    int month,
+    int year,
+  ) async {
     final response = await client
         .from(tableName)
         .select()
@@ -51,9 +56,7 @@ class MonthlyBudgetRemoteDataSourceImpl implements MonthlyBudgetRemoteDataSource
 
   @override
   Future<void> createMonthlyBudget(MonthlyBudgetModel monthlyBudget) async {
-    await client
-        .from(tableName)
-        .insert(monthlyBudget.toJson());
+    await client.from(tableName).insert(monthlyBudget.toJson());
   }
 
   @override
@@ -69,16 +72,16 @@ class MonthlyBudgetRemoteDataSourceImpl implements MonthlyBudgetRemoteDataSource
     // Soft delete - mark as deleted
     await client
         .from(tableName)
-        .update({'is_deleted': true, 'updated_at': DateTime.now().toIso8601String()})
+        .update({
+          'is_deleted': true,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
         .eq('id', id);
   }
 
   @override
   Future<void> permanentlyDeleteMonthlyBudgets(List<String> ids) async {
     // Hard delete from database
-    await client
-        .from(tableName)
-        .delete()
-        .inFilter('id', ids);
+    await client.from(tableName).delete().inFilter('id', ids);
   }
 }

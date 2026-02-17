@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
@@ -11,13 +10,12 @@ abstract class UserProfileEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadUserProfileEvent extends UserProfileEvent{
+class LoadUserProfileEvent extends UserProfileEvent {
   @override
   List<Object?> get props => [];
 }
 
-class CreateUserProfileEvent extends UserProfileEvent{
-
+class CreateUserProfileEvent extends UserProfileEvent {
   const CreateUserProfileEvent();
 
   @override
@@ -34,7 +32,6 @@ class UpdateUserProfileEvent extends UserProfileEvent {
 }
 
 class UploadProfilePhotoEvent extends UserProfileEvent {
-
   final File photoFile;
 
   const UploadProfilePhotoEvent(this.photoFile);
@@ -49,7 +46,6 @@ class DeleteProfilePhotoEvent extends UserProfileEvent {
   const DeleteProfilePhotoEvent(this.photoUrl);
 
   @override
-  // TODO: implement props
   List<Object?> get props => [photoUrl];
 }
 

@@ -56,11 +56,11 @@ Future<void> init() async {
   sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
 
   sl.registerLazySingleton<AuthRemoteDatasource>(
-        () => AuthRemoteDatasourceImpl(sl<SupabaseClient>()),
+    () => AuthRemoteDatasourceImpl(sl<SupabaseClient>()),
   );
 
   sl.registerLazySingleton<AuthRepository>(
-        () => AuthRepositoryImpl(sl<AuthRemoteDatasource>()),
+    () => AuthRepositoryImpl(sl<AuthRemoteDatasource>()),
   );
 
   // Database
@@ -82,17 +82,17 @@ Future<void> init() async {
 
   // Data sources
   sl.registerLazySingleton<ExpensesLocalDatasource>(
-          () => ExpenseLocalDataSourceImpl(sl())
+    () => ExpenseLocalDataSourceImpl(sl()),
   );
 
   // User session
   sl.registerLazySingleton<UserSession>(
-          () => UserSessionImpl(Supabase.instance.client)
+    () => UserSessionImpl(Supabase.instance.client),
   );
 
   // Remote data source
   sl.registerLazySingleton<ExpenseRemoteDatasource>(
-          () => ExpenseRemoteDatasourceImpl(Supabase.instance.client)
+    () => ExpenseRemoteDatasourceImpl(Supabase.instance.client),
   );
 
   // Network - UPDATED to include SharedPreferences
@@ -101,12 +101,12 @@ Future<void> init() async {
 
   // Repository
   sl.registerLazySingleton<ExpenseRepository>(
-          () => ExpenseRepositoryImpl(
-        localDatasource: sl(),
-        remoteDatasource: sl(),
-        networkInfo: sl(),
-        userSession: sl(),
-      )
+    () => ExpenseRepositoryImpl(
+      localDatasource: sl(),
+      remoteDatasource: sl(),
+      networkInfo: sl(),
+      userSession: sl(),
+    ),
   );
 
   // Auth use cases
@@ -116,7 +116,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
 
   sl.registerFactory(
-        () => AuthBloc(
+    () => AuthBloc(
       signIn: sl(),
       signUp: sl(),
       signOut: sl(),
@@ -147,21 +147,22 @@ Future<void> init() async {
   await initUserProfile(sl);
   await initMonthlyBudget(sl);
 
-
   // Bloc
-  sl.registerFactory(() => ExpenseBloc(
-    getExpenses: sl(),
-    getExpenseById: sl(),
-    addExpense: sl(),
-    updateExpense: sl(),
-    deleteExpense: sl(),
-    getExpenseByCategory: sl(),
-    getExpenseByDateRange: sl(),
-    getTotalSpent: sl(),
-    getCategoryTotals: sl(),
-    syncExpenses: sl(),
-    softDeleteExpense: sl(),
-    purgeSoftDeleted: sl(),
-    getByCategoryAndPeriod: sl(),
-  ));
+  sl.registerFactory(
+    () => ExpenseBloc(
+      getExpenses: sl(),
+      getExpenseById: sl(),
+      addExpense: sl(),
+      updateExpense: sl(),
+      deleteExpense: sl(),
+      getExpenseByCategory: sl(),
+      getExpenseByDateRange: sl(),
+      getTotalSpent: sl(),
+      getCategoryTotals: sl(),
+      syncExpenses: sl(),
+      softDeleteExpense: sl(),
+      purgeSoftDeleted: sl(),
+      getByCategoryAndPeriod: sl(),
+    ),
+  );
 }

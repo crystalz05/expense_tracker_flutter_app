@@ -23,11 +23,7 @@ import '../widgets/add_budget_widgets/recurring_toggle.dart';
 import '../widgets/add_budget_widgets/section_tile.dart';
 
 // Period enum (if not already defined in add_budget.dart)
-enum Period {
-  weekly,
-  monthly,
-  yearly,
-}
+enum Period { weekly, monthly, yearly }
 
 class AddBudgetPage extends StatefulWidget {
   const AddBudgetPage({super.key});
@@ -211,9 +207,11 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                   onDateSelected: (date) {
                                     setState(() {
                                       _startDate = date;
-                                      _startDateController.text =
-                                          DateFormat('MMM d, yyyy').format(date);
-                                      if (_endDate != null && _endDate!.isBefore(_startDate!)) {
+                                      _startDateController.text = DateFormat(
+                                        'MMM d, yyyy',
+                                      ).format(date);
+                                      if (_endDate != null &&
+                                          _endDate!.isBefore(_startDate!)) {
                                         _endDate = null;
                                         _endDateController.clear();
                                       }
@@ -238,8 +236,9 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                   onDateSelected: (date) {
                                     setState(() {
                                       _endDate = date;
-                                      _endDateController.text =
-                                          DateFormat('MMM d, yyyy').format(date);
+                                      _endDateController.text = DateFormat(
+                                        'MMM d, yyyy',
+                                      ).format(date);
                                     });
                                   },
                                   firstDate: _startDate ?? DateTime.now(),
@@ -274,9 +273,13 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                             children: [
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: isLoading ? null : () => context.pop(),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => context.pop(),
                                   style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: const Text('Cancel'),
                                 ),
@@ -286,19 +289,22 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                                 child: FilledButton(
                                   onPressed: isLoading ? null : _submitForm,
                                   style: FilledButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: isLoading
                                       ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                          ),
+                                        )
                                       : const Text('Create Budget'),
                                 ),
                               ),

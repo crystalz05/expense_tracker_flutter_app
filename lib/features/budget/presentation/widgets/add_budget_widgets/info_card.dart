@@ -6,7 +6,8 @@ class InfoCard extends StatelessWidget {
   final IconData icon;
   final Color color;
 
-  const InfoCard({super.key,
+  const InfoCard({
+    super.key,
     required this.message,
     required this.icon,
     required this.color,
@@ -19,9 +20,7 @@ class InfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

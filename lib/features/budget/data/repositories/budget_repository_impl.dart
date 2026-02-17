@@ -37,7 +37,6 @@ class BudgetRepositoryImpl implements BudgetRepository {
       final entities = localBudgets.map((e) => e.toEntity()).toList();
       return Right(entities);
     } catch (e) {
-      print('Error in getBudgets(): $e');
       return Left(DatabaseFailure('Failed to load budgets'));
     }
   }
@@ -172,9 +171,9 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
       final idsToDelete = deletedBudgets
           .where((b) {
-        final deleteTime = b.updatedAt ?? b.createdAt;
-        return deleteTime.isBefore(cutoffDate);
-      })
+            final deleteTime = b.updatedAt ?? b.createdAt;
+            return deleteTime.isBefore(cutoffDate);
+          })
           .map((b) => b.id)
           .toList();
 
@@ -267,13 +266,10 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
           // Mark as synced
           await localDataSource.updateBudget(
-            budget.copyWith(
-              needsSync: false,
-              lastSyncedAt: DateTime.now(),
-            ),
+            budget.copyWith(needsSync: false, lastSyncedAt: DateTime.now()),
           );
         } catch (e) {
-          print('Failed to upload budget $id: $e');
+          // Silent fail - sync will retry on next attempt
         }
       }
     }
@@ -287,21 +283,15 @@ class BudgetRepositoryImpl implements BudgetRepository {
 
           if (local == null) {
             await localDataSource.createBudget(
-              remote.copyWith(
-                needsSync: false,
-                lastSyncedAt: DateTime.now(),
-              ),
+              remote.copyWith(needsSync: false, lastSyncedAt: DateTime.now()),
             );
           } else {
             await localDataSource.updateBudget(
-              remote.copyWith(
-                needsSync: false,
-                lastSyncedAt: DateTime.now(),
-              ),
+              remote.copyWith(needsSync: false, lastSyncedAt: DateTime.now()),
             );
           }
         } catch (e) {
-          print('Failed to download budget $id: $e');
+          // Silent fail - sync will retry on next attempt
         }
       }
     }

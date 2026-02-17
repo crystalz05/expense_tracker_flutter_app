@@ -53,24 +53,18 @@ class _MainPage extends State<MainPage> {
     _initializeApp();
 
     // Periodic sync every 15 minutes
-    _syncTimer = Timer.periodic(
-      const Duration(minutes: 15),
-          (_) {
-        if (mounted) {
-          _performBackgroundSync();
-        }
-      },
-    );
+    _syncTimer = Timer.periodic(const Duration(minutes: 15), (_) {
+      if (mounted) {
+        _performBackgroundSync();
+      }
+    });
 
     // Check for cleanup daily
-    _cleanupCheckTimer = Timer.periodic(
-      const Duration(hours: 24),
-          (_) {
-        if (mounted) {
-          _checkAndPerformCleanup();
-        }
-      },
-    );
+    _cleanupCheckTimer = Timer.periodic(const Duration(hours: 24), (_) {
+      if (mounted) {
+        _checkAndPerformCleanup();
+      }
+    });
   }
 
   @override
@@ -90,7 +84,9 @@ class _MainPage extends State<MainPage> {
 
     // Load local data immediately for fast UI
     // expenseBloc.add(LoadExpensesEvent());
-    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+    context.read<ExpenseBloc>().add(
+      LoadExpensesByPeriodEvent(from: firstDay, to: lastDay),
+    );
     budgetBloc.add(const LoadBudgetsEvent());
 
     // Check if cleanup is needed (runs once on app start)
@@ -131,7 +127,6 @@ class _MainPage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-
     DateTime? _lastBackPressed;
 
     return PopScope(
@@ -173,9 +168,9 @@ class _MainPage extends State<MainPage> {
             }),
           ),
           child: Theme(
-            data: Theme.of(context).copyWith(
-              splashFactory: NoSplash.splashFactory,
-            ),
+            data: Theme.of(
+              context,
+            ).copyWith(splashFactory: NoSplash.splashFactory),
             child: NavigationBar(
               indicatorColor: Colors.transparent,
               selectedIndex: currentIndex,
@@ -188,7 +183,9 @@ class _MainPage extends State<MainPage> {
                 NavigationDestination(
                   icon: Icon(
                     Icons.home_outlined,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   selectedIcon: Icon(
                     Icons.home,
@@ -199,7 +196,9 @@ class _MainPage extends State<MainPage> {
                 NavigationDestination(
                   icon: Icon(
                     CupertinoIcons.chart_pie,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   selectedIcon: Icon(
                     CupertinoIcons.chart_pie_fill,
@@ -210,7 +209,9 @@ class _MainPage extends State<MainPage> {
                 NavigationDestination(
                   icon: Icon(
                     Icons.history_outlined,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   selectedIcon: Icon(
                     Icons.history,
@@ -221,7 +222,9 @@ class _MainPage extends State<MainPage> {
                 NavigationDestination(
                   icon: Icon(
                     Icons.settings_outlined,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   selectedIcon: Icon(
                     Icons.settings,
@@ -233,7 +236,7 @@ class _MainPage extends State<MainPage> {
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }

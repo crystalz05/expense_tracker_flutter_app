@@ -81,9 +81,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             // Amount Range
             Text(
               'Amount Range',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 12),
             Row(
@@ -122,9 +122,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             // Date Range
             Text(
               'Date Range',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 12),
             Row(
@@ -165,8 +165,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         setState(() => _endDate = picked);
                       }
                     },
-                    onClear:
-                    _endDate != null ? () => setState(() => _endDate = null) : null,
+                    onClear: _endDate != null
+                        ? () => setState(() => _endDate = null)
+                        : null,
                   ),
                 ),
               ],
@@ -193,8 +194,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 Expanded(
                   child: FilledButton(
                     onPressed: () {
-                      final minAmount = double.tryParse(_minAmountController.text);
-                      final maxAmount = double.tryParse(_maxAmountController.text);
+                      final minAmount = double.tryParse(
+                        _minAmountController.text,
+                      );
+                      final maxAmount = double.tryParse(
+                        _maxAmountController.text,
+                      );
 
                       widget.onApplyFilters(
                         widget.currentFilters.copyWith(

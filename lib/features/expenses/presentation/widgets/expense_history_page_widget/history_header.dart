@@ -40,22 +40,22 @@ class HistoryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return isSelectionMode
         ? _SelectionHeader(
-      selectedCount: selectedCount,
-      allExpenses: allExpenses,
-      onCancel: onToggleSelectionMode,
-      onSelectAll: onSelectAll,
-      onDeselectAll: onDeselectAll,
-      onDelete: onDeleteSelected,
-    )
+            selectedCount: selectedCount,
+            allExpenses: allExpenses,
+            onCancel: onToggleSelectionMode,
+            onSelectAll: onSelectAll,
+            onDeselectAll: onDeselectAll,
+            onDelete: onDeleteSelected,
+          )
         : _NormalHeader(
-      visibleCount: visibleCount,
-      totalCount: totalCount,
-      hasActiveFilters: hasActiveFilters,
-      activeFilterCount: activeFilterCount,
-      onToggleSelection: onToggleSelectionMode,
-      onClearFilters: onClearFilters,
-      onShowFilters: onShowFilters,
-    );
+            visibleCount: visibleCount,
+            totalCount: totalCount,
+            hasActiveFilters: hasActiveFilters,
+            activeFilterCount: activeFilterCount,
+            onToggleSelection: onToggleSelectionMode,
+            onClearFilters: onClearFilters,
+            onShowFilters: onShowFilters,
+          );
   }
 }
 
@@ -136,10 +136,7 @@ class _NormalHeader extends StatelessWidget {
                         color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
-                      constraints: BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
-                      ),
+                      constraints: BoxConstraints(minWidth: 16, minHeight: 16),
                       child: Center(
                         child: Text(
                           '$activeFilterCount',
@@ -194,9 +191,9 @@ class _SelectionHeader extends StatelessWidget {
         Expanded(
           child: Text(
             '$selectedCount selected',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         TextButton.icon(

@@ -31,9 +31,9 @@ class PaymentMethodSelector extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               "Payment Method",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -64,10 +64,7 @@ class PaymentMethodOption {
   final String label;
   final IconData icon;
 
-  const PaymentMethodOption({
-    required this.label,
-    required this.icon,
-  });
+  const PaymentMethodOption({required this.label, required this.icon});
 }
 
 class _PaymentMethodChip extends StatelessWidget {
@@ -93,10 +90,9 @@ class _PaymentMethodChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context)
-              .colorScheme
-              .surfaceContainerHighest
-              .withOpacity(0.5),
+              : Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected

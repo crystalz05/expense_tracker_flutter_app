@@ -7,7 +7,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/error/exceptions.dart';
 
 class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
-
   final SupabaseClient supabaseClient;
 
   UserProfileRemoteDatasourceImpl({required this.supabaseClient});
@@ -23,7 +22,10 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
           .maybeSingle(); // ✅ Returns null instead of throwing error
 
       if (response == null) {
-        throw ServerException('Profile not found for user: $userId' '. Will now proceed to create one' );
+        throw ServerException(
+          'Profile not found for user: $userId'
+          '. Will now proceed to create one',
+        );
       }
 
       return UserProfileModel.fromJson(response);
@@ -48,17 +50,16 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
     }
   }
 
-
   @override
   Future<UserProfileModel> updateUserProfile(UserProfileModel profile) async {
     try {
       final response = await supabaseClient
           .from('user_profiles')
           .update({
-        'profile_photo_url': profile.profilePhotoUrl,
-        'phone_number': profile.phoneNumber,
-        'updated_at': DateTime.now().toIso8601String(),
-      })
+            'profile_photo_url': profile.profilePhotoUrl,
+            'phone_number': profile.phoneNumber,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
           .eq('user_id', profile.userId)
           .select()
           .single();
@@ -76,26 +77,28 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
       final path = uri.pathSegments.last;
 
       // Delete from storage
-      await supabaseClient.storage
-          .from('profile_photos')
-          .remove(['$userId/$path']);
+      await supabaseClient.storage.from('profile_photos').remove([
+        '$userId/$path',
+      ]);
 
       // Remove URL from database
       await supabaseClient
           .from('user_profiles')
           .update({
-        'profile_photo_url': null,
-        'updated_at': DateTime.now().toIso8601String(),
-      })
+            'profile_photo_url': null,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
           .eq('user_id', userId);
-
     } catch (e) {
       throw ServerException('Failed to delete profile photo: $e');
     }
   }
 
   @override
-  Future<UserProfileModel> uploadProfilePhoto(String userId, File photoFile) async {
+  Future<UserProfileModel> uploadProfilePhoto(
+    String userId,
+    File photoFile,
+  ) async {
     try {
       final bytes = await photoFile.readAsBytes();
       final fileExt = photoFile.path.split('.').last;
@@ -105,10 +108,10 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
       await supabaseClient.storage
           .from('profile_photos')
           .uploadBinary(
-        filePath,
-        bytes,
-        fileOptions: const FileOptions(upsert: true),
-      );
+            filePath,
+            bytes,
+            fileOptions: const FileOptions(upsert: true),
+          );
 
       final url = supabaseClient.storage
           .from('profile_photos')
@@ -117,9 +120,9 @@ class UserProfileRemoteDatasourceImpl implements UserProfileRemoteDatasource {
       final response = await supabaseClient
           .from('user_profiles')
           .update({
-        'profile_photo_url': url,
-        'updated_at': DateTime.now().toIso8601String(),
-      })
+            'profile_photo_url': url,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
           .eq('user_id', userId)
           .select()
           .single();

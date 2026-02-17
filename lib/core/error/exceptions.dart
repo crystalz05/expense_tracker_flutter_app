@@ -9,22 +9,29 @@ abstract class AppException implements Exception {
 }
 
 class DatabaseException extends AppException {
-  const DatabaseException(
-  [super.message = 'Database operation failed', super.stackTrace]
-  );
+  const DatabaseException([
+    super.message = 'Database operation failed',
+    super.stackTrace,
+  ]);
 }
 
 class ServerException extends AppException {
-  const ServerException(
-  [super.message = 'Server error occurred', super.stackTrace]);
+  const ServerException([
+    super.message = 'Server error occurred',
+    super.stackTrace,
+  ]);
 }
 
 class AuthException extends AppException {
-  const AuthException(
-  [super.message = 'Authentication failed', super.stackTrace]);
+  const AuthException([
+    super.message = 'Authentication failed',
+    super.stackTrace,
+  ]);
 }
 
 class CacheException extends AppException {
-  const CacheException(
-  [super.message = 'Cache error occurred', super.stackTrace]);
+  const CacheException([
+    super.message = 'Cache error occurred',
+    super.stackTrace,
+  ]);
 }

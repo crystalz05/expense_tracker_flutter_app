@@ -11,7 +11,6 @@ import '../../domain/usecases/update_user_profile.dart';
 import '../../domain/usecases/upload_profile_photo.dart';
 
 class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
-
   final GetUserProfile getUserProfile;
   final CreateUserProfile createUserProfile;
   final UpdateUserProfile updateUserProfile;
@@ -23,8 +22,8 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
     required this.createUserProfile,
     required this.updateUserProfile,
     required this.uploadProfilePhoto,
-    required this.deleteProfilePhoto
-  }): super(const UserProfileInitial()){
+    required this.deleteProfilePhoto,
+  }) : super(const UserProfileInitial()) {
     on<LoadUserProfileEvent>(_onLoadUserProfile);
     on<CreateUserProfileEvent>(_onCreateUserProfile);
     on<UpdateUserProfileEvent>(_onUpdateUserProfile);
@@ -34,79 +33,79 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
   }
 
   Future<void> _onLoadUserProfile(
-      LoadUserProfileEvent event,
-      Emitter<UserProfileState> emit,
-      ) async {
-
+    LoadUserProfileEvent event,
+    Emitter<UserProfileState> emit,
+  ) async {
     emit(const UserProfileLoading());
 
     final result = await getUserProfile(NoParams());
 
     result.fold(
-        (failure) => emit(UserProfileError(failure.message)),
-        (profile) => emit(UserProfileLoaded(profile))
+      (failure) => emit(UserProfileError(failure.message)),
+      (profile) => emit(UserProfileLoaded(profile)),
     );
   }
 
   Future<void> _onCreateUserProfile(
-      CreateUserProfileEvent event,
-      Emitter<UserProfileState> emit,
-      ) async {
+    CreateUserProfileEvent event,
+    Emitter<UserProfileState> emit,
+  ) async {
     emit(const UserProfileLoading());
 
     final result = await createUserProfile(NoParams());
 
     result.fold(
-        (failure) => emit(UserProfileError(failure.message)),
-        (profile) => emit(UserProfileLoaded(profile))
+      (failure) => emit(UserProfileError(failure.message)),
+      (profile) => emit(UserProfileLoaded(profile)),
     );
   }
+
   Future<void> _onUpdateUserProfile(
-      UpdateUserProfileEvent event,
-      Emitter<UserProfileState> emit
-      ) async {
+    UpdateUserProfileEvent event,
+    Emitter<UserProfileState> emit,
+  ) async {
     emit(const UserProfileLoading());
 
     final result = await updateUserProfile(event.profile);
 
     result.fold(
-        (failure) => emit(UserProfileError(failure.message)),
-        (profile) => emit(UserProfileUpdated(profile))
+      (failure) => emit(UserProfileError(failure.message)),
+      (profile) => emit(UserProfileUpdated(profile)),
     );
   }
 
   Future<void> _onUploadProfilePhoto(
-      UploadProfilePhotoEvent event,
-      Emitter<UserProfileState> emit
-      ) async {
+    UploadProfilePhotoEvent event,
+    Emitter<UserProfileState> emit,
+  ) async {
     emit(const UserProfilePhotoUploading());
 
     final result = await uploadProfilePhoto(event.photoFile);
 
     result.fold(
-        (failure) => emit(UserProfileError(failure.message)),
-        (profile) => emit(UserProfilePhotoUploaded(profile.profilePhotoUrl))
+      (failure) => emit(UserProfileError(failure.message)),
+      (profile) => emit(UserProfilePhotoUploaded(profile.profilePhotoUrl)),
     );
   }
 
   Future<void> _onDeleteProfilePhoto(
-      DeleteProfilePhotoEvent event,
-      Emitter<UserProfileState> emit
-      ) async {
+    DeleteProfilePhotoEvent event,
+    Emitter<UserProfileState> emit,
+  ) async {
     emit(const UserProfileLoading());
 
     final result = await deleteProfilePhoto(event.photoUrl);
 
     result.fold(
-        (failure) => emit(UserProfileError(failure.message)),
-        (_) => add(LoadUserProfileEvent())
+      (failure) => emit(UserProfileError(failure.message)),
+      (_) => add(LoadUserProfileEvent()),
     );
   }
 
   Future<void> _onResetUserProfile(
-      ResetUserProfile event,
-      Emitter<UserProfileState> emit,
-      ) async {
+    ResetUserProfile event,
+    Emitter<UserProfileState> emit,
+  ) async {
     emit(const UserProfileInitial());
   }
 }

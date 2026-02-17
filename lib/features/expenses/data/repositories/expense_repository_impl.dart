@@ -19,7 +19,7 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     required this.localDatasource,
     required this.remoteDatasource,
     required this.networkInfo,
-    required this.userSession
+    required this.userSession,
   });
 
   // Core principle: Online = sync first, then operate. Offline = operate locally only.
@@ -57,7 +57,10 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
 
       if (await networkInfo.isConnected) {
         // Online: Update remote first, then local
-        await remoteDatasource.addExpense(model, userId); // Upsert handles updates
+        await remoteDatasource.addExpense(
+          model,
+          userId,
+        ); // Upsert handles updates
         await localDatasource.updateExpense(model);
       } else {
         // Offline: Update locally only
@@ -75,7 +78,10 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   }
 
   @override
-  Future<Either<Failure, void>> softDeleteExpense(String id, DateTime updatedAt) async {
+  Future<Either<Failure, void>> softDeleteExpense(
+    String id,
+    DateTime updatedAt,
+  ) async {
     try {
       final userId = userSession.userId;
 
@@ -157,7 +163,9 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   }
 
   @override
-  Future<Either<Failure, List<Expense>>> getExpenseByCategory(String category) async {
+  Future<Either<Failure, List<Expense>>> getExpenseByCategory(
+    String category,
+  ) async {
     try {
       final models = await localDatasource.getExpenseByCategory(category);
       final entities = models.map((e) => e.toEntity()).toList();
@@ -170,7 +178,10 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   }
 
   @override
-  Future<Either<Failure, List<Expense>>> getExpensesByDateRange(DateTime start, DateTime end) async {
+  Future<Either<Failure, List<Expense>>> getExpensesByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     try {
       final models = await localDatasource.getExpensesByDateRange(start, end);
       final entities = models.map((e) => e.toEntity()).toList();
@@ -184,12 +195,16 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
 
   @override
   Future<Either<Failure, List<Expense>>> getByCategoryAndPeriod(
-      String category,
-      DateTime start,
-      DateTime end
-      ) async {
+    String category,
+    DateTime start,
+    DateTime end,
+  ) async {
     try {
-      final models = await localDatasource.getByCategoryAndPeriod(category, start, end);
+      final models = await localDatasource.getByCategoryAndPeriod(
+        category,
+        start,
+        end,
+      );
       final entities = models.map((e) => e.toEntity()).toList();
       return Right(entities);
     } on DatabaseException catch (e) {
@@ -252,7 +267,8 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
     final userId = userSession.userId;
 
     // 1. Get all local expenses (including soft-deleted for conflict resolution)
-    final localExpenses = await localDatasource.getAllExpensesIncludingDeleted();
+    final localExpenses = await localDatasource
+        .getAllExpensesIncludingDeleted();
 
     // 2. Get all remote expenses
     final remoteExpenses = await remoteDatasource.getExpenses(userId);
@@ -298,7 +314,9 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
 
     // 6. Download remote changes to local
     if (toDownload.isNotEmpty) {
-      final expensesToDownload = toDownload.map((id) => remoteMap[id]!).toList();
+      final expensesToDownload = toDownload
+          .map((id) => remoteMap[id]!)
+          .toList();
 
       for (final expense in expensesToDownload) {
         // Check if exists locally to determine update vs insert

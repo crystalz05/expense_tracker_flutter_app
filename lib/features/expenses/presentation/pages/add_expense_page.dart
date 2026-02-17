@@ -1,4 +1,3 @@
-
 // ==================== REFACTORED ADD EXPENSE PAGE ====================
 import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
@@ -64,9 +63,9 @@ class _AddExpensePageState extends State<AddExpensePage> {
         appBar: AppBar(
           title: Text(
             "Add Expense",
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
@@ -76,9 +75,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
         body: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(28),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: SingleChildScrollView(
             child: Padding(
@@ -141,9 +138,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
         ),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -160,9 +155,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
         ),
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

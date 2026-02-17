@@ -19,9 +19,9 @@ class PaymentMethodDropdown extends StatelessWidget {
       children: [
         Text(
           "Payment Method",
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Container(
@@ -35,10 +35,10 @@ class PaymentMethodDropdown extends StatelessWidget {
           child: DropdownButtonFormField<String>(
             value: value,
             items: items
-                .map((method) => DropdownMenuItem(
-              value: method,
-              child: Text(method),
-            ))
+                .map(
+                  (method) =>
+                      DropdownMenuItem(value: method, child: Text(method)),
+                )
                 .toList(),
             onChanged: onChanged,
             decoration: const InputDecoration(

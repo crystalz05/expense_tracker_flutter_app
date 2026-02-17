@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses_tracker_app/core/error/failures.dart';
@@ -7,7 +6,6 @@ import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.d
 import 'package:expenses_tracker_app/features/expenses/domain/repositories/expense_repository.dart';
 
 class GetExpenseById extends UseCase<Expense, IdParams> {
-
   final ExpenseRepository repository;
 
   GetExpenseById(this.repository);
@@ -16,5 +14,4 @@ class GetExpenseById extends UseCase<Expense, IdParams> {
   Future<Either<Failure, Expense>> call(IdParams param) {
     return repository.getExpenseById(param.id);
   }
-
 }

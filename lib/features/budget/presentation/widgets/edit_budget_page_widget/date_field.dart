@@ -67,9 +67,9 @@ class _DateField extends StatelessWidget {
             lastDate: lastDate,
             builder: (context, child) {
               return Theme(
-                data: Theme.of(context).copyWith(
-                  colorScheme: Theme.of(context).colorScheme,
-                ),
+                data: Theme.of(
+                  context,
+                ).copyWith(colorScheme: Theme.of(context).colorScheme),
                 child: child!,
               );
             },

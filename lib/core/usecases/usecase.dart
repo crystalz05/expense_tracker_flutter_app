@@ -1,12 +1,7 @@
-
-import 'dart:math';
-
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
-import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../features/monthly_budget/domain/entities/monthly_budget.dart';
 import '../error/failures.dart';
@@ -15,27 +10,23 @@ abstract class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params param);
 }
 
-class NoParams extends Equatable{
+class NoParams extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
 class IdParams extends Equatable {
-
   final String id;
   final DateTime updatedAt;
 
-  IdParams({
-    required this.id,
-    DateTime? updatedAt
-  }): updatedAt = updatedAt ?? DateTime.now();
+  IdParams({required this.id, DateTime? updatedAt})
+    : updatedAt = updatedAt ?? DateTime.now();
 
   @override
   List<Object?> get props => [id, updatedAt];
 }
 
-class ExpenseParams extends Equatable{
-
+class ExpenseParams extends Equatable {
   final double amount;
   final String category;
   final String? description;
@@ -48,12 +39,12 @@ class ExpenseParams extends Equatable{
     required this.paymentMethod,
   });
 
-  factory ExpenseParams.fromExpense(Expense expense){
+  factory ExpenseParams.fromExpense(Expense expense) {
     return ExpenseParams(
-        amount: expense.amount,
-        category: expense.category,
-        description: expense.description,
-        paymentMethod: expense.paymentMethod
+      amount: expense.amount,
+      category: expense.category,
+      description: expense.description,
+      paymentMethod: expense.paymentMethod,
     );
   }
 
@@ -89,10 +80,7 @@ class DateRangeParams extends Equatable {
   final DateTime start;
   final DateTime end;
 
-  const DateRangeParams({
-    required this.start,
-    required this.end,
-  });
+  const DateRangeParams({required this.start, required this.end});
 
   @override
   List<Object?> get props => [start, end];
@@ -102,9 +90,7 @@ class SignInParams extends Equatable {
   final String email;
   final String password;
 
-  const SignInParams({
-    required this.email,
-    required this.password});
+  const SignInParams({required this.email, required this.password});
 
   @override
   List<Object?> get props => [email, password];
@@ -128,9 +114,7 @@ class SignUpParams extends Equatable {
 class CreateOrUpdateBudgetParams extends Equatable {
   final Budget budget;
 
-  const CreateOrUpdateBudgetParams({
-    required this.budget,
-  });
+  const CreateOrUpdateBudgetParams({required this.budget});
 
   @override
   List<Object?> get props => [budget];

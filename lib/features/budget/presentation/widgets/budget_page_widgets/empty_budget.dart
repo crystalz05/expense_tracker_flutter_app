@@ -17,7 +17,9 @@ class EmptyBudgetState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -29,9 +31,9 @@ class EmptyBudgetState extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               'No Budgets Yet',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
@@ -47,7 +49,10 @@ class EmptyBudgetState extends StatelessWidget {
               icon: const Icon(Icons.add),
               label: const Text('Create Budget'),
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
             ),
           ],

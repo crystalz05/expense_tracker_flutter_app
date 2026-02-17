@@ -1,25 +1,22 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:expenses_tracker_app/features/user_profile/domain/entities/user_profile.dart';
 
-class UserProfileState extends Equatable{
-
+class UserProfileState extends Equatable {
   const UserProfileState();
 
   @override
   List<Object?> get props => [];
 }
 
-class UserProfileInitial extends UserProfileState{
+class UserProfileInitial extends UserProfileState {
   const UserProfileInitial();
 }
 
-class UserProfileLoading extends UserProfileState{
+class UserProfileLoading extends UserProfileState {
   const UserProfileLoading();
 }
 
-class UserProfileLoaded extends UserProfileState{
-
+class UserProfileLoaded extends UserProfileState {
   final UserProfile profile;
 
   const UserProfileLoaded(this.profile);
@@ -58,4 +55,3 @@ class UserProfileError extends UserProfileState {
   @override
   List<Object?> get props => [message];
 }
-

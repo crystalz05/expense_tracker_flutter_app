@@ -1,4 +1,3 @@
-
 import 'package:floor/floor.dart';
 
 import '../../../../core/utils/date_time_converter.dart';
@@ -6,7 +5,6 @@ import '../../../../core/utils/date_time_converter.dart';
 @TypeConverters([DateTimeConverter, NullableDateTimeConverter])
 @Entity(tableName: 'expenses')
 class ExpenseModel {
-
   @primaryKey
   final String id;
 
@@ -34,6 +32,6 @@ class ExpenseModel {
     required this.createdAt,
     required this.updatedAt,
     required this.paymentMethod,
-    required this.isDeleted
+    required this.isDeleted,
   });
 }

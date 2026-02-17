@@ -5,7 +5,6 @@ import 'package:expenses_tracker_app/features/auth/domain/entities/user.dart';
 import 'package:expenses_tracker_app/features/auth/domain/repositories/auth_repository.dart';
 
 class SignIn implements UseCase<User, SignInParams> {
-
   final AuthRepository repository;
 
   SignIn(this.repository);

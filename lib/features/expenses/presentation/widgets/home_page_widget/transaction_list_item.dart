@@ -11,10 +11,7 @@ import '../../misc/formatter.dart';
 class TransactionListItem extends StatelessWidget {
   final Expense transaction;
 
-  const TransactionListItem({
-    super.key,
-    required this.transaction,
-  });
+  const TransactionListItem({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +20,7 @@ class TransactionListItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => context.push(
-          "/expense-detail-page",
-          extra: transaction,
-        ),
+        onTap: () => context.push("/expense-detail-page", extra: transaction),
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -62,32 +56,31 @@ class TransactionListItem extends StatelessWidget {
                       children: [
                         Text(
                           transaction.category,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.5),
-                            fontSize: 12,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.5),
+                                fontSize: 12,
+                              ),
                         ),
                         Text(
                           " • ",
                           style: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.5),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.5),
                           ),
                         ),
                         Text(
                           formatDate(transaction.updatedAt),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.5),
-                            fontSize: 12,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                                fontSize: 12,
+                              ),
                         ),
                       ],
                     ),

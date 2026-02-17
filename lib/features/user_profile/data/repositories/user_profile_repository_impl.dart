@@ -16,7 +16,6 @@ import '../../../../core/network/network_info.dart';
 import '../data_sources/user_profile_remote_datasource.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepository {
-
   final UserProfileRemoteDatasource remoteDataSource;
   final UserProfileCacheDataSource cacheDataSource;
   final NetworkInfo networkInfo;
@@ -29,12 +28,13 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     required this.userSession,
   });
 
-
   @override
   Future<Either<Failure, UserProfile>> getUserProfile() async {
     try {
       if (await networkInfo.isConnected) {
-        final remoteProfile = await remoteDataSource.getUserProfile(userSession.userId);
+        final remoteProfile = await remoteDataSource.getUserProfile(
+          userSession.userId,
+        );
 
         await cacheDataSource.cacheProfile(remoteProfile);
 
@@ -55,36 +55,36 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<Either<Failure, UserProfile>> createUserProfile() async {
-
-    try{
-
+    try {
       final profile = UserProfile(
-          userId: userSession.userId,
-          createAt: DateTime.now()
+        userId: userSession.userId,
+        createAt: DateTime.now(),
       );
 
-      if(await networkInfo.isConnected){
-
+      if (await networkInfo.isConnected) {
         final profileModel = UserProfileModel.fromEntity(profile);
-        final createdProfile = await remoteDataSource.createUserProfile(profileModel);
+        final createdProfile = await remoteDataSource.createUserProfile(
+          profileModel,
+        );
         await cacheDataSource.cacheProfile(createdProfile);
 
         return Right(createdProfile.toEntity());
-      }else{
+      } else {
         return Left(NetworkFailure('No internet connection'));
       }
-    }on ServerException catch (e, stack){
+    } on ServerException catch (e, stack) {
       _logError('Remote profile fetch failed', e, stack);
       return Left(ServerFailure(e.message));
-    }catch (e, stack){
+    } catch (e, stack) {
       _logError('Unexpected error', e, stack);
       return Left(UnknownFailure(e.toString()));
     }
   }
 
-
   @override
-  Future<Either<Failure, UserProfile>> updateUserProfile(UserProfile profile) async {
+  Future<Either<Failure, UserProfile>> updateUserProfile(
+    UserProfile profile,
+  ) async {
     if (!await networkInfo.isConnected) {
       return Left(NetworkFailure('No internet connection'));
     }
@@ -106,24 +106,27 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfile>> uploadProfilePhoto(File photoFile) async {
-
-    if(!await networkInfo.isConnected) {
+  Future<Either<Failure, UserProfile>> uploadProfilePhoto(
+    File photoFile,
+  ) async {
+    if (!await networkInfo.isConnected) {
       return Left(NetworkFailure('No internet connection'));
     }
-    try{
-      final profileModel = await remoteDataSource.uploadProfilePhoto(userSession.userId, photoFile);
+    try {
+      final profileModel = await remoteDataSource.uploadProfilePhoto(
+        userSession.userId,
+        photoFile,
+      );
       await cacheDataSource.cacheProfile(profileModel);
       return Right(profileModel.toEntity());
-    }on ServerException catch(e, stack){
+    } on ServerException catch (e, stack) {
       _logError("Profile photo upload failed", e, stack);
       return Left(ServerFailure(e.message));
-    }catch(e, stack){
+    } catch (e, stack) {
       _logError("Unexpected error", e, stack);
       return Left(UnknownFailure(e.toString()));
     }
   }
-
 
   Future<Either<Failure, UserProfile>> _getProfileFromCache() async {
     final cached = await cacheDataSource.getCachedProfile(userSession.userId);
@@ -133,7 +136,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     return Left(CacheFailure('No cached profile available'));
   }
 
-  Future<Either<Failure, UserProfile>> _getProfileFromCacheOrFail(String reason) async {
+  Future<Either<Failure, UserProfile>> _getProfileFromCacheOrFail(
+    String reason,
+  ) async {
     final cached = await cacheDataSource.getCachedProfile(userSession.userId);
     if (cached != null) {
       return Right(cached.toEntity());
@@ -159,11 +164,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     } on ServerException catch (e, stack) {
       _logError('Delete profile photo failed', e, stack);
       return Left(ServerFailure(e.message));
-    } catch (e, stack){
+    } catch (e, stack) {
       _logError('Unexpected error', e, stack);
       return Left(UnknownFailure(e.toString()));
     }
   }
 }
-
-

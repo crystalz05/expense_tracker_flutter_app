@@ -24,14 +24,9 @@ class HistorySearchBar extends StatelessWidget {
           hintText: 'Search by description...',
           prefixIcon: Icon(Icons.search),
           suffixIcon: controller.text.isNotEmpty
-              ? IconButton(
-            icon: Icon(Icons.clear),
-            onPressed: onClear,
-          )
+              ? IconButton(icon: Icon(Icons.clear), onPressed: onClear)
               : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         onChanged: onChanged,

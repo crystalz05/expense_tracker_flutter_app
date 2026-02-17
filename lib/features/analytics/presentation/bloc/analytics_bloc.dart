@@ -30,47 +30,41 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
   }
 
   Future<void> _onLoadAnalyticsSummary(
-      LoadAnalyticsSummaryEvent event,
-      Emitter<AnalyticsState> emit,
-      ) async {
+    LoadAnalyticsSummaryEvent event,
+    Emitter<AnalyticsState> emit,
+  ) async {
     emit(const AnalyticsLoading());
 
     final result = await getAnalyticsSummary(
-      DateRangeParams(
-        start: event.startDate,
-        end: event.endDate,
-      ),
+      DateRangeParams(start: event.startDate, end: event.endDate),
     );
 
     result.fold(
-          (failure) => emit(AnalyticsError(failure.message)),
-          (summary) => emit(AnalyticsSummaryLoaded(summary)),
+      (failure) => emit(AnalyticsError(failure.message)),
+      (summary) => emit(AnalyticsSummaryLoaded(summary)),
     );
   }
 
   Future<void> _onLoadCategorySpending(
-      LoadCategorySpendingEvent event,
-      Emitter<AnalyticsState> emit,
-      ) async {
+    LoadCategorySpendingEvent event,
+    Emitter<AnalyticsState> emit,
+  ) async {
     emit(const AnalyticsLoading());
 
     final result = await getCategorySpending(
-      DateRangeParams(
-        start: event.startDate,
-        end: event.endDate,
-      ),
+      DateRangeParams(start: event.startDate, end: event.endDate),
     );
 
     result.fold(
-          (failure) => emit(AnalyticsError(failure.message)),
-          (categorySpending) => emit(CategorySpendingLoaded(categorySpending)),
+      (failure) => emit(AnalyticsError(failure.message)),
+      (categorySpending) => emit(CategorySpendingLoaded(categorySpending)),
     );
   }
 
   Future<void> _onLoadMonthlyComparison(
-      LoadMonthlyComparisonEvent event,
-      Emitter<AnalyticsState> emit,
-      ) async {
+    LoadMonthlyComparisonEvent event,
+    Emitter<AnalyticsState> emit,
+  ) async {
     emit(const AnalyticsLoading());
 
     final result = await getMonthlyComparison(
@@ -80,39 +74,35 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
       ),
     );
 
-    result.fold(
-          (failure) => emit(AnalyticsError(failure.message)),
-          (comparison){
-            if(comparison != null) {
-              emit(MonthlyComparisonLoaded(comparison));
-            }
-          },
-    );
+    result.fold((failure) => emit(AnalyticsError(failure.message)), (
+      comparison,
+    ) {
+      if (comparison != null) {
+        emit(MonthlyComparisonLoaded(comparison));
+      }
+    });
   }
 
   Future<void> _onLoadSpendingInsights(
-      LoadSpendingInsightsEvent event,
-      Emitter<AnalyticsState> emit,
-      ) async {
+    LoadSpendingInsightsEvent event,
+    Emitter<AnalyticsState> emit,
+  ) async {
     emit(const AnalyticsLoading());
 
     final result = await getSpendingInsights(
-      DateRangeParams(
-        start: event.startDate,
-        end: event.endDate,
-      ),
+      DateRangeParams(start: event.startDate, end: event.endDate),
     );
 
     result.fold(
-          (failure) => emit(AnalyticsError(failure.message)),
-          (insights) => emit(SpendingInsightsLoaded(insights)),
+      (failure) => emit(AnalyticsError(failure.message)),
+      (insights) => emit(SpendingInsightsLoaded(insights)),
     );
   }
 
   Future<void> _onLoadSpendingTrend(
-      LoadSpendingTrendEvent event,
-      Emitter<AnalyticsState> emit,
-      ) async {
+    LoadSpendingTrendEvent event,
+    Emitter<AnalyticsState> emit,
+  ) async {
     emit(const AnalyticsLoading());
 
     final result = await getSpendingTrend(
@@ -120,8 +110,8 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
     );
 
     result.fold(
-          (failure) => emit(AnalyticsError(failure.message)),
-          (trend) => emit(SpendingTrendLoaded(trend)),
+      (failure) => emit(AnalyticsError(failure.message)),
+      (trend) => emit(SpendingTrendLoaded(trend)),
     );
   }
 }

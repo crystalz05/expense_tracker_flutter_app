@@ -11,7 +11,8 @@ class CleanupManager {
     final lastCleanup = prefs.getString(_lastCleanupKey);
 
     final now = DateTime.now();
-    final shouldCleanup = lastCleanup == null ||
+    final shouldCleanup =
+        lastCleanup == null ||
         DateTime.parse(lastCleanup).difference(now).inDays.abs() >= 30;
 
     if (shouldCleanup) {

@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -8,7 +7,6 @@ import 'package:expenses_tracker_app/features/user_profile/domain/entities/user_
 import 'package:expenses_tracker_app/features/user_profile/domain/repositories/user_profile_repository.dart';
 
 class DeleteProfilePhoto extends UseCase<void, String> {
-
   final UserProfileRepository repository;
 
   DeleteProfilePhoto(this.repository);

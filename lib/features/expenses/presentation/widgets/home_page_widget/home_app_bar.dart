@@ -26,10 +26,11 @@ class HomeAppBar extends StatelessWidget {
                     if (state is AuthAuthenticated) {
                       return Text(
                         "Hi, ${state.user.displayName?.split(' ')[0]}",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28,
-                        ),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                            ),
                       );
                     }
                     return const SizedBox.shrink();
@@ -39,7 +40,9 @@ class HomeAppBar extends StatelessWidget {
                 Text(
                   "Let's manage your finances",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
               ],
@@ -66,10 +69,7 @@ class _AppBarIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _AppBarIconButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _AppBarIconButton({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class _ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         context.push('/profile-page');
       },
       child: Container(

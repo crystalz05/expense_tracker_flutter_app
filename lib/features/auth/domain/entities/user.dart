@@ -10,7 +10,7 @@ class User extends Equatable {
     required this.id,
     required this.email,
     this.displayName,
-    required this.createdAt
+    required this.createdAt,
   });
 
   @override

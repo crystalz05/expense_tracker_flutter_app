@@ -26,9 +26,9 @@ class ExpenseDescriptionField extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               "Description",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -46,10 +46,9 @@ class ExpenseDescriptionField extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
             ),
             filled: true,
-            fillColor: Theme.of(context)
-                .colorScheme
-                .surfaceContainerHighest
-                .withOpacity(0.5),
+            fillColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,

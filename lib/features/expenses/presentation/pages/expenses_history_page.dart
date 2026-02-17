@@ -41,7 +41,6 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     context.read<ExpenseBloc>().add(LoadExpensesEvent());
   }
@@ -95,13 +94,13 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
     );
   }
 
-  void _deleteExpense(String id){
+  void _deleteExpense(String id) {
     showSingleDeleteConfirmationDialog(
-        context: context,
-        onConfirm: (){
-          context.read<ExpenseBloc>().add(SoftDeleteExpenseEvent(id));
-        },
-        onCancel: (){}
+      context: context,
+      onConfirm: () {
+        context.read<ExpenseBloc>().add(SoftDeleteExpenseEvent(id));
+      },
+      onCancel: () {},
     );
   }
 
@@ -211,11 +210,7 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
 
           final filteredExpenses = _applyFilters(expenses);
 
-          return _buildHistoryView(
-            context,
-            filteredExpenses,
-            expenses.length,
-          );
+          return _buildHistoryView(context, filteredExpenses, expenses.length);
         },
       ),
     );
@@ -231,7 +226,9 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
           Text(
             'Loading expenses...',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -240,10 +237,10 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
   }
 
   Widget _buildHistoryView(
-      BuildContext context,
-      List<Expense> filteredExpenses,
-      int totalCount,
-      ) {
+    BuildContext context,
+    List<Expense> filteredExpenses,
+    int totalCount,
+  ) {
     final sortedExpenses = List.of(filteredExpenses)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
@@ -275,7 +272,8 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
                   allExpenses: sortedExpenses,
                   onToggleSelectionMode: _toggleSelectionMode,
                   onSelectAll: () => _selectAll(sortedExpenses),
-                  onDeselectAll: () => setState(() => _selectedExpenseIds.clear()),
+                  onDeselectAll: () =>
+                      setState(() => _selectedExpenseIds.clear()),
                   onDeleteSelected: _deleteSelected,
                   onClearFilters: _clearAllFilters,
                   onShowFilters: _showFilterBottomSheet,
@@ -311,11 +309,13 @@ class _ExpensesHistoryPageState extends State<ExpensesHistoryPage> {
             onClearFilters: _clearAllFilters,
             onSwipeDelete: (id) {
               _deleteExpense(id);
-              },
+            },
             onSwipeEdit: (expense) {
               context.push("/edit-expense", extra: expense);
             },
-            toggleSelectionMode: (bool value) { _isSelectionMode = value; },
+            toggleSelectionMode: (bool value) {
+              _isSelectionMode = value;
+            },
           ),
         ),
       ],

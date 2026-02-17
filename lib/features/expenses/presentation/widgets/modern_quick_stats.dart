@@ -41,12 +41,12 @@ class ModernQuickStats extends StatelessWidget {
   }
 
   Widget _buildStatCard(
-      BuildContext context, {
-        required IconData icon,
-        required Color iconColor,
-        required String label,
-        required String value,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required String value,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -64,7 +64,9 @@ class ModernQuickStats extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 12,
             ),
           ),

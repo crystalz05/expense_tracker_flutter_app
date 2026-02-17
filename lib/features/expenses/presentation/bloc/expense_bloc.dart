@@ -60,19 +60,27 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   }
 
   Future<void> _loadExpenses(
-      LoadExpensesEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    LoadExpensesEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     try {
       List<Expense> expenses;
 
       if (event.category != null && event.from != null && event.to != null) {
-        final result = await getByCategoryAndPeriod(CategoryDateRangeParams(category: event.category!, start: event.from!, end: event.to!));
+        final result = await getByCategoryAndPeriod(
+          CategoryDateRangeParams(
+            category: event.category!,
+            start: event.from!,
+            end: event.to!,
+          ),
+        );
         expenses = result.fold((f) => throw Exception(f.message), (e) => e);
-      }else if (event.category != null) {
-        final result = await getExpenseByCategory(CategoryParams(event.category!));
+      } else if (event.category != null) {
+        final result = await getExpenseByCategory(
+          CategoryParams(event.category!),
+        );
         expenses = result.fold((f) => throw Exception(f.message), (e) => e);
       } else if (event.from != null && event.to != null) {
         final result = await getExpenseByDateRange(
@@ -97,23 +105,25 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   }
 
   Future<void> _loadExpensesByPeriod(
-      LoadExpensesByPeriodEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    LoadExpensesByPeriodEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     try {
       List<Expense> expenses;
 
-      final result = await getExpenseByDateRange(DateRangeParams(start: event.from!, end: event.to!));
+      final result = await getExpenseByDateRange(
+        DateRangeParams(start: event.from!, end: event.to!),
+      );
       expenses = result.fold((f) => throw Exception(f.message), (e) => e);
 
       emit(
-          ExpensesByPeriodLoaded(
-            expenses,
-            getTotalSpent(expenses),
-            getCategoryTotals(expenses),
-          )
+        ExpensesByPeriodLoaded(
+          expenses,
+          getTotalSpent(expenses),
+          getCategoryTotals(expenses),
+        ),
       );
     } catch (e) {
       emit(ExpenseError(e.toString()));
@@ -121,98 +131,85 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   }
 
   Future<void> _loadExpenseById(
-      LoadExpenseByIdEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    LoadExpenseByIdEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     final result = await getExpenseById(IdParams(id: event.id));
 
     result.fold(
-          (f) => emit(ExpenseError(f.message)),
-          (expense) => emit(ExpenseLoaded(expense)),
+      (f) => emit(ExpenseError(f.message)),
+      (expense) => emit(ExpenseLoaded(expense)),
     );
   }
 
   Future<void> _addExpense(
-      AddExpenseEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    AddExpenseEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     final result = await addExpense(event.params);
 
-    result.fold(
-          (f) => emit(ExpenseError(f.message)),
-          (_) {
-        emit(const ExpenseActionSuccess("Expense created successfully"));
-        add(LoadExpensesEvent());
-      },
-    );
+    result.fold((f) => emit(ExpenseError(f.message)), (_) {
+      emit(const ExpenseActionSuccess("Expense created successfully"));
+      add(LoadExpensesEvent());
+    });
   }
 
   Future<void> _updateExpense(
-      UpdateExpenseEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    UpdateExpenseEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     final result = await updateExpense(event.expense);
 
-    result.fold(
-          (f) => emit(ExpenseError(f.message)),
-          (_) {
-        emit(const ExpenseActionSuccess("Expense updated successfully"));
-        add(LoadExpensesEvent());
-      },
-    );
+    result.fold((f) => emit(ExpenseError(f.message)), (_) {
+      emit(const ExpenseActionSuccess("Expense updated successfully"));
+      add(LoadExpensesEvent());
+    });
   }
 
   Future<void> _deleteExpense(
-      DeleteExpenseEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    DeleteExpenseEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     final result = await deleteExpense(IdParams(id: event.id));
 
-    result.fold(
-          (f) => emit(ExpenseError(f.message)),
-          (_) {
-        emit(const ExpenseActionSuccess("Expense deleted successfully"));
-        add(LoadExpensesEvent());
-      },
-    );
+    result.fold((f) => emit(ExpenseError(f.message)), (_) {
+      emit(const ExpenseActionSuccess("Expense deleted successfully"));
+      add(LoadExpensesEvent());
+    });
   }
 
   Future<void> _softDeleteExpense(
-      SoftDeleteExpenseEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    SoftDeleteExpenseEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     final result = await softDeleteExpense(IdParams(id: event.id));
 
-    result.fold(
-          (f) => emit(ExpenseError(f.message)),
-          (_) {
-        emit(const ExpenseActionSuccess("Expense deleted successfully"));
-        add(LoadExpensesEvent());
-      },
-    );
+    result.fold((f) => emit(ExpenseError(f.message)), (_) {
+      emit(const ExpenseActionSuccess("Expense deleted successfully"));
+      add(LoadExpensesEvent());
+    });
   }
 
   Future<void> _syncExpenses(
-      SyncExpensesEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
-
+    SyncExpensesEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     // Don't show loading during background sync
     if (!event.showLoading) {
       final result = await syncExpenses(NoParams());
       result.fold(
-            (f) => null, // Silent fail for background sync
-            (_) => null,
+        (f) => null, // Silent fail for background sync
+        (_) => null,
       );
       return;
     }
@@ -220,28 +217,22 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     emit(ExpenseLoading());
     final result = await syncExpenses(NoParams());
 
-    result.fold(
-          (f) => emit(ExpenseError(f.message)),
-          (_) {
-        emit(const ExpenseActionSuccess("Sync completed successfully"));
-      },
-    );
+    result.fold((f) => emit(ExpenseError(f.message)), (_) {
+      emit(const ExpenseActionSuccess("Sync completed successfully"));
+    });
   }
 
   Future<void> _purgeSoftDeleted(
-      PurgeSoftDeletedEvent event,
-      Emitter<ExpenseState> emit,
-      ) async {
+    PurgeSoftDeletedEvent event,
+    Emitter<ExpenseState> emit,
+  ) async {
     emit(ExpenseLoading());
 
     final result = await purgeSoftDeleted(NoParams());
 
-    result.fold(
-          (f) => emit(ExpenseError(f.message)),
-          (_) {
-        emit(const ExpenseActionSuccess("Deleted expenses permanently removed"));
-        add(LoadExpensesEvent());
-      },
-    );
+    result.fold((f) => emit(ExpenseError(f.message)), (_) {
+      emit(const ExpenseActionSuccess("Deleted expenses permanently removed"));
+      add(LoadExpensesEvent());
+    });
   }
 }

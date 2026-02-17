@@ -22,7 +22,8 @@ class HomeMonthNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCurrentMonth = selectedMonth.year == DateTime.now().year &&
+    final isCurrentMonth =
+        selectedMonth.year == DateTime.now().year &&
         selectedMonth.month == DateTime.now().month;
 
     return Container(

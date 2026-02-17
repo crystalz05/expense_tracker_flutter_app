@@ -19,7 +19,6 @@ class HistoryContent extends StatelessWidget {
   final ValueChanged<String> onSwipeDelete;
   final ValueChanged<Expense> onSwipeEdit;
 
-
   const HistoryContent({
     super.key,
     required this.expenses,
@@ -32,7 +31,7 @@ class HistoryContent extends StatelessWidget {
     required this.onRefresh,
     required this.onClearFilters,
     required this.onSwipeDelete,
-    required this.onSwipeEdit
+    required this.onSwipeEdit,
   });
 
   @override
@@ -57,13 +56,13 @@ class HistoryContent extends StatelessWidget {
           onToggleSelect: onToggleSelection,
           onDelete: (id) {
             onSwipeDelete(id);
-            }, // Handled by parent
+          }, // Handled by parent
           onEdit: (expense) {
             onSwipeEdit(expense);
-            },
+          },
           toggleSelectionMode: (bool value) {
             toggleSelectionMode(value);
-            }, // Handled by parent
+          }, // Handled by parent
         ),
       ),
     );

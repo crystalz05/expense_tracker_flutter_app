@@ -21,8 +21,18 @@ class _MonthlyBudgetDialogState extends State<MonthlyBudgetDialog> {
 
   String get _monthName {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[widget.month - 1];
   }
@@ -31,7 +41,9 @@ class _MonthlyBudgetDialogState extends State<MonthlyBudgetDialog> {
   void initState() {
     super.initState();
     _controller = TextEditingController(
-      text: widget.initialBudget > 0 ? widget.initialBudget.toStringAsFixed(2) : '',
+      text: widget.initialBudget > 0
+          ? widget.initialBudget.toStringAsFixed(2)
+          : '',
     );
   }
 
@@ -44,7 +56,9 @@ class _MonthlyBudgetDialogState extends State<MonthlyBudgetDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("${widget.initialBudget > 0 ? 'Edit' : 'Set'} Monthly Budget"),
+      title: Text(
+        "${widget.initialBudget > 0 ? 'Edit' : 'Set'} Monthly Budget",
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +94,9 @@ class _MonthlyBudgetDialogState extends State<MonthlyBudgetDialog> {
               Navigator.of(context).pop(enteredValue);
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Please enter a valid amount greater than 0")),
+                const SnackBar(
+                  content: Text("Please enter a valid amount greater than 0"),
+                ),
               );
             }
           },

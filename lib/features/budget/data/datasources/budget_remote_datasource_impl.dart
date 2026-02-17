@@ -34,9 +34,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
 
   @override
   Future<void> createBudget(BudgetModel budget) async {
-    await client
-        .from(SupabaseConstants.budgetTable)
-        .insert(budget.toJson());
+    await client.from(SupabaseConstants.budgetTable).insert(budget.toJson());
   }
 
   @override
@@ -66,7 +64,10 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   }
 
   @override
-  Future<List<BudgetModel>> getBudgetsModifiedAfter(DateTime timestamp, String userId) async {
+  Future<List<BudgetModel>> getBudgetsModifiedAfter(
+    DateTime timestamp,
+    String userId,
+  ) async {
     final response = await client
         .from(SupabaseConstants.budgetTable)
         .select()

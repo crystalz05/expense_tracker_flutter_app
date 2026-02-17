@@ -4,11 +4,11 @@ import 'package:expenses_tracker_app/features/user_profile/domain/entities/user_
 extension UserProfileModelMapper on UserProfileModel {
   UserProfile toEntity() {
     return UserProfile(
-        userId: userId,
-        profilePhotoUrl: profilePhotoUrl,
-        phoneNumber: phoneNumber,
-        createAt: createAt,
-        updatedAt: updatedAt
+      userId: userId,
+      profilePhotoUrl: profilePhotoUrl,
+      phoneNumber: phoneNumber,
+      createAt: createAt,
+      updatedAt: updatedAt,
     );
   }
 }
@@ -20,7 +20,7 @@ extension UserProfileEntityMapper on UserProfile {
       profilePhotoUrl: profilePhotoUrl,
       phoneNumber: phoneNumber,
       createAt: createAt,
-      updatedAt: updatedAt
+      updatedAt: updatedAt,
     );
   }
 }

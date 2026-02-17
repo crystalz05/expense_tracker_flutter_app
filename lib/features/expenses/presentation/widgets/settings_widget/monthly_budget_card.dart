@@ -23,18 +23,25 @@ class _MonthlyBudgetCardState extends State<MonthlyBudgetCard> {
     // Load budget for current month
     final now = DateTime.now();
     context.read<MonthlyBudgetBloc>().add(
-      LoadMonthlyBudgetByMonthYearEvent(
-        month: now.month,
-        year: now.year,
-      ),
+      LoadMonthlyBudgetByMonthYearEvent(month: now.month, year: now.year),
     );
   }
 
   String get _currentMonthYear {
     final now = DateTime.now();
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return '${months[now.month - 1]} ${now.year}';
   }
@@ -54,9 +61,9 @@ class _MonthlyBudgetCardState extends State<MonthlyBudgetCard> {
         child: BlocConsumer<MonthlyBudgetBloc, MonthlyBudgetState>(
           listener: (context, state) {
             if (state is MonthlyBudgetOperationSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
               // Reload after operation
               final now = DateTime.now();
               context.read<MonthlyBudgetBloc>().add(
@@ -66,9 +73,9 @@ class _MonthlyBudgetCardState extends State<MonthlyBudgetCard> {
                 ),
               );
             } else if (state is MonthlyBudgetError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
@@ -102,18 +109,16 @@ class _MonthlyBudgetCardState extends State<MonthlyBudgetCard> {
                     children: [
                       Text(
                         "Monthly Budget",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         _currentMonthYear,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.6),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
                         ),
                       ),
                     ],
@@ -133,10 +138,9 @@ class _MonthlyBudgetCardState extends State<MonthlyBudgetCard> {
                           fontWeight: FontWeight.bold,
                           color: currentBudget != null
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.4),
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.4),
                         ),
                       ),
                       TextButton.icon(
@@ -186,7 +190,9 @@ class _MonthlyBudgetCardState extends State<MonthlyBudgetCard> {
                           currentBudget != null ? Icons.edit : Icons.add,
                           size: 16,
                         ),
-                        label: Text(currentBudget != null ? 'Edit' : 'Set Budget'),
+                        label: Text(
+                          currentBudget != null ? 'Edit' : 'Set Budget',
+                        ),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,

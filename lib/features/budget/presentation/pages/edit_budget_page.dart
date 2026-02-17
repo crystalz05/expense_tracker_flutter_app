@@ -52,7 +52,7 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
     );
     _selectedCategory = widget.budget.category;
     _period = Period.values.firstWhere(
-          (p) => p.name == widget.budget.period,
+      (p) => p.name == widget.budget.period,
       orElse: () => Period.monthly,
     );
     _isRecurring = widget.budget.isRecurring;
@@ -202,8 +202,9 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                                   onDateSelected: (date) {
                                     setState(() {
                                       _startDate = date;
-                                      _startDateController.text =
-                                          DateFormat('EEEE, MMMM d, yyyy').format(date);
+                                      _startDateController.text = DateFormat(
+                                        'EEEE, MMMM d, yyyy',
+                                      ).format(date);
                                       if (_endDate.isBefore(_startDate)) {
                                         _endDate = _startDate;
                                         _endDateController.clear();
@@ -229,8 +230,9 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                                   onDateSelected: (date) {
                                     setState(() {
                                       _endDate = date;
-                                      _endDateController.text =
-                                          DateFormat('EEEE, MMMM d, yyyy').format(date);
+                                      _endDateController.text = DateFormat(
+                                        'EEEE, MMMM d, yyyy',
+                                      ).format(date);
                                     });
                                   },
                                   firstDate: _startDate,
@@ -265,9 +267,13 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                             children: [
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: isLoading ? null : () => context.pop(),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => context.pop(),
                                   style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: const Text('Cancel'),
                                 ),
@@ -277,19 +283,22 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                                 child: FilledButton(
                                   onPressed: isLoading ? null : _submitForm,
                                   style: FilledButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: isLoading
                                       ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                          ),
+                                        )
                                       : const Text('Save Changes'),
                                 ),
                               ),
@@ -309,4 +318,3 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
     );
   }
 }
-

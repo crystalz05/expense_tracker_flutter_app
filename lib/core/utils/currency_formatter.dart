@@ -1,5 +1,3 @@
-
-
 import 'package:intl/intl.dart';
 
 String formatNaira(double amount, {int decimalDigits = 2}) {
@@ -9,4 +7,3 @@ String formatNaira(double amount, {int decimalDigits = 2}) {
     decimalDigits: decimalDigits,
   ).format(amount);
 }
-

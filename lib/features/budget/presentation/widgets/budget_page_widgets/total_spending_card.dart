@@ -16,10 +16,7 @@ class TotalSpendingCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0A2E5D),
-            Color(0xFF0A2E5D).withValues(alpha: 0.7),
-          ],
+          colors: [Color(0xFF0A2E5D), Color(0xFF0A2E5D).withValues(alpha: 0.7)],
         ),
         borderRadius: BorderRadius.circular(24),
       ),
@@ -42,7 +39,10 @@ class TotalSpendingCard extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),

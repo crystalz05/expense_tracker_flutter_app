@@ -66,17 +66,16 @@ class _PeriodSelector extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
+                            : Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context)
-                              .colorScheme
-                              .outline
-                              .withOpacity(0.2),
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.outline.withOpacity(0.2),
                         ),
                       ),
                       child: Column(
@@ -86,21 +85,21 @@ class _PeriodSelector extends StatelessWidget {
                             size: 24,
                             color: isSelected
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.6),
+                                : Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             period.label,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.onPrimary
-                                  : null,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : null,
+                                ),
                           ),
                         ],
                       ),

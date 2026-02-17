@@ -1,6 +1,3 @@
-
-
-
 import '../../domain/entities/expense.dart';
 import '../models/expense_model.dart';
 
@@ -14,7 +11,7 @@ extension ExpenseModelMapper on ExpenseModel {
       createdAt: createdAt,
       updatedAt: updatedAt,
       paymentMethod: paymentMethod,
-      isDeleted: isDeleted ?? false
+      isDeleted: isDeleted ?? false,
     );
   }
 }
@@ -29,7 +26,7 @@ extension ExpenseEntityMapper on Expense {
       createdAt: createdAt,
       updatedAt: updatedAt,
       paymentMethod: paymentMethod,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
     );
   }
 }

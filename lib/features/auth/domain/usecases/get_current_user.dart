@@ -6,7 +6,6 @@ import 'package:expenses_tracker_app/features/auth/domain/repositories/auth_repo
 import '../entities/user.dart';
 
 class GetCurrentUser extends UseCase<User?, NoParams> {
-
   final AuthRepository repository;
 
   GetCurrentUser(this.repository);

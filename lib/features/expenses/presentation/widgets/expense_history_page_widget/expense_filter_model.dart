@@ -42,11 +42,11 @@ class ExpenseFilters {
 
   bool get hasActiveFilters =>
       category != 'All' ||
-          minAmount != null ||
-          maxAmount != null ||
-          startDate != null ||
-          endDate != null ||
-          (searchQuery != null && searchQuery!.isNotEmpty);
+      minAmount != null ||
+      maxAmount != null ||
+      startDate != null ||
+      endDate != null ||
+      (searchQuery != null && searchQuery!.isNotEmpty);
 
   int get activeFilterCount {
     int count = 0;

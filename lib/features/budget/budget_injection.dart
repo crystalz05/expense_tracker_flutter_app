@@ -27,16 +27,16 @@ Future<void> initBudget(GetIt sl) async {
 
   // Data sources
   sl.registerLazySingleton<BudgetLocalDataSource>(
-        () => BudgetLocalDataSourceImpl(sl()),
+    () => BudgetLocalDataSourceImpl(sl()),
   );
 
   sl.registerLazySingleton<BudgetRemoteDataSource>(
-        () => BudgetRemoteDataSourceImpl(sl()),
+    () => BudgetRemoteDataSourceImpl(sl()),
   );
 
   // Repository
   sl.registerLazySingleton<BudgetRepository>(
-        () => BudgetRepositoryImpl(
+    () => BudgetRepositoryImpl(
       localDataSource: sl(),
       remoteDataSource: sl(),
       networkInfo: sl<NetworkInfo>(),
@@ -52,17 +52,11 @@ Future<void> initBudget(GetIt sl) async {
 
   // Use cases (cross-feature logic)
   sl.registerLazySingleton(
-        () => GetBudgetProgress(
-      sl<BudgetRepository>(),
-      sl<ExpenseRepository>(),
-    ),
+    () => GetBudgetProgress(sl<BudgetRepository>(), sl<ExpenseRepository>()),
   );
 
   sl.registerLazySingleton(
-        () => GetAllBudgetProgress(
-      sl<BudgetRepository>(),
-      sl<ExpenseRepository>(),
-    ),
+    () => GetAllBudgetProgress(sl<BudgetRepository>(), sl<ExpenseRepository>()),
   );
 
   sl.registerLazySingleton(() => SyncBudgets(sl()));
@@ -71,16 +65,16 @@ Future<void> initBudget(GetIt sl) async {
 
   // Bloc
   sl.registerFactory(
-        () => BudgetBloc(
-          getBudgets: sl(),
-          createBudget: sl(),
-          updateBudget: sl(),
-          deleteBudget: sl(),
-          getBudgetProgress: sl(),
-          getAllBudgetProgress: sl(),
-          syncBudgets: sl(),
-          purgeSoftDeletedBudgets: sl(),
-          clearUserData: sl(),
+    () => BudgetBloc(
+      getBudgets: sl(),
+      createBudget: sl(),
+      updateBudget: sl(),
+      deleteBudget: sl(),
+      getBudgetProgress: sl(),
+      getAllBudgetProgress: sl(),
+      syncBudgets: sl(),
+      purgeSoftDeletedBudgets: sl(),
+      clearUserData: sl(),
     ),
   );
 }

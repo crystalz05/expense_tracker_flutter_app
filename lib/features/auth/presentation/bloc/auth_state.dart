@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:expenses_tracker_app/features/auth/domain/entities/user.dart';
 
@@ -7,11 +6,11 @@ abstract class AuthState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthInitial extends AuthState{}
+class AuthInitial extends AuthState {}
 
-class AuthLoading extends AuthState{}
+class AuthLoading extends AuthState {}
 
-class AuthAuthenticated extends AuthState{
+class AuthAuthenticated extends AuthState {
   final User user;
 
   AuthAuthenticated(this.user);
@@ -20,7 +19,7 @@ class AuthAuthenticated extends AuthState{
   List<Object?> get props => [user];
 }
 
-class AuthUnauthenticated extends AuthState{}
+class AuthUnauthenticated extends AuthState {}
 
 class AuthError extends AuthState {
   final String message;

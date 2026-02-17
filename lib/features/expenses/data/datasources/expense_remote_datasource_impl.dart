@@ -23,7 +23,7 @@ class ExpenseRemoteDatasourceImpl implements ExpenseRemoteDatasource {
         'payment_method': expense.paymentMethod,
         'is_deleted': expense.isDeleted,
         'created_at': expense.createdAt.toIso8601String(),
-        'updated_at': expense.updatedAt.toIso8601String()
+        'updated_at': expense.updatedAt.toIso8601String(),
       });
     } catch (e) {
       throw ServerException("Failed to add expense: $e");
@@ -31,12 +31,20 @@ class ExpenseRemoteDatasourceImpl implements ExpenseRemoteDatasource {
   }
 
   @override
-  Future<void> softDeleteExpense(String id, String userId, DateTime updatedAt) async {
+  Future<void> softDeleteExpense(
+    String id,
+    String userId,
+    DateTime updatedAt,
+  ) async {
     try {
-      await supabase.from(SupabaseConstants.expensesTable).update({
-        'is_deleted': true,
-        'updated_at': updatedAt.toIso8601String(),
-      }).eq('id', id).eq('user_id', userId);
+      await supabase
+          .from(SupabaseConstants.expensesTable)
+          .update({
+            'is_deleted': true,
+            'updated_at': updatedAt.toIso8601String(),
+          })
+          .eq('id', id)
+          .eq('user_id', userId);
     } catch (e) {
       throw ServerException("Failed to soft-delete expense: $e");
     }
@@ -67,16 +75,18 @@ class ExpenseRemoteDatasourceImpl implements ExpenseRemoteDatasource {
 
       return (response as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
-          .map((json) => ExpenseModel(
-        id: json['id'],
-        amount: json['amount'],
-        category: json['category'],
-        description: json['description'],
-        createdAt: DateTime.parse(json['created_at']),
-        updatedAt: DateTime.parse(json['updated_at']),
-        paymentMethod: json['payment_method'],
-        isDeleted: json['is_deleted'] ?? false,
-      ))
+          .map(
+            (json) => ExpenseModel(
+              id: json['id'],
+              amount: json['amount'],
+              category: json['category'],
+              description: json['description'],
+              createdAt: DateTime.parse(json['created_at']),
+              updatedAt: DateTime.parse(json['updated_at']),
+              paymentMethod: json['payment_method'],
+              isDeleted: json['is_deleted'] ?? false,
+            ),
+          )
           .toList();
     } catch (e) {
       throw ServerException("Failed to fetch expenses: $e");
@@ -84,19 +94,26 @@ class ExpenseRemoteDatasourceImpl implements ExpenseRemoteDatasource {
   }
 
   @override
-  Future<void> upsertExpenses(List<ExpenseModel> expenses, String userId) async {
+  Future<void> upsertExpenses(
+    List<ExpenseModel> expenses,
+    String userId,
+  ) async {
     try {
-      final data = expenses.map((expense) => {
-        'id': expense.id,
-        'user_id': userId,
-        'amount': expense.amount,
-        'category': expense.category,
-        'description': expense.description,
-        'payment_method': expense.paymentMethod,
-        'is_deleted': expense.isDeleted,
-        'created_at': expense.createdAt.toIso8601String(),
-        'updated_at': expense.updatedAt.toIso8601String(),
-      }).toList();
+      final data = expenses
+          .map(
+            (expense) => {
+              'id': expense.id,
+              'user_id': userId,
+              'amount': expense.amount,
+              'category': expense.category,
+              'description': expense.description,
+              'payment_method': expense.paymentMethod,
+              'is_deleted': expense.isDeleted,
+              'created_at': expense.createdAt.toIso8601String(),
+              'updated_at': expense.updatedAt.toIso8601String(),
+            },
+          )
+          .toList();
 
       await supabase
           .from(SupabaseConstants.expensesTable)
@@ -107,7 +124,9 @@ class ExpenseRemoteDatasourceImpl implements ExpenseRemoteDatasource {
   }
 
   @override
-  Future<List<ExpenseModel>> getAllExpensesIncludingDeleted(String userId) async {
+  Future<List<ExpenseModel>> getAllExpensesIncludingDeleted(
+    String userId,
+  ) async {
     try {
       final response = await supabase
           .from(SupabaseConstants.expensesTable)
@@ -117,16 +136,18 @@ class ExpenseRemoteDatasourceImpl implements ExpenseRemoteDatasource {
 
       return (response as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
-          .map((json) => ExpenseModel(
-        id: json['id'],
-        amount: json['amount'],
-        category: json['category'],
-        description: json['description'],
-        createdAt: DateTime.parse(json['created_at']),
-        updatedAt: DateTime.parse(json['updated_at']),
-        paymentMethod: json['payment_method'],
-        isDeleted: json['is_deleted'] ?? false,
-      ))
+          .map(
+            (json) => ExpenseModel(
+              id: json['id'],
+              amount: json['amount'],
+              category: json['category'],
+              description: json['description'],
+              createdAt: DateTime.parse(json['created_at']),
+              updatedAt: DateTime.parse(json['updated_at']),
+              paymentMethod: json['payment_method'],
+              isDeleted: json['is_deleted'] ?? false,
+            ),
+          )
           .toList();
     } catch (e) {
       throw ServerException("Failed to fetch all expenses: $e");

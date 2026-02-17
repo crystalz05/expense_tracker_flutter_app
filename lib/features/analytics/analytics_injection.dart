@@ -11,7 +11,7 @@ import 'presentation/bloc/analytics_bloc.dart';
 Future<void> initAnalytics(GetIt sl) async {
   // Repository
   sl.registerLazySingleton<AnalyticsRepository>(
-        () => AnalyticsRepositoryImpl(
+    () => AnalyticsRepositoryImpl(
       expenseRepository: sl(),
       budgetRepository: sl(),
     ),
@@ -26,7 +26,7 @@ Future<void> initAnalytics(GetIt sl) async {
 
   // Bloc
   sl.registerFactory(
-        () => AnalyticsBloc(
+    () => AnalyticsBloc(
       getCategorySpending: sl(),
       getMonthlyComparison: sl(),
       getSpendingInsights: sl(),

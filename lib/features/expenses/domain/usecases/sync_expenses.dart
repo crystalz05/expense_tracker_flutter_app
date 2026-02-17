@@ -6,7 +6,6 @@ import '../entities/expense.dart';
 import '../repositories/expense_repository.dart';
 
 class SyncExpenses extends UseCase<void, NoParams> {
-
   ExpenseRepository repository;
 
   SyncExpenses(this.repository);

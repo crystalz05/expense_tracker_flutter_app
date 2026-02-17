@@ -22,43 +22,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await init();
   runApp(
     MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) => sl<AuthBloc>()..add(AuthCheckRequested()),
-          ),
-          BlocProvider(
-            create: (_) => sl<ExpenseBloc>(),
-          ),
-          BlocProvider(
-            create: (_) => sl<ThemeCubit>(),
-          ),
-          BlocProvider(
-              create: (_) => sl<BudgetCubit>()
-          ),
-          BlocProvider(
-              create: (_) => sl<BudgetBloc>()
-          ),
-          BlocProvider(
-              create: (_) => sl<AnalyticsBloc>()
-          ),
-          BlocProvider(
-              create: (_) => sl<OfflineModeCubit>()
-          ),
-          BlocProvider(
-              create: (_) => sl<UserProfileBloc>()
-          ),
-          BlocProvider(
-              create: (_) => sl<MonthlyBudgetBloc>()
-          ),
-        ],
-        child: const MyApp()),
+      providers: [
+        BlocProvider(create: (_) => sl<AuthBloc>()..add(AuthCheckRequested())),
+        BlocProvider(create: (_) => sl<ExpenseBloc>()),
+        BlocProvider(create: (_) => sl<ThemeCubit>()),
+        BlocProvider(create: (_) => sl<BudgetCubit>()),
+        BlocProvider(create: (_) => sl<BudgetBloc>()),
+        BlocProvider(create: (_) => sl<AnalyticsBloc>()),
+        BlocProvider(create: (_) => sl<OfflineModeCubit>()),
+        BlocProvider(create: (_) => sl<UserProfileBloc>()),
+        BlocProvider(create: (_) => sl<MonthlyBudgetBloc>()),
+      ],
+      child: const MyApp(),
+    ),
   );
-
 }
 
 class MyApp extends StatelessWidget {
@@ -70,16 +51,17 @@ class MyApp extends StatelessWidget {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) {
         return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           title: 'Tyro Spend Wise',
           theme: ThemeData(
-              useMaterial3: true,
-              colorScheme: lightColorScheme,
-              scaffoldBackgroundColor: lightColorScheme.surface
+            useMaterial3: true,
+            colorScheme: lightColorScheme,
+            scaffoldBackgroundColor: lightColorScheme.surface,
           ),
           darkTheme: ThemeData(
-              useMaterial3: true,
-              colorScheme: darkColorScheme,
-              scaffoldBackgroundColor: darkColorScheme.surface
+            useMaterial3: true,
+            colorScheme: darkColorScheme,
+            scaffoldBackgroundColor: darkColorScheme.surface,
           ),
           themeMode: context.read<ThemeCubit>().themeMode,
           routerConfig: router,

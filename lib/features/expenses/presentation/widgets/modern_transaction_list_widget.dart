@@ -25,25 +25,21 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
       return _buildEmptyState(context);
     }
 
-    final visibleItems = showAll ? widget.transactions : widget.transactions
-        .take(5).toList();
+    final visibleItems = showAll
+        ? widget.transactions
+        : widget.transactions.take(5).toList();
 
     return Column(
       children: [
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: Theme
-                .of(context)
-                .colorScheme
-                .surface,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .outline
-                  .withValues(alpha: 0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.1),
             ),
           ),
           child: ListView.separated(
@@ -51,16 +47,13 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             itemCount: visibleItems.length,
-            separatorBuilder: (context, index) =>
-                Divider(
-                  height: 1,
-                  indent: 72,
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .outline
-                      .withValues(alpha: 0.1),
-                ),
+            separatorBuilder: (context, index) => Divider(
+              height: 1,
+              indent: 72,
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.1),
+            ),
             itemBuilder: (context, index) {
               return _buildTransactionItem(context, visibleItems[index]);
             },
@@ -78,9 +71,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          context.push(
-            "/expense-detail-page", extra: transaction
-          );
+          context.push("/expense-detail-page", extra: transaction);
         },
         borderRadius: BorderRadius.circular(20),
         child: Padding(
@@ -106,11 +97,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
                   children: [
                     Text(
                       transaction.description ?? "No description",
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                       maxLines: 1,
@@ -121,43 +108,31 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
                       children: [
                         Text(
                           transaction.category,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.5),
-                            fontSize: 12,
-                          ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.5),
+                                fontSize: 12,
+                              ),
                         ),
                         Text(
                           " • ",
                           style: TextStyle(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.5),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.5),
                           ),
                         ),
                         Text(
                           formatDate(transaction.updatedAt),
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.5),
-                            fontSize: 12,
-                          ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.5),
+                                fontSize: 12,
+                              ),
                         ),
                       ],
                     ),
@@ -166,11 +141,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
               ),
               Text(
                 "₦${formatter.format(transaction.amount)}",
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 16,
                 ),
@@ -187,11 +158,9 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(48),
       decoration: BoxDecoration(
-        color: Theme
-            .of(context)
-            .colorScheme
-            .surfaceContainerHighest
-            .withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -199,47 +168,32 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .primaryContainer
-                  .withOpacity(0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withOpacity(0.5),
               shape: BoxShape.circle,
             ),
             child: Icon(
               CupertinoIcons.doc_text,
               size: 48,
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .primary,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             "No Transactions Yet",
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             "Start tracking your expenses\nto see them here",
             textAlign: TextAlign.center,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.6),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -262,10 +216,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
           showAll
               ? "Show Less"
               : "Show All (${widget.transactions.length - 5} more)",
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
       ),
     );

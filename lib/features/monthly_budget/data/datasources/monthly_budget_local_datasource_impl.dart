@@ -16,12 +16,17 @@ class MonthlyBudgetLocalDataSourceImpl implements MonthlyBudgetLocalDataSource {
       dao.getMonthlyBudgetById(id);
 
   @override
-  Future<MonthlyBudgetModel?> getMonthlyBudgetByMonthYear(String userId, int month, int year) =>
-      dao.getMonthlyBudgetByMonthYear(userId, month, year);
+  Future<MonthlyBudgetModel?> getMonthlyBudgetByMonthYear(
+    String userId,
+    int month,
+    int year,
+  ) => dao.getMonthlyBudgetByMonthYear(userId, month, year);
 
   @override
-  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsByYear(String userId, int year) =>
-      dao.getMonthlyBudgetsByYear(userId, year);
+  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsByYear(
+    String userId,
+    int year,
+  ) => dao.getMonthlyBudgetsByYear(userId, year);
 
   @override
   Future<void> createMonthlyBudget(MonthlyBudgetModel monthlyBudget) =>
@@ -32,12 +37,12 @@ class MonthlyBudgetLocalDataSourceImpl implements MonthlyBudgetLocalDataSource {
       dao.updateMonthlyBudget(monthlyBudget);
 
   @override
-  Future<void> deleteMonthlyBudget(String id) =>
-      dao.deleteMonthlyBudget(id);
+  Future<void> deleteMonthlyBudget(String id) => dao.deleteMonthlyBudget(id);
 
   @override
-  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsNeedingSync(String userId) =>
-      dao.getMonthlyBudgetsNeedingSync(userId);
+  Future<List<MonthlyBudgetModel>> getMonthlyBudgetsNeedingSync(
+    String userId,
+  ) => dao.getMonthlyBudgetsNeedingSync(userId);
 
   @override
   Future<List<MonthlyBudgetModel>> getDeletedMonthlyBudgets(String userId) =>
@@ -48,6 +53,5 @@ class MonthlyBudgetLocalDataSourceImpl implements MonthlyBudgetLocalDataSource {
       dao.permanentlyDeleteMonthlyBudgets(ids);
 
   @override
-  Future<void> clearUserData(String userId) =>
-      dao.clearUserData(userId);
+  Future<void> clearUserData(String userId) => dao.clearUserData(userId);
 }

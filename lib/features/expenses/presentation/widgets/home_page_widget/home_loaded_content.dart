@@ -12,10 +12,7 @@ import 'home_section_header.dart';
 class HomeLoadedContent extends StatelessWidget {
   final ExpensesByPeriodLoaded state;
 
-  const HomeLoadedContent({
-    super.key,
-    required this.state,
-  });
+  const HomeLoadedContent({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {

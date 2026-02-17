@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../../misc/formatter.dart';
 
-
 class CategoryListItem extends StatelessWidget {
   final dynamic categoryData;
   final String title;
@@ -37,10 +36,7 @@ class CategoryListItem extends StatelessWidget {
               color: categoryData.color.withOpacity(0.15),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              categoryData.icon,
-              color: categoryData.color,
-            ),
+            child: Icon(categoryData.icon, color: categoryData.color),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -49,9 +45,9 @@ class CategoryListItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -65,7 +61,9 @@ class CategoryListItem extends StatelessWidget {
           ),
           Icon(
             CupertinoIcons.chevron_right,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
           ),
         ],
       ),

@@ -30,9 +30,9 @@ class AmountField extends StatelessWidget {
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
         ],
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           prefixText: '₦ ',
           prefixStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(

@@ -1,8 +1,6 @@
-
 import '../models/expense_model.dart';
 
 abstract class ExpenseRemoteDatasource {
-
   Future<void> addExpense(ExpenseModel expense, String userId);
   Future<List<ExpenseModel>> getExpenses(String userId);
   Future<void> deleteExpense(String id, String userId);
@@ -12,4 +10,3 @@ abstract class ExpenseRemoteDatasource {
   // NEW: Get all expenses including soft-deleted ones for sync
   Future<List<ExpenseModel>> getAllExpensesIncludingDeleted(String userId);
 }
-

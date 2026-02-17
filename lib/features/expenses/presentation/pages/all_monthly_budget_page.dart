@@ -16,8 +16,8 @@ class AllMonthlyBudgetsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<MonthlyBudgetBloc>()
-        ..add(const LoadMonthlyBudgetsEvent()),
+      create: (context) =>
+          di.sl<MonthlyBudgetBloc>()..add(const LoadMonthlyBudgetsEvent()),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Monthly Budgets'),
@@ -96,9 +96,9 @@ class AllMonthlyBudgetsPage extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'No Budgets Set',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -119,10 +119,10 @@ class AllMonthlyBudgetsPage extends StatelessWidget {
   }
 
   Widget _buildYearSection(
-      BuildContext context,
-      int year,
-      List<MonthlyBudget> budgets,
-      ) {
+    BuildContext context,
+    int year,
+    List<MonthlyBudget> budgets,
+  ) {
     // Sort by month (descending)
     budgets.sort((a, b) => b.month.compareTo(a.month));
 
@@ -146,7 +146,8 @@ class AllMonthlyBudgetsPage extends StatelessWidget {
   }
 
   Widget _buildBudgetCard(BuildContext context, MonthlyBudget budget) {
-    final isCurrentMonth = budget.month == DateTime.now().month &&
+    final isCurrentMonth =
+        budget.month == DateTime.now().month &&
         budget.year == DateTime.now().year;
 
     return Card(
@@ -162,10 +163,7 @@ class AllMonthlyBudgetsPage extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -185,17 +183,14 @@ class AllMonthlyBudgetsPage extends StatelessWidget {
           children: [
             Text(
               budget.monthName,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             if (isCurrentMonth) ...[
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(12),
@@ -367,8 +362,18 @@ class _MonthYearBudgetDialogState extends State<_MonthYearBudgetDialog> {
   final _formKey = GlobalKey<FormState>();
 
   static const _months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   @override
@@ -401,9 +406,9 @@ class _MonthYearBudgetDialogState extends State<_MonthYearBudgetDialog> {
             children: [
               Text(
                 'Add Monthly Budget',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
               Row(
@@ -416,10 +421,12 @@ class _MonthYearBudgetDialogState extends State<_MonthYearBudgetDialog> {
                         border: OutlineInputBorder(),
                       ),
                       items: List.generate(12, (i) => i + 1)
-                          .map((m) => DropdownMenuItem(
-                        value: m,
-                        child: Text(_months[m - 1]),
-                      ))
+                          .map(
+                            (m) => DropdownMenuItem(
+                              value: m,
+                              child: Text(_months[m - 1]),
+                            ),
+                          )
                           .toList(),
                       onChanged: (v) => setState(() => _selectedMonth = v!),
                     ),
@@ -433,10 +440,12 @@ class _MonthYearBudgetDialogState extends State<_MonthYearBudgetDialog> {
                         border: OutlineInputBorder(),
                       ),
                       items: years
-                          .map((y) => DropdownMenuItem(
-                        value: y,
-                        child: Text(y.toString()),
-                      ))
+                          .map(
+                            (y) => DropdownMenuItem(
+                              value: y,
+                              child: Text(y.toString()),
+                            ),
+                          )
                           .toList(),
                       onChanged: (v) => setState(() => _selectedYear = v!),
                     ),

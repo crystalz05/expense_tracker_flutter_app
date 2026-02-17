@@ -29,7 +29,6 @@ class BudgetDetailPage extends StatefulWidget {
 }
 
 class _BudgetDetailPageState extends State<BudgetDetailPage> {
-
   @override
   void initState() {
     super.initState();
@@ -38,8 +37,8 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
 
   bool _popListenerAdded = false;
 
-  @override void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
+  @override
+  void didChangeDependencies() {
     super.didChangeDependencies();
     if (_popListenerAdded) return;
 
@@ -51,10 +50,12 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
     _popListenerAdded = true;
   }
 
-  void _onPopToBudgetPage(){
+  void _onPopToBudgetPage() {
     // context.read<ExpenseBloc>().add(const LoadExpensesEvent());
     context.read<BudgetBloc>().add(LoadAllBudgetProgress());
-    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+    context.read<ExpenseBloc>().add(
+      LoadExpensesByPeriodEvent(from: firstDay, to: lastDay),
+    );
   }
 
   @override
@@ -65,7 +66,10 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
         listener: (context, state) {
           if (state is BudgetError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
             );
           }
           if (state is BudgetOperationSuccess) {
@@ -126,11 +130,11 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
   }
 
   Widget _buildContent(
-      BuildContext context,
-      Budget budget,
-      dynamic progress,
-      List<Expense> expenses,
-      ) {
+    BuildContext context,
+    Budget budget,
+    dynamic progress,
+    List<Expense> expenses,
+  ) {
     final categoryData = ExpenseCategories.fromName(budget.category);
 
     return CustomScrollView(
@@ -152,7 +156,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
               icon: const Icon(Icons.edit, color: Colors.white),
               onPressed: () {
                 context.push('/edit-budget-page', extra: budget);
-              }
+              },
             ),
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.white),
@@ -246,13 +250,18 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
         children: [
           Icon(Icons.error_outline, size: 80, color: Colors.red),
           const SizedBox(height: 16),
-          Text('Failed to load budget', style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Failed to load budget',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 8),
           Text(message),
           const SizedBox(height: 24),
           FilledButton(
             onPressed: () {
-              context.read<BudgetBloc>().add(LoadBudgetProgress(widget.budgetId));
+              context.read<BudgetBloc>().add(
+                LoadBudgetProgress(widget.budgetId),
+              );
             },
             child: const Text('Retry'),
           ),
@@ -266,7 +275,9 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete Budget'),
-        content: Text('Are you sure you want to delete "${budget.description}"?'),
+        content: Text(
+          'Are you sure you want to delete "${budget.description}"?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),

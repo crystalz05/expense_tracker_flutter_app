@@ -10,7 +10,8 @@ class MainBudgetCard extends StatelessWidget {
   final dynamic progress;
   final ExpenseCategory categoryData;
 
-  const MainBudgetCard({super.key,
+  const MainBudgetCard({
+    super.key,
     required this.budget,
     required this.progress,
     required this.categoryData,
@@ -146,7 +147,9 @@ class _AmountColumn extends StatelessWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 8),

@@ -38,10 +38,9 @@ class SettingsPage extends StatelessWidget {
               Text(
                 "Customize your experience",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
               const SizedBox(height: 32),
@@ -54,18 +53,15 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 12),
               const MonthlyBudgetCard(),
               TextButton(
-                  onPressed: () {
-                    context.push('/all-monthly-budget');
-                  },
-                  child: Text("Show more")
+                onPressed: () {
+                  context.push('/all-monthly-budget');
+                },
+                child: Text("Show more"),
               ),
               const SizedBox(height: 32),
 
               // Data Management Section
-              SectionHeader(
-                icon: Icons.sync,
-                title: 'DATA MANAGEMENT',
-              ),
+              SectionHeader(icon: Icons.sync, title: 'DATA MANAGEMENT'),
               const SizedBox(height: 12),
               SyncCard(),
               const SizedBox(height: 12),
@@ -82,10 +78,7 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 32),
 
               // About Section
-              SectionHeader(
-                icon: Icons.info_outline,
-                title: 'ABOUT',
-              ),
+              SectionHeader(icon: Icons.info_outline, title: 'ABOUT'),
               const SizedBox(height: 12),
               AboutCard(),
               const SizedBox(height: 32),
@@ -96,4 +89,3 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
-

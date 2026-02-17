@@ -9,10 +9,7 @@ class BudgetCard extends StatelessWidget {
   final dynamic progress; // BudgetProgress
   final VoidCallback onTap;
 
-  const BudgetCard({
-    required this.progress,
-    required this.onTap,
-  });
+  const BudgetCard({required this.progress, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -75,17 +72,15 @@ class BudgetCard extends StatelessWidget {
                     children: [
                       Text(
                         budget.category,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         budget.description,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.6),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -96,7 +91,9 @@ class BudgetCard extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 18,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.3),
                 ),
               ],
             ),
@@ -113,10 +110,9 @@ class BudgetCard extends StatelessWidget {
                     Text(
                       'Spent',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
                     Text(
@@ -134,10 +130,9 @@ class BudgetCard extends StatelessWidget {
                     Text(
                       'Budget',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
                     Text(
@@ -159,9 +154,7 @@ class BudgetCard extends StatelessWidget {
                 Container(
                   height: 10,
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .surfaceContainerHighest
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest
                         .withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -172,7 +165,10 @@ class BudgetCard extends StatelessWidget {
                     height: 10,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [statusColor, statusColor.withValues(alpha: 0.7)],
+                        colors: [
+                          statusColor,
+                          statusColor.withValues(alpha: 0.7),
+                        ],
                       ),
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
@@ -206,10 +202,9 @@ class BudgetCard extends StatelessWidget {
                       ? 'Over by ${formatNaira(progress.spent - budget.amount)}'
                       : '${formatNaira(progress.remaining)} left',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -221,7 +216,9 @@ class BudgetCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

@@ -29,18 +29,21 @@ class _BudgetPageState extends State<BudgetPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+    context.read<ExpenseBloc>().add(
+      LoadExpensesByPeriodEvent(from: firstDay, to: lastDay),
+    );
     _reload();
   }
 
-  void _reload(){
+  void _reload() {
     context.read<BudgetBloc>().add(LoadAllBudgetProgress());
-    context.read<ExpenseBloc>().add(LoadExpensesByPeriodEvent(from: firstDay, to: lastDay));
+    context.read<ExpenseBloc>().add(
+      LoadExpensesByPeriodEvent(from: firstDay, to: lastDay),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       body: CustomScrollView(
@@ -67,10 +70,9 @@ class _BudgetPageState extends State<BudgetPage> {
                 Text(
                   'Track your spending goals',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -83,7 +85,9 @@ class _BudgetPageState extends State<BudgetPage> {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
               child: BlocBuilder<ExpenseBloc, ExpenseState>(
                 builder: (context, state) {
-                  final totalSpent = state is ExpensesByPeriodLoaded ? state.totalSpent : 0.0;
+                  final totalSpent = state is ExpensesByPeriodLoaded
+                      ? state.totalSpent
+                      : 0.0;
                   return TotalSpendingCard(totalSpent: totalSpent);
                 },
               ),
@@ -106,7 +110,7 @@ class _BudgetPageState extends State<BudgetPage> {
                   FilledButton.icon(
                     onPressed: () async {
                       final success = await context.push('/add-budget-page');
-                      if(success == true && mounted){
+                      if (success == true && mounted) {
                         _reload();
                       }
                     },
@@ -156,7 +160,7 @@ class _BudgetPageState extends State<BudgetPage> {
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
-                          (context, index) {
+                      (context, index) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: Skeletonizer(
@@ -188,21 +192,18 @@ class _BudgetPageState extends State<BudgetPage> {
                 return SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                        final progress = budgetProgressList[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: BudgetCard(
-                            progress: progress,
-                            onTap: () => context.push(
-                              '/budget-detail-page/${progress.budget.id}',
-                            ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final progress = budgetProgressList[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: BudgetCard(
+                          progress: progress,
+                          onTap: () => context.push(
+                            '/budget-detail-page/${progress.budget.id}',
                           ),
-                        );
-                      },
-                      childCount: budgetProgressList.length,
-                    ),
+                        ),
+                      );
+                    }, childCount: budgetProgressList.length),
                   ),
                 );
               }

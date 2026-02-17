@@ -10,10 +10,7 @@ import 'transaction_empty_state.dart';
 class ModernTransactionList extends StatefulWidget {
   final List<Expense> transactions;
 
-  const ModernTransactionList({
-    super.key,
-    required this.transactions,
-  });
+  const ModernTransactionList({super.key, required this.transactions});
 
   @override
   State<ModernTransactionList> createState() => _ModernTransactionListState();
@@ -40,10 +37,9 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Theme.of(context)
-                  .colorScheme
-                  .outline
-                  .withValues(alpha: 0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.1),
             ),
           ),
           child: ListView.separated(
@@ -54,10 +50,9 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
             separatorBuilder: (context, index) => Divider(
               height: 1,
               indent: 72,
-              color: Theme.of(context)
-                  .colorScheme
-                  .outline
-                  .withValues(alpha: 0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.1),
             ),
             itemBuilder: (context, index) {
               return TransactionListItem(transaction: visibleItems[index]);
@@ -82,10 +77,7 @@ class _ModernTransactionListState extends State<ModernTransactionList> {
           showAll
               ? "Show Less"
               : "Show All (${widget.transactions.length - 5} more)",
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         ),
       ),
     );

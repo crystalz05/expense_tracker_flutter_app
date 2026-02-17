@@ -48,9 +48,9 @@ class AnalyticsSection extends StatelessWidget {
         children: [
           Text(
             'Analytics',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
 
@@ -95,7 +95,9 @@ class AnalyticsSection extends StatelessWidget {
                   label: 'Projected',
                   value: formatNaira(projectedSpending),
                   icon: Icons.trending_up,
-                  color: projectedSpending > budget.amount ? Colors.red : Colors.green,
+                  color: projectedSpending > budget.amount
+                      ? Colors.red
+                      : Colors.green,
                 ),
               ),
             ],
@@ -105,9 +107,9 @@ class AnalyticsSection extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               'Spending Trend',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -156,9 +158,9 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -197,7 +199,8 @@ class _SpendingChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               getTitlesWidget: (value, meta) {
-                if (value.toInt() >= sortedDates.length) return const SizedBox();
+                if (value.toInt() >= sortedDates.length)
+                  return const SizedBox();
                 return Text(
                   DateFormat('MM/dd').format(sortedDates[value.toInt()]),
                   style: const TextStyle(fontSize: 10),

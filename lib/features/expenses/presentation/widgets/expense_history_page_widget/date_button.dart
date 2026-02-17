@@ -8,7 +8,8 @@ class DateButton extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onClear;
 
-  const DateButton({super.key,
+  const DateButton({
+    super.key,
     required this.label,
     required this.date,
     required this.onTap,
@@ -37,10 +38,9 @@ class DateButton extends StatelessWidget {
                   Text(
                     label,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
                     ),
                   ),
                   SizedBox(height: 4),

@@ -7,7 +7,8 @@ class CategoryGrid extends StatelessWidget {
   final String? selectedCategory;
   final ValueChanged<String> onCategoryChanged;
 
-  const CategoryGrid({super.key,
+  const CategoryGrid({
+    super.key,
     required this.selectedCategory,
     required this.onCategoryChanged,
   });
@@ -96,7 +97,9 @@ class CategoryGrid extends StatelessWidget {
                     border: Border.all(
                       color: isSelected
                           ? category.color
-                          : Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                          : Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.2),
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -109,28 +112,29 @@ class CategoryGrid extends StatelessWidget {
                           category.icon,
                           color: isSelected
                               ? category.color
-                              : Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6),
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                           size: 28,
                         ),
                         const SizedBox(height: 6),
                         Text(
                           category.name,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                            color: isSelected ? category.color : null,
-                            fontSize: 11,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isSelected ? category.color : null,
+                                fontSize: 11,
+                              ),
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        ],
+                      ],
                     ),
-                  )
+                  ),
                 ),
               );
             },

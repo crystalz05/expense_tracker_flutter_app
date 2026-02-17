@@ -48,7 +48,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         updatedAt: DateTime.now(),
       );
 
-      context.read<UserProfileBloc>().add(UpdateUserProfileEvent(updatedProfile));
+      context.read<UserProfileBloc>().add(
+        UpdateUserProfileEvent(updatedProfile),
+      );
     }
   }
 
@@ -143,7 +145,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -157,9 +161,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             Expanded(
                               child: Text(
                                 'Update your personal information',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
                               ),
                             ),
                           ],
@@ -183,9 +190,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             children: [
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: isLoading ? null : () => context.pop(),
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => context.pop(),
                                   style: OutlinedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: const Text('Cancel'),
                                 ),
@@ -195,19 +206,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 child: FilledButton(
                                   onPressed: isLoading ? null : _submitForm,
                                   style: FilledButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                   ),
                                   child: isLoading
                                       ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                          ),
+                                        )
                                       : const Text('Save Changes'),
                                 ),
                               ),
@@ -238,9 +252,9 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 }

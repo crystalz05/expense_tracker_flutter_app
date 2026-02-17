@@ -46,115 +46,111 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   }
 
   Future<void> _onLoadBudgets(
-      LoadBudgetsEvent event,
-      Emitter<BudgetState> emit,
-      ) async {
+    LoadBudgetsEvent event,
+    Emitter<BudgetState> emit,
+  ) async {
     emit(const BudgetLoading());
 
     final result = await getBudgets(NoParams());
 
     result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (budgets) => emit(BudgetLoaded(budgets)),
+      (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+      (budgets) => emit(BudgetLoaded(budgets)),
     );
   }
 
   Future<void> _onCreateBudget(
-      CreateBudgetEvent event,
-      Emitter<BudgetState> emit,
-      ) async {
+    CreateBudgetEvent event,
+    Emitter<BudgetState> emit,
+  ) async {
     emit(const BudgetLoading());
 
     final result = await createBudget(
       CreateOrUpdateBudgetParams(budget: event.budget),
     );
 
-    result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) {
-        emit(const BudgetOperationSuccess('Budget created successfully'));
-        add(const LoadBudgetsEvent());
-      },
-    );
+    result.fold((failure) => emit(BudgetError(_mapFailureToMessage(failure))), (
+      _,
+    ) {
+      emit(const BudgetOperationSuccess('Budget created successfully'));
+      add(const LoadBudgetsEvent());
+    });
   }
 
   Future<void> _onUpdateBudget(
-      UpdateBudgetEvent event,
-      Emitter<BudgetState> emit,
-      ) async {
+    UpdateBudgetEvent event,
+    Emitter<BudgetState> emit,
+  ) async {
     emit(const BudgetLoading());
 
     final result = await updateBudget(
       CreateOrUpdateBudgetParams(budget: event.budget),
     );
 
-    result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) {
-        emit(const BudgetOperationSuccess('Budget updated successfully'));
-        add(const LoadBudgetsEvent());
-      },
-    );
+    result.fold((failure) => emit(BudgetError(_mapFailureToMessage(failure))), (
+      _,
+    ) {
+      emit(const BudgetOperationSuccess('Budget updated successfully'));
+      add(const LoadBudgetsEvent());
+    });
   }
 
   Future<void> _onDeleteBudget(
-      DeleteBudgetEvent event,
-      Emitter<BudgetState> emit,
-      ) async {
+    DeleteBudgetEvent event,
+    Emitter<BudgetState> emit,
+  ) async {
     emit(const BudgetLoading());
 
     final result = await deleteBudget(IdParams(id: event.budgetId));
 
-    result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) {
-        emit(const BudgetOperationSuccess('Budget deleted successfully'));
-        add(const LoadBudgetsEvent());
-      },
-    );
+    result.fold((failure) => emit(BudgetError(_mapFailureToMessage(failure))), (
+      _,
+    ) {
+      emit(const BudgetOperationSuccess('Budget deleted successfully'));
+      add(const LoadBudgetsEvent());
+    });
   }
 
   Future<void> _onLoadBudgetProgress(
-      LoadBudgetProgress event,
-      Emitter<BudgetState> emit,
-      ) async {
+    LoadBudgetProgress event,
+    Emitter<BudgetState> emit,
+  ) async {
     emit(const BudgetLoading());
 
     final result = await getBudgetProgress(event.budgetId);
 
     result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (progress) => emit(BudgetProgressLoaded(progress)),
+      (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+      (progress) => emit(BudgetProgressLoaded(progress)),
     );
   }
 
   Future<void> _onLoadAllBudgetProgress(
-      LoadAllBudgetProgress event,
-      Emitter<BudgetState> emit,
-      ) async {
+    LoadAllBudgetProgress event,
+    Emitter<BudgetState> emit,
+  ) async {
     emit(const BudgetLoading());
 
     final result = await getAllBudgetProgress();
 
     result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (progressList) => emit(AllBudgetProgressLoaded(progressList)),
+      (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+      (progressList) => emit(AllBudgetProgressLoaded(progressList)),
     );
   }
 
   Future<void> _onSyncBudgets(
-      SyncBudgetsEvent event,
-      Emitter<BudgetState> emit,
-      ) async {
+    SyncBudgetsEvent event,
+    Emitter<BudgetState> emit,
+  ) async {
     // Don't emit loading for background sync
     final result = await syncBudgets(NoParams());
 
     result.fold(
-          (failure) {
+      (failure) {
         // Silent fail for background sync
-        print('Budget sync failed: ${_mapFailureToMessage(failure)}');
       },
-          (_) {
+      (_) {
         // Optionally reload budgets after sync
         add(const LoadBudgetsEvent());
       },
@@ -162,29 +158,28 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   }
 
   Future<void> _onPurgeSoftDeleted(
-      PurgeSoftDeletedBudgetsEvent event,
-      Emitter<BudgetState> emit,
-      ) async {
+    PurgeSoftDeletedBudgetsEvent event,
+    Emitter<BudgetState> emit,
+  ) async {
     final result = await purgeSoftDeletedBudgets(NoParams());
 
-    result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) {
-        emit(const BudgetOperationSuccess('Deleted budgets purged successfully'));
-        add(const LoadBudgetsEvent());
-      },
-    );
+    result.fold((failure) => emit(BudgetError(_mapFailureToMessage(failure))), (
+      _,
+    ) {
+      emit(const BudgetOperationSuccess('Deleted budgets purged successfully'));
+      add(const LoadBudgetsEvent());
+    });
   }
 
   Future<void> _onClearUserData(
-      ClearUserDataEvent event,
-      Emitter<BudgetState> emit,
-      ) async {
+    ClearUserDataEvent event,
+    Emitter<BudgetState> emit,
+  ) async {
     final result = await clearUserData(NoParams());
 
     result.fold(
-          (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
-          (_) => emit(const BudgetOperationSuccess('User data cleared')),
+      (failure) => emit(BudgetError(_mapFailureToMessage(failure))),
+      (_) => emit(const BudgetOperationSuccess('User data cleared')),
     );
   }
 

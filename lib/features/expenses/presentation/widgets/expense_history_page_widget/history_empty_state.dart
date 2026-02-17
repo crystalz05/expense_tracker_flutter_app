@@ -21,9 +21,7 @@ class HistoryEmptyState extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            hasActiveFilters
-                ? Icons.search_off
-                : Icons.receipt_long_outlined,
+            hasActiveFilters ? Icons.search_off : Icons.receipt_long_outlined,
             size: 80,
             color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),
@@ -31,10 +29,9 @@ class HistoryEmptyState extends StatelessWidget {
           Text(
             _getEmptyStateTitle(),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           SizedBox(height: 8),
@@ -43,10 +40,9 @@ class HistoryEmptyState extends StatelessWidget {
                 ? "Try adjusting your filters"
                 : "Start tracking your expenses",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.4),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ),
           if (hasActiveFilters) ...[

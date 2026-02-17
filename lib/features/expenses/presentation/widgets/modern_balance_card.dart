@@ -14,7 +14,10 @@ class ModernBalanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<BudgetCubit, BudgetStateSecondary>(
       builder: (context, state) {
-        final double fraction = (totalSpent / state.monthlyBudget).clamp(0.0, 1.0);
+        final double fraction = (totalSpent / state.monthlyBudget).clamp(
+          0.0,
+          1.0,
+        );
         final String percentage = (fraction * 100).toStringAsFixed(1);
         final double remaining = state.monthlyBudget - totalSpent;
         final bool isOverBudget = totalSpent > state.monthlyBudget;
@@ -28,11 +31,13 @@ class ModernBalanceCard extends StatelessWidget {
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(24),
-            border: BoxBorder.all(color: isOverBudget
-                ? Colors.red.shade600.withValues(alpha: 0.5)
-                : isWarning
-                ? Colors.orange.shade400.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.5),)
+            border: BoxBorder.all(
+              color: isOverBudget
+                  ? Colors.red.shade600.withValues(alpha: 0.5)
+                  : isWarning
+                  ? Colors.orange.shade400.withValues(alpha: 0.5)
+                  : Colors.white.withValues(alpha: 0.5),
+            ),
           ),
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -55,7 +60,10 @@ class ModernBalanceCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(20),
@@ -107,10 +115,7 @@ class ModernBalanceCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildStatItem(
-                      "Spent",
-                      "₦${formatter.format(totalSpent)}",
-                    ),
+                    _buildStatItem("Spent", "₦${formatter.format(totalSpent)}"),
                     _buildStatItem(
                       isOverBudget ? "Over Budget" : "Remaining",
                       "₦${formatter.format(remaining.abs())}",
@@ -126,9 +131,15 @@ class ModernBalanceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String value, {bool isHighlight = false}) {
+  Widget _buildStatItem(
+    String label,
+    String value, {
+    bool isHighlight = false,
+  }) {
     return Column(
-      crossAxisAlignment: isHighlight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isHighlight
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Text(
           label,

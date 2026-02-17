@@ -5,7 +5,8 @@ import '../../../../core/usecases/usecase.dart';
 import '../entities/spending_insight.dart';
 import '../repositories/analytics_repository.dart';
 
-class GetSpendingInsights implements UseCase<List<SpendingInsight>, DateRangeParams> {
+class GetSpendingInsights
+    implements UseCase<List<SpendingInsight>, DateRangeParams> {
   final AnalyticsRepository repository;
 
   GetSpendingInsights(this.repository);

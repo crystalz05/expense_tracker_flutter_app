@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +17,6 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   // @override
@@ -42,9 +39,7 @@ class _SplashPageState extends State<SplashPage> {
           // TODO context.go('/login');
         }
       },
-      child: const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      child: const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }
 }

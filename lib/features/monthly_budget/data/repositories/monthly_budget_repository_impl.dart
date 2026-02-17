@@ -31,11 +31,12 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
         await _fullSync();
       }
 
-      final localBudgets = await localDataSource.getMonthlyBudgets(userSession.userId);
+      final localBudgets = await localDataSource.getMonthlyBudgets(
+        userSession.userId,
+      );
       final entities = localBudgets.map((e) => e.toEntity()).toList();
       return Right(entities);
     } catch (e) {
-      print('Error in getMonthlyBudgets(): $e');
       return Left(DatabaseFailure('Failed to load monthly budgets'));
     }
   }
@@ -57,7 +58,10 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
   }
 
   @override
-  Future<Either<Failure, MonthlyBudget?>> getMonthlyBudgetByMonthYear(int month, int year) async {
+  Future<Either<Failure, MonthlyBudget?>> getMonthlyBudgetByMonthYear(
+    int month,
+    int year,
+  ) async {
     try {
       final budget = await localDataSource.getMonthlyBudgetByMonthYear(
         userSession.userId,
@@ -72,7 +76,9 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
   }
 
   @override
-  Future<Either<Failure, List<MonthlyBudget>>> getMonthlyBudgetsByYear(int year) async {
+  Future<Either<Failure, List<MonthlyBudget>>> getMonthlyBudgetsByYear(
+    int year,
+  ) async {
     try {
       final budgets = await localDataSource.getMonthlyBudgetsByYear(
         userSession.userId,
@@ -86,7 +92,9 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
   }
 
   @override
-  Future<Either<Failure, void>> createMonthlyBudget(MonthlyBudget monthlyBudget) async {
+  Future<Either<Failure, void>> createMonthlyBudget(
+    MonthlyBudget monthlyBudget,
+  ) async {
     try {
       // Check if budget for this month/year already exists
       final existing = await localDataSource.getMonthlyBudgetByMonthYear(
@@ -108,10 +116,14 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
       if (await networkInfo.isConnected) {
         // Online: Save remote first, then local
         await remoteDataSource.createMonthlyBudget(model);
-        await localDataSource.createMonthlyBudget(model.copyWith(needsSync: false));
+        await localDataSource.createMonthlyBudget(
+          model.copyWith(needsSync: false),
+        );
       } else {
         // Offline: Save locally only
-        await localDataSource.createMonthlyBudget(model.copyWith(needsSync: true));
+        await localDataSource.createMonthlyBudget(
+          model.copyWith(needsSync: true),
+        );
       }
 
       return const Right(null);
@@ -126,9 +138,13 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateMonthlyBudget(MonthlyBudget monthlyBudget) async {
+  Future<Either<Failure, void>> updateMonthlyBudget(
+    MonthlyBudget monthlyBudget,
+  ) async {
     try {
-      final existing = await localDataSource.getMonthlyBudgetById(monthlyBudget.id);
+      final existing = await localDataSource.getMonthlyBudgetById(
+        monthlyBudget.id,
+      );
       if (existing == null) return Left(NotFoundFailure());
       if (existing.userId != userSession.userId) {
         return Left(PermissionFailure());
@@ -142,10 +158,14 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
       if (await networkInfo.isConnected) {
         // Online: Update remote first, then local
         await remoteDataSource.updateMonthlyBudget(model);
-        await localDataSource.updateMonthlyBudget(model.copyWith(needsSync: false));
+        await localDataSource.updateMonthlyBudget(
+          model.copyWith(needsSync: false),
+        );
       } else {
         // Offline: Update locally only
-        await localDataSource.updateMonthlyBudget(model.copyWith(needsSync: true));
+        await localDataSource.updateMonthlyBudget(
+          model.copyWith(needsSync: true),
+        );
       }
 
       return const Right(null);
@@ -171,10 +191,14 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
       if (await networkInfo.isConnected) {
         // Online: Delete from remote first, then local
         await remoteDataSource.deleteMonthlyBudget(id);
-        await localDataSource.updateMonthlyBudget(model.copyWith(needsSync: false));
+        await localDataSource.updateMonthlyBudget(
+          model.copyWith(needsSync: false),
+        );
       } else {
         // Offline: Mark deleted locally
-        await localDataSource.updateMonthlyBudget(model.copyWith(needsSync: true));
+        await localDataSource.updateMonthlyBudget(
+          model.copyWith(needsSync: true),
+        );
       }
 
       return const Right(null);
@@ -206,13 +230,15 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
 
       final userId = userSession.userId;
       final cutoffDate = DateTime.now().subtract(const Duration(days: 30));
-      final deletedBudgets = await localDataSource.getDeletedMonthlyBudgets(userId);
+      final deletedBudgets = await localDataSource.getDeletedMonthlyBudgets(
+        userId,
+      );
 
       final idsToDelete = deletedBudgets
           .where((b) {
-        final deleteTime = b.updatedAt ?? b.createdAt;
-        return deleteTime.isBefore(cutoffDate);
-      })
+            final deleteTime = b.updatedAt ?? b.createdAt;
+            return deleteTime.isBefore(cutoffDate);
+          })
           .map((b) => b.id)
           .toList();
 
@@ -242,7 +268,9 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
     final userId = userSession.userId;
 
     final localBudgets = await localDataSource.getMonthlyBudgets(userId);
-    final deletedBudgets = await localDataSource.getDeletedMonthlyBudgets(userId);
+    final deletedBudgets = await localDataSource.getDeletedMonthlyBudgets(
+      userId,
+    );
     final allLocalBudgets = [...localBudgets, ...deletedBudgets];
 
     final remoteBudgets = await remoteDataSource.getMonthlyBudgets(userId);
@@ -292,13 +320,10 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
           }
 
           await localDataSource.updateMonthlyBudget(
-            budget.copyWith(
-              needsSync: false,
-              lastSyncedAt: DateTime.now(),
-            ),
+            budget.copyWith(needsSync: false, lastSyncedAt: DateTime.now()),
           );
         } catch (e) {
-          print('Failed to upload monthly budget $id: $e');
+          // Silent fail - sync will retry on next attempt
         }
       }
     }
@@ -311,21 +336,15 @@ class MonthlyBudgetRepositoryImpl implements MonthlyBudgetRepository {
 
           if (local == null) {
             await localDataSource.createMonthlyBudget(
-              remote.copyWith(
-                needsSync: false,
-                lastSyncedAt: DateTime.now(),
-              ),
+              remote.copyWith(needsSync: false, lastSyncedAt: DateTime.now()),
             );
           } else {
             await localDataSource.updateMonthlyBudget(
-              remote.copyWith(
-                needsSync: false,
-                lastSyncedAt: DateTime.now(),
-              ),
+              remote.copyWith(needsSync: false, lastSyncedAt: DateTime.now()),
             );
           }
         } catch (e) {
-          print('Failed to download monthly budget $id: $e');
+          // Silent fail - sync will retry on next attempt
         }
       }
     }

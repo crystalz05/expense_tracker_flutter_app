@@ -10,7 +10,6 @@ import '../../bloc/expense_bloc.dart';
 import '../../bloc/expense_event.dart';
 import 'delete-confirmation_dialog.dart';
 
-
 class HistorySection extends StatelessWidget {
   final List<Expense> expenses;
   final bool selectionMode;
@@ -101,14 +100,16 @@ class _DateSection extends StatelessWidget {
             ),
           ),
         ),
-        ...expenses.map((expense) => _ExpenseListItem(
-          expense: expense,
-          selectionMode: selectionMode,
-          isSelected: selectedIds.contains(expense.id),
-          onToggleSelect: () => onToggleSelect(expense.id),
-          onDelete: () => _handleDelete(context, expense.id),
-          onEdit: () => onEdit(expense),
-        )),
+        ...expenses.map(
+          (expense) => _ExpenseListItem(
+            expense: expense,
+            selectionMode: selectionMode,
+            isSelected: selectedIds.contains(expense.id),
+            onToggleSelect: () => onToggleSelect(expense.id),
+            onDelete: () => _handleDelete(context, expense.id),
+            onEdit: () => onEdit(expense),
+          ),
+        ),
         const SizedBox(height: 16),
       ],
     );
@@ -195,10 +196,9 @@ class _ExpenseListItem extends StatelessWidget {
                     Text(
                       expense.category,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
                   ],
@@ -218,10 +218,9 @@ class _ExpenseListItem extends StatelessWidget {
                   Text(
                     DateFormat('h:mm a').format(expense.updatedAt),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
                     ),
                   ),
                 ],

@@ -1,8 +1,6 @@
-
 import 'package:equatable/equatable.dart';
 
 class Expense extends Equatable {
-
   final String id;
   final double amount;
   final String category;
@@ -20,7 +18,7 @@ class Expense extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.paymentMethod,
-    this.isDeleted = false
+    this.isDeleted = false,
   });
 
   // Expense copyWith({
@@ -46,6 +44,14 @@ class Expense extends Equatable {
   // }
 
   @override
-  List<Object?> get props => [id, amount, category, description, createdAt, updatedAt, paymentMethod, isDeleted];
-
+  List<Object?> get props => [
+    id,
+    amount,
+    category,
+    description,
+    createdAt,
+    updatedAt,
+    paymentMethod,
+    isDeleted,
+  ];
 }

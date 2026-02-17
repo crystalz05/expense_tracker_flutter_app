@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 class ExpenseFormHeader extends StatelessWidget {
   final String subtitle;
 
-  const ExpenseFormHeader({
-    super.key,
-    required this.subtitle,
-  });
+  const ExpenseFormHeader({super.key, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,6 @@
-
 import 'package:equatable/equatable.dart';
 
 abstract class Failure extends Equatable {
-
   final String message;
   const Failure(this.message);
 
@@ -39,7 +37,9 @@ class UnreachableError extends Failure {
 }
 
 class PermissionFailure extends Failure {
-  const PermissionFailure([super.message = 'You do not have sufficient permission']);
+  const PermissionFailure([
+    super.message = 'You do not have sufficient permission',
+  ]);
 }
 
 class DuplicateFailure extends Failure {
@@ -47,5 +47,5 @@ class DuplicateFailure extends Failure {
 }
 
 class UnknownFailure extends Failure {
-  const UnknownFailure([super.message = 'Duplicate entry found']);
+  const UnknownFailure([super.message = 'An unknown error occurred']);
 }

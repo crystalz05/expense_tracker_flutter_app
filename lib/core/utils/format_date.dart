@@ -12,7 +12,6 @@ String formatDate(DateTime date) {
   }
 }
 
-
 DateTime month = DateTime.now();
 
 DateTime firstDay = DateTime(month.year, month.month, 1);

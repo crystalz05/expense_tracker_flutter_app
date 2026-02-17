@@ -33,35 +33,32 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
         endDate,
       );
 
-      return expensesResult.fold(
-            (failure) => Left(failure),
-            (expenses) {
-          final categoryMap = <String, _CategoryData>{};
-          double total = 0;
+      return expensesResult.fold((failure) => Left(failure), (expenses) {
+        final categoryMap = <String, _CategoryData>{};
+        double total = 0;
 
-          for (final expense in expenses) {
-            if (!categoryMap.containsKey(expense.category)) {
-              categoryMap[expense.category] = _CategoryData();
-            }
-            categoryMap[expense.category]!.amount += expense.amount;
-            categoryMap[expense.category]!.count++;
-            total += expense.amount;
+        for (final expense in expenses) {
+          if (!categoryMap.containsKey(expense.category)) {
+            categoryMap[expense.category] = _CategoryData();
           }
+          categoryMap[expense.category]!.amount += expense.amount;
+          categoryMap[expense.category]!.count++;
+          total += expense.amount;
+        }
 
-          final categorySpending = categoryMap.entries.map((entry) {
-            return CategorySpending(
-              category: entry.key,
-              amount: entry.value.amount,
-              percentage: total > 0 ? (entry.value.amount / total) * 100 : 0,
-              transactionCount: entry.value.count,
-            );
-          }).toList();
+        final categorySpending = categoryMap.entries.map((entry) {
+          return CategorySpending(
+            category: entry.key,
+            amount: entry.value.amount,
+            percentage: total > 0 ? (entry.value.amount / total) * 100 : 0,
+            transactionCount: entry.value.count,
+          );
+        }).toList();
 
-          categorySpending.sort((a, b) => b.amount.compareTo(a.amount));
+        categorySpending.sort((a, b) => b.amount.compareTo(a.amount));
 
-          return Right(categorySpending);
-        },
-      );
+        return Right(categorySpending);
+      });
     } catch (e) {
       return Left(DatabaseFailure('Failed to get category spending: $e'));
     }
@@ -76,90 +73,96 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
       final currentStart = DateTime(currentMonth.year, currentMonth.month, 1);
       final currentEnd = DateTime(currentMonth.year, currentMonth.month + 1, 0);
 
-      final previousStart = DateTime(previousMonth.year, previousMonth.month, 1);
-      final previousEnd = DateTime(previousMonth.year, previousMonth.month + 1, 0);
-
-      final currentExpensesResult = await expenseRepository.getExpensesByDateRange(
-        currentStart,
-        currentEnd,
+      final previousStart = DateTime(
+        previousMonth.year,
+        previousMonth.month,
+        1,
+      );
+      final previousEnd = DateTime(
+        previousMonth.year,
+        previousMonth.month + 1,
+        0,
       );
 
-      final previousExpensesResult = await expenseRepository.getExpensesByDateRange(
-        previousStart,
-        previousEnd,
-      );
+      final currentExpensesResult = await expenseRepository
+          .getExpensesByDateRange(currentStart, currentEnd);
 
-      return currentExpensesResult.fold(
-            (failure) => Left(failure),
-            (currentExpenses) {
-          return previousExpensesResult.fold(
-                (failure) => Left(failure),
-                (previousExpenses) {
-              double currentTotal = 0;
-              double previousTotal = 0;
+      final previousExpensesResult = await expenseRepository
+          .getExpensesByDateRange(previousStart, previousEnd);
 
-              final currentCategoryMap = <String, double>{};
-              final previousCategoryMap = <String, double>{};
+      return currentExpensesResult.fold((failure) => Left(failure), (
+        currentExpenses,
+      ) {
+        return previousExpensesResult.fold((failure) => Left(failure), (
+          previousExpenses,
+        ) {
+          double currentTotal = 0;
+          double previousTotal = 0;
 
-              for (final expense in currentExpenses) {
-                currentTotal += expense.amount;
-                currentCategoryMap[expense.category] =
-                    (currentCategoryMap[expense.category] ?? 0) + expense.amount;
-              }
+          final currentCategoryMap = <String, double>{};
+          final previousCategoryMap = <String, double>{};
 
-              for (final expense in previousExpenses) {
-                previousTotal += expense.amount;
-                previousCategoryMap[expense.category] =
-                    (previousCategoryMap[expense.category] ?? 0) + expense.amount;
-              }
+          for (final expense in currentExpenses) {
+            currentTotal += expense.amount;
+            currentCategoryMap[expense.category] =
+                (currentCategoryMap[expense.category] ?? 0) + expense.amount;
+          }
 
-              final allCategories = {
-                ...currentCategoryMap.keys,
-                ...previousCategoryMap.keys,
-              };
+          for (final expense in previousExpenses) {
+            previousTotal += expense.amount;
+            previousCategoryMap[expense.category] =
+                (previousCategoryMap[expense.category] ?? 0) + expense.amount;
+          }
 
-              final categoryComparisons = <String, CategoryComparison>{};
+          final allCategories = {
+            ...currentCategoryMap.keys,
+            ...previousCategoryMap.keys,
+          };
 
-              for (final category in allCategories) {
-                final currentAmount = currentCategoryMap[category] ?? 0;
-                final previousAmount = previousCategoryMap[category] ?? 0;
+          final categoryComparisons = <String, CategoryComparison>{};
 
-                double percentageChange = 0;
-                if (previousAmount > 0) {
-                  percentageChange = ((currentAmount - previousAmount) / previousAmount) * 100;
-                } else if (currentAmount > 0) {
-                  percentageChange = 100;
-                }
+          for (final category in allCategories) {
+            final currentAmount = currentCategoryMap[category] ?? 0;
+            final previousAmount = previousCategoryMap[category] ?? 0;
 
-                categoryComparisons[category] = CategoryComparison(
-                  category: category,
-                  currentAmount: currentAmount,
-                  previousAmount: previousAmount,
-                  percentageChange: percentageChange.abs(),
-                  isIncrease: currentAmount >= previousAmount,
-                );
-              }
+            double percentageChange = 0;
+            if (previousAmount > 0) {
+              percentageChange =
+                  ((currentAmount - previousAmount) / previousAmount) * 100;
+            } else if (currentAmount > 0) {
+              percentageChange = 100;
+            }
 
-              double totalPercentageChange = 0;
-              if (previousTotal > 0) {
-                totalPercentageChange = ((currentTotal - previousTotal) / previousTotal) * 100;
-              } else if (currentTotal > 0) {
-                totalPercentageChange = 100;
-              }
+            categoryComparisons[category] = CategoryComparison(
+              category: category,
+              currentAmount: currentAmount,
+              previousAmount: previousAmount,
+              percentageChange: percentageChange.abs(),
+              isIncrease: currentAmount >= previousAmount,
+            );
+          }
 
-              return Right(MonthlyComparison(
-                currentMonth: currentMonth,
-                previousMonth: previousMonth,
-                currentTotal: currentTotal,
-                previousTotal: previousTotal,
-                percentageChange: totalPercentageChange.abs(),
-                isIncrease: currentTotal >= previousTotal,
-                categoryComparisons: categoryComparisons,
-              ));
-            },
+          double totalPercentageChange = 0;
+          if (previousTotal > 0) {
+            totalPercentageChange =
+                ((currentTotal - previousTotal) / previousTotal) * 100;
+          } else if (currentTotal > 0) {
+            totalPercentageChange = 100;
+          }
+
+          return Right(
+            MonthlyComparison(
+              currentMonth: currentMonth,
+              previousMonth: previousMonth,
+              currentTotal: currentTotal,
+              previousTotal: previousTotal,
+              percentageChange: totalPercentageChange.abs(),
+              isIncrease: currentTotal >= previousTotal,
+              categoryComparisons: categoryComparisons,
+            ),
           );
-        },
-      );
+        });
+      });
     } catch (e) {
       return Left(DatabaseFailure('Failed to get monthly comparison: $e'));
     }
@@ -197,14 +200,15 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
           if (budget.isDeleted) continue;
 
           final categoryExpenses = expenses.where(
-                (e) => e.category == budget.category &&
+            (e) =>
+                e.category == budget.category &&
                 e.createdAt.isAfter(budget.startDate) &&
                 e.createdAt.isBefore(budget.endDate),
           );
 
           final totalSpent = categoryExpenses.fold<double>(
             0,
-                (sum, e) => sum + e.amount,
+            (sum, e) => sum + e.amount,
           );
 
           final percentageUsed = (totalSpent / budget.amount) * 100;
@@ -213,28 +217,36 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
             final exceeded = totalSpent - budget.amount;
             final exceededPercent = ((exceeded / budget.amount) * 100);
 
-            insights.add(SpendingInsight(
-              id: uuid.v4(),
-              type: InsightType.budgetExceeded,
-              category: budget.category,
-              message: '${budget.category} exceeded budget by ${exceededPercent.toStringAsFixed(1)}%',
-              description: 'You spent ₦${totalSpent.toStringAsFixed(2)} out of ₦${budget.amount.toStringAsFixed(2)}',
-              severity: InsightSeverity.critical,
-              amount: exceeded,
-              percentage: exceededPercent,
-              generatedAt: DateTime.now(),
-            ));
+            insights.add(
+              SpendingInsight(
+                id: uuid.v4(),
+                type: InsightType.budgetExceeded,
+                category: budget.category,
+                message:
+                    '${budget.category} exceeded budget by ${exceededPercent.toStringAsFixed(1)}%',
+                description:
+                    'You spent ₦${totalSpent.toStringAsFixed(2)} out of ₦${budget.amount.toStringAsFixed(2)}',
+                severity: InsightSeverity.critical,
+                amount: exceeded,
+                percentage: exceededPercent,
+                generatedAt: DateTime.now(),
+              ),
+            );
           } else if (percentageUsed >= (budget.alertThreshold ?? 80)) {
-            insights.add(SpendingInsight(
-              id: uuid.v4(),
-              type: InsightType.budgetWarning,
-              category: budget.category,
-              message: '${budget.category} is at ${percentageUsed.toStringAsFixed(1)}% of budget',
-              description: 'You have ₦${(budget.amount - totalSpent).toStringAsFixed(2)} remaining',
-              severity: InsightSeverity.warning,
-              percentage: percentageUsed,
-              generatedAt: DateTime.now(),
-            ));
+            insights.add(
+              SpendingInsight(
+                id: uuid.v4(),
+                type: InsightType.budgetWarning,
+                category: budget.category,
+                message:
+                    '${budget.category} is at ${percentageUsed.toStringAsFixed(1)}% of budget',
+                description:
+                    'You have ₦${(budget.amount - totalSpent).toStringAsFixed(2)} remaining',
+                severity: InsightSeverity.warning,
+                percentage: percentageUsed,
+                generatedAt: DateTime.now(),
+              ),
+            );
           }
         }
       }
@@ -244,10 +256,8 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
       final previousStart = startDate.subtract(duration);
       final previousEnd = startDate.subtract(const Duration(days: 1));
 
-      final previousExpensesResult = await expenseRepository.getExpensesByDateRange(
-        previousStart,
-        previousEnd,
-      );
+      final previousExpensesResult = await expenseRepository
+          .getExpensesByDateRange(previousStart, previousEnd);
 
       if (previousExpensesResult.isRight()) {
         final previousExpenses = previousExpensesResult.getOrElse(() => []);
@@ -273,50 +283,65 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
           final previousAmount = previousCategoryMap[category] ?? 0;
 
           if (previousAmount > 0) {
-            final percentageChange = ((currentAmount - previousAmount) / previousAmount) * 100;
+            final percentageChange =
+                ((currentAmount - previousAmount) / previousAmount) * 100;
 
             if (percentageChange > 20) {
-              insights.add(SpendingInsight(
-                id: uuid.v4(),
-                type: InsightType.spendingIncrease,
-                category: category,
-                message: '$category spending increased by ${percentageChange.toStringAsFixed(1)}%',
-                description: 'You spent ₦${currentAmount.toStringAsFixed(2)} vs ₦${previousAmount.toStringAsFixed(2)} last period',
-                severity: InsightSeverity.warning,
-                percentage: percentageChange,
-                generatedAt: DateTime.now(),
-              ));
+              insights.add(
+                SpendingInsight(
+                  id: uuid.v4(),
+                  type: InsightType.spendingIncrease,
+                  category: category,
+                  message:
+                      '$category spending increased by ${percentageChange.toStringAsFixed(1)}%',
+                  description:
+                      'You spent ₦${currentAmount.toStringAsFixed(2)} vs ₦${previousAmount.toStringAsFixed(2)} last period',
+                  severity: InsightSeverity.warning,
+                  percentage: percentageChange,
+                  generatedAt: DateTime.now(),
+                ),
+              );
             } else if (percentageChange < -20) {
-              insights.add(SpendingInsight(
-                id: uuid.v4(),
-                type: InsightType.spendingDecrease,
-                category: category,
-                message: '$category spending decreased by ${percentageChange.abs().toStringAsFixed(1)}%',
-                description: 'You spent ₦${currentAmount.toStringAsFixed(2)} vs ₦${previousAmount.toStringAsFixed(2)} last period',
-                severity: InsightSeverity.info,
-                percentage: percentageChange.abs(),
-                generatedAt: DateTime.now(),
-              ));
+              insights.add(
+                SpendingInsight(
+                  id: uuid.v4(),
+                  type: InsightType.spendingDecrease,
+                  category: category,
+                  message:
+                      '$category spending decreased by ${percentageChange.abs().toStringAsFixed(1)}%',
+                  description:
+                      'You spent ₦${currentAmount.toStringAsFixed(2)} vs ₦${previousAmount.toStringAsFixed(2)} last period',
+                  severity: InsightSeverity.info,
+                  percentage: percentageChange.abs(),
+                  generatedAt: DateTime.now(),
+                ),
+              );
             }
           }
         }
 
         // Check if one category dominates spending
-        final totalCurrent = currentCategoryMap.values.fold<double>(0, (a, b) => a + b);
+        final totalCurrent = currentCategoryMap.values.fold<double>(
+          0,
+          (a, b) => a + b,
+        );
         if (totalCurrent > 0) {
           for (final entry in currentCategoryMap.entries) {
             final percentage = (entry.value / totalCurrent) * 100;
             if (percentage > 40) {
-              insights.add(SpendingInsight(
-                id: uuid.v4(),
-                type: InsightType.categoryDominating,
-                category: entry.key,
-                message: '${entry.key} accounts for ${percentage.toStringAsFixed(1)}% of spending',
-                description: 'Consider reviewing your ${entry.key} expenses',
-                severity: InsightSeverity.info,
-                percentage: percentage,
-                generatedAt: DateTime.now(),
-              ));
+              insights.add(
+                SpendingInsight(
+                  id: uuid.v4(),
+                  type: InsightType.categoryDominating,
+                  category: entry.key,
+                  message:
+                      '${entry.key} accounts for ${percentage.toStringAsFixed(1)}% of spending',
+                  description: 'Consider reviewing your ${entry.key} expenses',
+                  severity: InsightSeverity.info,
+                  percentage: percentage,
+                  generatedAt: DateTime.now(),
+                ),
+              );
             }
           }
         }
@@ -372,17 +397,25 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
       final topCategory = categoryTotals.entries.isEmpty
           ? 'None'
-          : categoryTotals.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+          : categoryTotals.entries
+                .reduce((a, b) => a.value > b.value ? a : b)
+                .key;
 
       final averageMonthlySpending = monthlyData.isEmpty
           ? 0.0
-          : monthlyData.fold<double>(0, (sum, m) => sum + m.amount) / monthlyData.length;
+          : monthlyData.fold<double>(0, (sum, m) => sum + m.amount) /
+                monthlyData.length;
 
       // Determine trend
       TrendDirection trend = TrendDirection.stable;
       if (monthlyData.length >= 2) {
-        final recentAvg = monthlyData.skip(monthlyData.length - 2).fold<double>(0, (sum, m) => sum + m.amount) / 2;
-        final olderAvg = monthlyData.take(2).fold<double>(0, (sum, m) => sum + m.amount) / 2;
+        final recentAvg =
+            monthlyData
+                .skip(monthlyData.length - 2)
+                .fold<double>(0, (sum, m) => sum + m.amount) /
+            2;
+        final olderAvg =
+            monthlyData.take(2).fold<double>(0, (sum, m) => sum + m.amount) / 2;
 
         if (olderAvg > 0) {
           final change = ((recentAvg - olderAvg) / olderAvg) * 100;
@@ -394,12 +427,14 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
         }
       }
 
-      return Right(SpendingTrend(
-        monthlyData: monthlyData,
-        topCategory: topCategory,
-        averageMonthlySpending: averageMonthlySpending,
-        overallTrend: trend,
-      ));
+      return Right(
+        SpendingTrend(
+          monthlyData: monthlyData,
+          topCategory: topCategory,
+          averageMonthlySpending: averageMonthlySpending,
+          overallTrend: trend,
+        ),
+      );
     } catch (e) {
       return Left(DatabaseFailure('Failed to get spending trend: $e'));
     }
@@ -423,48 +458,43 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
       final trendResult = await getSpendingTrend(monthsBack: 6);
 
-      return categorySpendingResult.fold(
-            (failure) => Left(failure),
-            (categorySpending) {
-          return insightsResult.fold(
-                (failure) => Left(failure),
-                (insights) {
-              return trendResult.fold(
-                    (failure) => Left(failure),
-                    (trend) async {
-                  final totalSpending = categorySpending.fold<double>(
-                    0,
-                        (sum, c) => sum + c.amount,
-                  );
+      return categorySpendingResult.fold((failure) => Left(failure), (
+        categorySpending,
+      ) {
+        return insightsResult.fold((failure) => Left(failure), (insights) {
+          return trendResult.fold((failure) => Left(failure), (trend) async {
+            final totalSpending = categorySpending.fold<double>(
+              0,
+              (sum, c) => sum + c.amount,
+            );
 
-                  MonthlyComparison? monthComparison;
+            MonthlyComparison? monthComparison;
 
-                  final now = DateTime.now();
-                  final currentMonth = DateTime(now.year, now.month, 1);
-                  final previousMonth = DateTime(now.year, now.month - 1, 1);
+            final now = DateTime.now();
+            final currentMonth = DateTime(now.year, now.month, 1);
+            final previousMonth = DateTime(now.year, now.month - 1, 1);
 
-                  final comparisonResult = await getMonthlyComparison(
-                    currentMonth: currentMonth,
-                    previousMonth: previousMonth,
-                  );
+            final comparisonResult = await getMonthlyComparison(
+              currentMonth: currentMonth,
+              previousMonth: previousMonth,
+            );
 
-                  monthComparison = comparisonResult.getOrElse(() => null);
+            monthComparison = comparisonResult.getOrElse(() => null);
 
-                  return Right(AnalyticsSummary(
-                    periodStart: startDate,
-                    periodEnd: endDate,
-                    totalSpending: totalSpending,
-                    categoryBreakdown: categorySpending,
-                    monthComparison: monthComparison,
-                    insights: insights,
-                    trend: trend,
-                  ));
-                },
-              );
-            },
-          );
-        },
-      );
+            return Right(
+              AnalyticsSummary(
+                periodStart: startDate,
+                periodEnd: endDate,
+                totalSpending: totalSpending,
+                categoryBreakdown: categorySpending,
+                monthComparison: monthComparison,
+                insights: insights,
+                trend: trend,
+              ),
+            );
+          });
+        });
+      });
     } catch (e) {
       return Left(DatabaseFailure('Failed to get analytics summary: $e'));
     }

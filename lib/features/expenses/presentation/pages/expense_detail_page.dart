@@ -11,10 +11,7 @@ import 'package:intl/intl.dart';
 class ExpenseDetailPage extends StatelessWidget {
   final Expense expense;
 
-  const ExpenseDetailPage({
-    super.key,
-    required this.expense,
-  });
+  const ExpenseDetailPage({super.key, required this.expense});
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +148,9 @@ class ExpenseDetailPage extends StatelessWidget {
                       _DetailRow(
                         icon: Icons.calendar_today_outlined,
                         label: 'Created',
-                        value: DateFormat('EEEE, MMMM d, yyyy').format(expense.createdAt),
+                        value: DateFormat(
+                          'EEEE, MMMM d, yyyy',
+                        ).format(expense.createdAt),
                       ),
                       const Divider(height: 32),
                       _DetailRow(
@@ -164,7 +163,9 @@ class ExpenseDetailPage extends StatelessWidget {
                         _DetailRow(
                           icon: Icons.update_outlined,
                           label: 'Last Updated',
-                          value: DateFormat('MMM d, yyyy h:mm a').format(expense.updatedAt),
+                          value: DateFormat(
+                            'MMM d, yyyy h:mm a',
+                          ).format(expense.updatedAt),
                         ),
                       ],
                     ],
@@ -194,7 +195,9 @@ class ExpenseDetailPage extends StatelessWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              context.read<ExpenseBloc>().add(SoftDeleteExpenseEvent(expense.id));
+              context.read<ExpenseBloc>().add(
+                SoftDeleteExpenseEvent(expense.id),
+              );
               context.pop(); // Go back to previous screen
 
               ScaffoldMessenger.of(context).showSnackBar(
@@ -214,9 +217,7 @@ class ExpenseDetailPage extends StatelessWidget {
                 ),
               );
             },
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Delete'),
           ),
         ],
@@ -229,10 +230,7 @@ class _QuickInfoCard extends StatelessWidget {
   final Expense expense;
   final ExpenseCategory categoryData;
 
-  const _QuickInfoCard({
-    required this.expense,
-    required this.categoryData,
-  });
+  const _QuickInfoCard({required this.expense, required this.categoryData});
 
   @override
   Widget build(BuildContext context) {
@@ -248,9 +246,7 @@ class _QuickInfoCard extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: categoryData.color.withOpacity(0.2),
-        ),
+        border: Border.all(color: categoryData.color.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,11 +259,7 @@ class _QuickInfoCard extends StatelessWidget {
                   color: categoryData.color,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  categoryData.icon,
-                  color: Colors.white,
-                  size: 24,
-                ),
+                child: Icon(categoryData.icon, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -283,10 +275,9 @@ class _QuickInfoCard extends StatelessWidget {
                     Text(
                       expense.description ?? 'No description',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -306,17 +297,13 @@ class _QuickInfoCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.calendar_today,
-                  size: 16,
-                  color: categoryData.color,
-                ),
+                Icon(Icons.calendar_today, size: 16, color: categoryData.color),
                 const SizedBox(width: 8),
                 Text(
                   DateFormat('MMM d, yyyy').format(expense.createdAt),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -331,10 +318,7 @@ class _DetailSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const _DetailSection({
-    required this.title,
-    required this.children,
-  });
+  const _DetailSection({required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -359,9 +343,9 @@ class _DetailSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
           ...children,
@@ -393,7 +377,9 @@ class _DetailRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -410,10 +396,9 @@ class _DetailRow extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -422,13 +407,13 @@ class _DetailRow extends StatelessWidget {
                 value,
                 style: isLarge
                     ? Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: valueColor,
-                )
+                        fontWeight: FontWeight.bold,
+                        color: valueColor,
+                      )
                     : Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: valueColor,
-                ),
+                        fontWeight: FontWeight.w600,
+                        color: valueColor,
+                      ),
               ),
             ],
           ),

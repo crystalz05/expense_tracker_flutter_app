@@ -8,7 +8,8 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
   BudgetLocalDataSourceImpl(this.dao);
 
   @override
-  Future<List<BudgetModel>> getBudgets(String userId) => dao.getAllBudgets(userId);
+  Future<List<BudgetModel>> getBudgets(String userId) =>
+      dao.getAllBudgets(userId);
 
   @override
   Future<BudgetModel?> getBudgetById(String id) => dao.getBudgetById(id);
@@ -23,13 +24,16 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
   Future<void> deleteBudget(String id) => dao.deleteBudget(id);
 
   @override
-  Future<List<BudgetModel>> getBudgetsNeedingSync(String userId) => dao.getBudgetsNeedingSync(userId);
+  Future<List<BudgetModel>> getBudgetsNeedingSync(String userId) =>
+      dao.getBudgetsNeedingSync(userId);
 
   @override
-  Future<List<BudgetModel>> getDeletedBudgets(String userId) => dao.getDeletedBudgets(userId);
+  Future<List<BudgetModel>> getDeletedBudgets(String userId) =>
+      dao.getDeletedBudgets(userId);
 
   @override
-  Future<void> permanentlyDeleteBudgets(List<String> ids) => dao.permanentlyDeleteBudgets(ids);
+  Future<void> permanentlyDeleteBudgets(List<String> ids) =>
+      dao.permanentlyDeleteBudgets(ids);
 
   @override
   Future<void> clearUserData(String userId) => dao.clearUserData(userId);

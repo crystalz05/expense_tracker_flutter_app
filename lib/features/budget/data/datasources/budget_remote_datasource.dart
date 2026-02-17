@@ -7,5 +7,8 @@ abstract class BudgetRemoteDataSource {
   Future<void> updateBudget(BudgetModel budget);
   Future<void> deleteBudget(String id);
   Future<void> permanentlyDeleteBudgets(List<String> ids);
-  Future<List<BudgetModel>> getBudgetsModifiedAfter(DateTime timestamp, String userId);
+  Future<List<BudgetModel>> getBudgetsModifiedAfter(
+    DateTime timestamp,
+    String userId,
+  );
 }

@@ -48,7 +48,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 behavior: SnackBarBehavior.floating,
               ),
             );
-            if (state.message.contains("No cached") || state.message.contains("not found")) {
+            if (state.message.contains("No cached") ||
+                state.message.contains("not found")) {
               final authState = context.read<AuthBloc>().state;
               if (authState is AuthAuthenticated) {
                 context.read<UserProfileBloc>().add(CreateUserProfileEvent());
@@ -89,7 +90,8 @@ class _ProfilePageState extends State<ProfilePage> {
           }
         },
         builder: (context, state) {
-          if (state is UserProfileLoading || state is UserProfilePhotoUploading) {
+          if (state is UserProfileLoading ||
+              state is UserProfilePhotoUploading) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -97,8 +99,6 @@ class _ProfilePageState extends State<ProfilePage> {
             final profile = state is UserProfileLoaded
                 ? state.profile
                 : (state as UserProfileUpdated).profile;
-
-            print(profile.profilePhotoUrl);
 
             return _buildProfileContent(context, profile);
           }
@@ -308,7 +308,10 @@ class _ProfilePhotoSection extends StatelessWidget {
             if (profile.profilePhotoUrl != null)
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Remove Photo', style: TextStyle(color: Colors.red)),
+                title: const Text(
+                  'Remove Photo',
+                  style: TextStyle(color: Colors.red),
+                ),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
 
@@ -351,10 +354,10 @@ class _ProfilePhotoSection extends StatelessWidget {
                 : null,
             child: profile.profilePhotoUrl == null
                 ? Icon(
-              Icons.person,
-              size: 60,
-              color: Theme.of(context).colorScheme.primary,
-            )
+                    Icons.person,
+                    size: 60,
+                    color: Theme.of(context).colorScheme.primary,
+                  )
                 : null,
           ),
         ),
@@ -377,7 +380,7 @@ class _ProfilePhotoSection extends StatelessWidget {
                 child: Icon(
                   Icons.camera_alt,
                   size: 20,
-                  color: Theme.of(context).colorScheme.onPrimary
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ),
@@ -414,9 +417,9 @@ class _UserInfoCard extends StatelessWidget {
         children: [
           Text(
             'Personal Information',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           _InfoRow(
@@ -435,7 +438,9 @@ class _UserInfoCard extends StatelessWidget {
             _InfoRow(
               icon: Icons.update_outlined,
               label: 'Last Updated',
-              value: DateFormat('MMM d, yyyy h:mm a').format(profile.updatedAt!),
+              value: DateFormat(
+                'MMM d, yyyy h:mm a',
+              ).format(profile.updatedAt!),
             ),
           ],
         ],
@@ -462,7 +467,9 @@ class _InfoRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withOpacity(0.3),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -479,15 +486,17 @@ class _InfoRow extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -510,9 +519,9 @@ class _QuickActionsSection extends StatelessWidget {
       children: [
         Text(
           'Quick Actions',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Row(
@@ -534,7 +543,9 @@ class _QuickActionsSection extends StatelessWidget {
                 onTap: () {
                   // Navigate to security settings
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Security settings coming soon')),
+                    const SnackBar(
+                      content: Text('Security settings coming soon'),
+                    ),
                   );
                 },
               ),
@@ -607,7 +618,9 @@ class _AccountSettingsSection extends StatelessWidget {
             subtitle: 'Manage notification preferences',
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications settings coming soon')),
+                const SnackBar(
+                  content: Text('Notifications settings coming soon'),
+                ),
               );
             },
           ),
@@ -663,7 +676,9 @@ class _SettingsTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -686,10 +701,9 @@ class _SettingsTile extends StatelessWidget {
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
                     ),
                   ),
                 ],
@@ -751,7 +765,9 @@ class _DangerZoneSection extends StatelessWidget {
 
                           // Use the outer context which is still valid
                           if (context.mounted) {
-                            context.read<AuthBloc>().add(AuthSignOutRequested());
+                            context.read<AuthBloc>().add(
+                              AuthSignOutRequested(),
+                            );
                             context.go('/login');
                           }
                         },

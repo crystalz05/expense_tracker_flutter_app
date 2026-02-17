@@ -1,8 +1,6 @@
-
 import 'package:expenses_tracker_app/core/utils/date_time_converter.dart';
 import 'package:expenses_tracker_app/features/expenses/data/datasources/expense_dao.dart';
 import 'package:floor/floor.dart';
-
 
 import 'dart:async';
 import 'package:sqflite/sqflite.dart' as sqflite;
@@ -18,11 +16,7 @@ part 'app_database.g.dart';
 @TypeConverters([DateTimeConverter, NullableDateTimeConverter])
 @Database(
   version: 3, // bump version
-  entities: [
-    ExpenseModel,
-    BudgetModel,
-    MonthlyBudgetModel,
-  ],
+  entities: [ExpenseModel, BudgetModel, MonthlyBudgetModel],
 )
 abstract class AppDatabase extends FloorDatabase {
   ExpenseDao get expenseDao;

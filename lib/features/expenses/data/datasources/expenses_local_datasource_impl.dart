@@ -55,7 +55,10 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource {
   }
 
   @override
-  Future<List<ExpenseModel>> getExpensesByDateRange(DateTime start, DateTime end) async {
+  Future<List<ExpenseModel>> getExpensesByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     try {
       return await database.expenseDao.getExpensesByDateRange(start, end);
     } catch (e, s) {
@@ -101,18 +104,21 @@ class ExpenseLocalDataSourceImpl implements ExpensesLocalDatasource {
 
   @override
   Future<List<ExpenseModel>> getByCategoryAndPeriod(
-      String category,
-      DateTime start,
-      DateTime end
-      ) async {
+    String category,
+    DateTime start,
+    DateTime end,
+  ) async {
     try {
       return await database.expenseDao.getExpensesByCategoryAndPeriod(
-          category,
-          start,
-          end
+        category,
+        start,
+        end,
       );
     } catch (e, s) {
-      throw DatabaseException('Failed to get expense by category and period: $e', s);
+      throw DatabaseException(
+        'Failed to get expense by category and period: $e',
+        s,
+      );
     }
   }
 

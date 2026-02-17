@@ -79,7 +79,7 @@ class _CategoryFilterWidgetState extends State<CategoryFilterWidget> {
             onTap: () => widget.onCategorySelected(category.name),
           );
         },
-      )
+      ),
     );
   }
 }
@@ -120,12 +120,14 @@ class CategoryCard extends StatelessWidget {
               ),
               boxShadow: currentActive
                   ? [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ]
+                      BoxShadow(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ]
                   : null,
             ),
             child: Padding(
@@ -137,7 +139,9 @@ class CategoryCard extends StatelessWidget {
                     color: currentActive
                         ? Theme.of(context).colorScheme.onPrimary
                         : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: currentActive ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: currentActive
+                        ? FontWeight.w600
+                        : FontWeight.w500,
                     fontSize: 14,
                   ),
                 ),

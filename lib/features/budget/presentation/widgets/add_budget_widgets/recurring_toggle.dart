@@ -5,7 +5,8 @@ class RecurringToggle extends StatelessWidget {
   final bool isRecurring;
   final ValueChanged<bool> onChanged;
 
-  const RecurringToggle({super.key,
+  const RecurringToggle({
+    super.key,
     required this.isRecurring,
     required this.onChanged,
   });
@@ -34,7 +35,9 @@ class RecurringToggle extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: isRecurring
-                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.15)
                   : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
@@ -42,7 +45,9 @@ class RecurringToggle extends StatelessWidget {
               Icons.repeat,
               color: isRecurring
                   ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
               size: 24,
             ),
           ),
@@ -53,18 +58,17 @@ class RecurringToggle extends StatelessWidget {
               children: [
                 Text(
                   'Recurring Budget',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Automatically renew this budget',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],

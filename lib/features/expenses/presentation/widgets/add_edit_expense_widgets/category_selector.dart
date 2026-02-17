@@ -29,22 +29,22 @@ class CategorySelector extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               "Category",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
         const SizedBox(height: 12),
         style == CategorySelectorStyle.grid
             ? _CategoryGrid(
-          selectedCategory: selectedCategory,
-          onCategorySelected: onCategorySelected,
-        )
+                selectedCategory: selectedCategory,
+                onCategorySelected: onCategorySelected,
+              )
             : _CategoryCompactGrid(
-          selectedCategory: selectedCategory,
-          onCategorySelected: onCategorySelected,
-        ),
+                selectedCategory: selectedCategory,
+                onCategorySelected: onCategorySelected,
+              ),
       ],
     );
   }
@@ -85,10 +85,9 @@ class _CategoryGrid extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? categoryData.color.withOpacity(0.15)
-                  : Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest
-                  .withOpacity(0.5),
+                  : Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected
@@ -118,8 +117,9 @@ class _CategoryGrid extends StatelessWidget {
                   child: Text(
                     categoryData.name,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight:
-                      isSelected ? FontWeight.bold : FontWeight.w600,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w600,
                       color: isSelected
                           ? categoryData.color
                           : Theme.of(context).colorScheme.onSurface,
@@ -199,18 +199,18 @@ class _CategoryCompactGrid extends StatelessWidget {
                     category.icon,
                     color: isSelected
                         ? category.color
-                        : Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.6),
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
                     size: 28,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     category.name,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight:
-                      isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: isSelected ? category.color : null,
                     ),
                     textAlign: TextAlign.center,

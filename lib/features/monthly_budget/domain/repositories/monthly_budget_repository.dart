@@ -7,10 +7,19 @@ import '../../../../core/error/failures.dart';
 abstract class MonthlyBudgetRepository {
   Future<Either<Failure, List<MonthlyBudget>>> getMonthlyBudgets();
   Future<Either<Failure, MonthlyBudget>> getMonthlyBudgetById(String id);
-  Future<Either<Failure, MonthlyBudget?>> getMonthlyBudgetByMonthYear(int month, int year);
-  Future<Either<Failure, List<MonthlyBudget>>> getMonthlyBudgetsByYear(int year);
-  Future<Either<Failure, void>> createMonthlyBudget(MonthlyBudget monthlyBudget);
-  Future<Either<Failure, void>> updateMonthlyBudget(MonthlyBudget monthlyBudget);
+  Future<Either<Failure, MonthlyBudget?>> getMonthlyBudgetByMonthYear(
+    int month,
+    int year,
+  );
+  Future<Either<Failure, List<MonthlyBudget>>> getMonthlyBudgetsByYear(
+    int year,
+  );
+  Future<Either<Failure, void>> createMonthlyBudget(
+    MonthlyBudget monthlyBudget,
+  );
+  Future<Either<Failure, void>> updateMonthlyBudget(
+    MonthlyBudget monthlyBudget,
+  );
   Future<Either<Failure, void>> deleteMonthlyBudget(String id);
 
   Future<Either<Failure, void>> syncMonthlyBudgets();
