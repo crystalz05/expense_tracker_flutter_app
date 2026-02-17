@@ -3,7 +3,7 @@ import 'package:expenses_tracker_app/features/expenses/data/datasources/expense_
 import 'package:floor/floor.dart';
 
 import 'dart:async';
-import 'package:sqflite/sqflite.dart' as sqflite;
+import 'package:sqflite_sqlcipher/sqflite.dart' as sqflite;
 
 import '../../features/budget/data/datasources/budget_dao.dart';
 import '../../features/budget/data/models/budget_model.dart';

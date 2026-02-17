@@ -37,6 +37,15 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    packaging {
+        jniLibs {
+            pickFirsts.add("lib/x86/libsqlcipher.so")
+            pickFirsts.add("lib/x86_64/libsqlcipher.so")
+            pickFirsts.add("lib/armeabi-v7a/libsqlcipher.so")
+            pickFirsts.add("lib/arm64-v8a/libsqlcipher.so")
+        }
+    }
 }
 
 flutter {
