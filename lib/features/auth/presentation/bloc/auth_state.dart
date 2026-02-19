@@ -29,3 +29,19 @@ class AuthError extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class AuthPasswordResetEmailSent extends AuthState {}
+
+class AuthPasswordResetSuccess extends AuthState {}
+
+class AuthVerificationEmailSent extends AuthState {}
+
+class AuthEmailNotVerified extends AuthState {
+  final String email;
+
+  AuthEmailNotVerified({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+

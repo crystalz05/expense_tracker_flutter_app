@@ -172,7 +172,23 @@ class _LoginPageState extends State<LoginPage> {
                                 },
                                 enabled: !isLoading,
                               ),
-                              SizedBox(height: 24),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => context.go('/forgot-password'),
+                                  child: Text(
+                                    "Forgot Password?",
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 12),
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(

@@ -1,5 +1,8 @@
 import 'package:expenses_tracker_app/core/navigation/route_observer.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/pages/email_verification_page.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/login_page.dart';
+import 'package:expenses_tracker_app/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:expenses_tracker_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:expenses_tracker_app/features/budget/domain/entities/budget.dart';
@@ -27,6 +30,21 @@ final GoRouter router = GoRouter(
     GoRoute(path: '/splash', builder: (context, state) => const SplashPage()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordPage(),
+    ),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) => const ResetPasswordPage(),
+    ),
+    GoRoute(
+      path: '/email-verification',
+      builder: (context, state) {
+        final email = state.extra as String;
+        return EmailVerificationPage(email: email);
+      },
+    ),
     GoRoute(path: '/main-page', builder: (context, state) => const MainPage()),
     GoRoute(
       path: '/budget-page',

@@ -6,4 +6,7 @@ abstract class AuthRemoteDatasource {
   Future<void> signOut();
   Future<UserModel?> getCurrentUser();
   Stream<UserModel?> get authStateChanges;
+  Future<void> sendPasswordResetEmail(String email);
+  Future<void> resetPassword(String newPassword);
+  Future<void> resendVerificationEmail(String email);
 }

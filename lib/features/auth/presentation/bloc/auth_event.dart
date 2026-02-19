@@ -39,3 +39,31 @@ class AuthUserChanged extends AuthEvent {
   @override
   List<Object?> get props => [user];
 }
+
+class AuthForgotPasswordRequested extends AuthEvent {
+  final String email;
+
+  AuthForgotPasswordRequested({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class AuthResetPasswordRequested extends AuthEvent {
+  final String newPassword;
+
+  AuthResetPasswordRequested({required this.newPassword});
+
+  @override
+  List<Object?> get props => [newPassword];
+}
+
+class AuthResendVerificationRequested extends AuthEvent {
+  final String email;
+
+  AuthResendVerificationRequested({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+

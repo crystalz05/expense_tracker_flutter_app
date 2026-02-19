@@ -62,6 +62,9 @@ class _SignUpPageState extends State<SignupPage> {
           if (state is AuthAuthenticated) {
             context.go("/main-page");
           }
+          if (state is AuthEmailNotVerified) {
+            context.go('/email-verification', extra: state.email);
+          }
         },
         builder: (BuildContext context, AuthState state) {
           final isLoading = state is AuthLoading;

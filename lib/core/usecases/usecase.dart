@@ -169,3 +169,21 @@ class MonthlyBudgetParams extends Equatable {
   @override
   List<Object?> get props => [monthlyBudget];
 }
+
+class EmailParams extends Equatable {
+  final String email;
+
+  const EmailParams({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class ResetPasswordParams extends Equatable {
+  final String newPassword;
+
+  const ResetPasswordParams({required this.newPassword});
+
+  @override
+  List<Object?> get props => [newPassword];
+}

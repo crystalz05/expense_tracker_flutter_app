@@ -3,6 +3,9 @@ class SupabaseConstants {
   static const String supabaseAnonKey =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4YXJ2b3Bka2lmd3VxdWNpcm5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NjMyODUsImV4cCI6MjA4MTUzOTI4NX0._pwS0vQHi8Wl6YnTty0pM4mwofJ6RU_IE-uZS__ddAU';
 
+  /// Deep link redirect URL for auth callbacks (password reset, email verification)
+  static const String redirectUrl = 'io.supabase.tyro://login-callback';
+
   // Table names
   static const String expensesTable = 'expenses';
   static const String usersTable = 'users';

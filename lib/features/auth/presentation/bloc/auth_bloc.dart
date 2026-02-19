@@ -4,6 +4,9 @@ import 'package:expenses_tracker_app/core/usecases/usecase.dart';
 import 'package:expenses_tracker_app/features/auth/domain/entities/user.dart';
 import 'package:expenses_tracker_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:expenses_tracker_app/features/auth/domain/usecases/get_current_user.dart';
+import 'package:expenses_tracker_app/features/auth/domain/usecases/resend_verification_email.dart';
+import 'package:expenses_tracker_app/features/auth/domain/usecases/reset_password.dart';
+import 'package:expenses_tracker_app/features/auth/domain/usecases/send_password_reset_email.dart';
 import 'package:expenses_tracker_app/features/auth/domain/usecases/sign_in.dart';
 import 'package:expenses_tracker_app/features/auth/domain/usecases/sign_out.dart';
 import 'package:expenses_tracker_app/features/auth/domain/usecases/sign_up.dart';
@@ -17,6 +20,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignOut signOut;
   final GetCurrentUser getCurrentUser;
   final AuthRepository authRepository;
+  final SendPasswordResetEmail sendPasswordResetEmail;
+  final ResetPassword resetPassword;
+  final ResendVerificationEmail resendVerificationEmail;
 
   StreamSubscription<User?>? _authSubscription;
 
@@ -26,12 +32,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.signOut,
     required this.getCurrentUser,
     required this.authRepository,
+    required this.sendPasswordResetEmail,
+    required this.resetPassword,
+    required this.resendVerificationEmail,
   }) : super(AuthInitial()) {
     on<AuthCheckRequested>(_onAuthCheckRequested);
     on<AuthSignInRequested>(_onSignInRequested);
     on<AuthSignUpRequested>(_onSignUpRequested);
     on<AuthSignOutRequested>(_onSignOutRequested);
     on<AuthUserChanged>(_onUserChanged);
+    on<AuthForgotPasswordRequested>(_onForgotPasswordRequested);
+    on<AuthResetPasswordRequested>(_onResetPasswordRequested);
+    on<AuthResendVerificationRequested>(_onResendVerificationRequested);
 
     _authSubscription = authRepository.authStateChanges.listen((user) {
       add(AuthUserChanged(user));
@@ -86,7 +98,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (user) => emit(AuthAuthenticated(user)),
+      (user) {
+        if (user.isEmailVerified) {
+          emit(AuthAuthenticated(user));
+        } else {
+          emit(AuthEmailNotVerified(email: user.email));
+        }
+      },
     );
   }
 
@@ -110,6 +128,54 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else {
       emit(AuthUnauthenticated());
     }
+  }
+
+  Future<void> _onForgotPasswordRequested(
+    AuthForgotPasswordRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await sendPasswordResetEmail(
+      EmailParams(email: event.email),
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(AuthPasswordResetEmailSent()),
+    );
+  }
+
+  Future<void> _onResetPasswordRequested(
+    AuthResetPasswordRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await resetPassword(
+      ResetPasswordParams(newPassword: event.newPassword),
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(AuthPasswordResetSuccess()),
+    );
+  }
+
+  Future<void> _onResendVerificationRequested(
+    AuthResendVerificationRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+
+    final result = await resendVerificationEmail(
+      EmailParams(email: event.email),
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(AuthVerificationEmailSent()),
+    );
   }
 
   @override

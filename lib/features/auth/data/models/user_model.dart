@@ -7,6 +7,7 @@ class UserModel extends User {
     required super.email,
     super.displayName,
     required super.createdAt,
+    super.emailConfirmedAt,
   });
 
   factory UserModel.fromSupabaseUser(supabase.User user) {
@@ -15,6 +16,9 @@ class UserModel extends User {
       email: user.email ?? "",
       displayName: user.userMetadata?['display_name'] as String?,
       createdAt: DateTime.parse(user.createdAt),
+      emailConfirmedAt: user.emailConfirmedAt != null
+          ? DateTime.parse(user.emailConfirmedAt!)
+          : null,
     );
   }
 
@@ -24,6 +28,7 @@ class UserModel extends User {
       'email': email,
       'display_name': displayName,
       'created_at': createdAt.toIso8601String(),
+      'email_confirmed_at': emailConfirmedAt?.toIso8601String(),
     };
   }
 
@@ -33,6 +38,9 @@ class UserModel extends User {
       email: json['email'] as String,
       displayName: json['display_name'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      emailConfirmedAt: json['email_confirmed_at'] != null
+          ? DateTime.parse(json['email_confirmed_at'] as String)
+          : null,
     );
   }
 }
