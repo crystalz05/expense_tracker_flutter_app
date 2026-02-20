@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tyro Expense Tracker – Auth Redirect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #e0e0e0;
+      padding: 24px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 48px 36px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .icon-wrapper {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .icon-wrapper.mobile { background: linear-gradient(135deg, #6c63ff, #48c6ef); }
+    .icon-wrapper.desktop { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .icon-wrapper.success { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .icon-wrapper.error { background: linear-gradient(135deg, #f5576c, #ff6b6b); }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(108, 99, 255, 0); }
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #b0b0c0;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, #6c63ff, #48c6ef);
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 24px 0;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: #7a7a8c;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      border-top-color: #6c63ff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+
+    .badge.redirect { background: rgba(108, 99, 255, 0.2); color: #a5a0ff; }
+    .badge.info { background: rgba(240, 147, 251, 0.2); color: #f5a0d6; }
+
+    #view-mobile, #view-desktop, #view-redirecting, #view-error { display: none; }
+
+    .steps {
+      text-align: left;
+      margin: 16px 0;
+    }
+
+    .steps li {
+      list-style: none;
+      padding: 8px 0;
+      padding-left: 28px;
+      position: relative;
+      font-size: 14px;
+      color: #c0c0d0;
+    }
+
+    .steps li::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(108, 99, 255, 0.25);
+      color: #a5a0ff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 9px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE VIEW: Redirecting to app -->
+  <div class="card" id="view-redirecting">
+    <div class="spinner"></div>
+    <span class="badge redirect">Redirecting</span>
+    <h1>Opening Tyro…</h1>
+    <p>You're being redirected to the Tyro Expense Tracker app. This should only take a moment.</p>
+    <div class="divider"></div>
+    <p class="footer-text">If nothing happens, tap the button below.</p>
+    <a id="manual-link" class="btn" href="#">Open in App</a>
+  </div>
+
+  <!-- MOBILE VIEW: App not installed or redirect failed -->
+  <div class="card" id="view-mobile">
+    <div class="icon-wrapper mobile">📱</div>
+    <span class="badge redirect">Mobile Detected</span>
+    <h1>Open in Tyro App</h1>
+    <p>It looks like the automatic redirect didn't work. Make sure the <strong>Tyro Expense Tracker</strong> app is installed, then tap below.</p>
+    <a id="retry-link" class="btn" href="#">Try Again</a>
+    <div class="divider"></div>
+    <p class="footer-text">If you don't have the app installed, please install it first and then click the link in your email again.</p>
+  </div>
+
+  <!-- DESKTOP VIEW: Tell user to open on phone -->
+  <div class="card" id="view-desktop">
+    <div class="icon-wrapper desktop">💻</div>
+    <span class="badge info">Desktop Browser</span>
+    <h1>Open This Link on Your Phone</h1>
+    <p>This link needs to be opened in the <strong>Tyro Expense Tracker</strong> mobile app to complete the process.</p>
+    <ol class="steps">
+      <li data-step="1">Open the <strong>email</strong> on your phone</li>
+      <li data-step="2">Tap the link from your <strong>mobile browser</strong></li>
+      <li data-step="3">The app will open and handle it <strong>automatically</strong></li>
+    </ol>
+    <div class="divider"></div>
+    <p class="footer-text">This page is for password resets and email verifications only.</p>
+  </div>
+
+  <!-- ERROR VIEW: No tokens found -->
+  <div class="card" id="view-error">
+    <div class="icon-wrapper error">⚠️</div>
+    <h1>Invalid or Expired Link</h1>
+    <p>This link appears to be invalid or has already been used. Please request a new one from the app.</p>
+    <div class="divider"></div>
+    <p class="footer-text">If this keeps happening, contact support.</p>
+  </div>
+
+  <script>
+    (function () {
+      var DEEP_LINK_SCHEME = 'io.supabase.tyro://login-callback';
+
+      // Get the hash fragment (contains access_token, refresh_token, type, etc.)
+      var hash = window.location.hash;
+
+      // Check if we have auth tokens in the URL
+      var hasTokens = hash && (hash.includes('access_token') || hash.includes('type='));
+
+      // Detect mobile devices
+      var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+      if (!hasTokens) {
+        // No tokens – show error view
+        document.getElementById('view-error').style.display = 'block';
+        return;
+      }
+
+      // Build the deep link URL with the hash fragment
+      var deepLink = DEEP_LINK_SCHEME + hash;
+
+      if (isMobile) {
+        // Show redirecting state
+        document.getElementById('view-redirecting').style.display = 'block';
+        document.getElementById('manual-link').href = deepLink;
+
+        // Attempt to open the app
+        window.location.href = deepLink;
+
+        // After a delay, if we're still on this page, show the fallback mobile view
+        setTimeout(function () {
+          document.getElementById('view-redirecting').style.display = 'none';
+          document.getElementById('view-mobile').style.display = 'block';
+          document.getElementById('retry-link').href = deepLink;
+        }, 3000);
+      } else {
+        // Desktop – tell user to open on mobile
+        document.getElementById('view-desktop').style.display = 'block';
+      }
+    })();
+  </script>
+</body>
+</html>

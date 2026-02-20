@@ -16,7 +16,6 @@ import 'core/presentation/cubit/theme_cubit.dart';
 import 'core/presentation/cubit/offline_mode_cubit.dart';
 import 'core/security/secure_storage_service.dart';
 import 'core/security/database_encryption_key_manager.dart';
-import 'core/security/encryption_migration.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
 import 'features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -32,7 +31,7 @@ import 'features/auth/domain/user_session/user_session.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'core/database/app_database.dart';
 import 'core/database/encrypted_database_factory.dart';
-import 'package:sqflite_sqlcipher/sqflite.dart' as sqflite;
+
 import 'features/expenses/data/datasources/expense_remote_datasource.dart';
 import 'features/expenses/data/datasources/expense_remote_datasource_impl.dart';
 import 'features/expenses/data/datasources/expenses_local_datasource.dart';
@@ -86,26 +85,13 @@ Future<void> init() async {
   final encryptionKeyManager = DatabaseEncryptionKeyManager(secureStorageService);
   sl.registerLazySingleton(() => encryptionKeyManager);
 
-  final encryptionMigration = EncryptionMigration(encryptionKeyManager);
-  sl.registerLazySingleton(() => encryptionMigration);
-
   // Get or create encryption key
   final encryptionKey = await encryptionKeyManager.getOrCreateEncryptionKey();
 
-  // Check if migration is needed
-  final needsMigration = await encryptionMigration.needsMigration(
-    '${await sqflite.getDatabasesPath()}/app_database.db',
-  );
-
-  if (needsMigration) {
-    // Migrate existing unencrypted database to encrypted version
-    await encryptionMigration.migrateToEncrypted(
-      '${await sqflite.getDatabasesPath()}/app_database.db',
-      encryptionKey,
-    );
-  }
-
   // Database with encryption
+  // Note: EncryptedDatabaseFactory.createEncrypted() will automatically probe
+  // the existing file and delete it if it can't be opened with the current key
+  // (e.g. after a reinstall that wiped FlutterSecureStorage).
   final database = await EncryptedDatabaseFactory.createEncrypted(
     databaseName: 'app_database.db',
     encryptionKey: encryptionKey,
