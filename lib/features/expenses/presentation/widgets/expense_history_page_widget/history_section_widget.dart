@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../../core/utils/currency_formatter.dart';
 import '../../../domain/entities/expense.dart';
 import '../../bloc/expense_bloc.dart';
 import '../../bloc/expense_event.dart';
@@ -207,11 +209,13 @@ class _ExpenseListItem extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    '₦${expense.amount.toStringAsFixed(2)}',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                  BlocBuilder<CurrencyCubit, AppCurrency>(
+                    builder: (context, currency) => Text(
+                      formatCurrency(expense.amount, currency),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),

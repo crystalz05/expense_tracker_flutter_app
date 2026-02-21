@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:expenses_tracker_app/core/colors/colors.dart';
 import 'package:expenses_tracker_app/core/navigation/app_router.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/budget_cubit.dart';
+import 'package:expenses_tracker_app/core/presentation/cubit/currency_cubit.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/offline_mode_cubit.dart';
 import 'package:expenses_tracker_app/core/presentation/cubit/theme_cubit.dart';
 import 'package:expenses_tracker_app/features/analytics/presentation/bloc/analytics_bloc.dart';
@@ -31,6 +32,7 @@ Future<void> main() async {
         BlocProvider(create: (_) => sl<BudgetBloc>()),
         BlocProvider(create: (_) => sl<AnalyticsBloc>()),
         BlocProvider(create: (_) => sl<OfflineModeCubit>()),
+        BlocProvider(create: (_) => sl<CurrencyCubit>()),
         BlocProvider(create: (_) => sl<UserProfileBloc>()),
         BlocProvider(create: (_) => sl<MonthlyBudgetBloc>()),
       ],

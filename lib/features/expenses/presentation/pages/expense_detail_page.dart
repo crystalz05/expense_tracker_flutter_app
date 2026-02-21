@@ -2,6 +2,8 @@ import 'package:expenses_tracker_app/core/utils/expenses_categories.dart';
 import 'package:expenses_tracker_app/features/expenses/domain/entities/expense.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_bloc.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/bloc/expense_event.dart';
+import 'package:expenses_tracker_app/core/presentation/cubit/currency_cubit.dart';
+import 'package:expenses_tracker_app/core/utils/currency_formatter.dart';
 import 'package:expenses_tracker_app/features/expenses/presentation/misc/formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,8 +19,9 @@ class ExpenseDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final categoryData = ExpenseCategories.fromName(expense.category);
 
-    return Scaffold(
-      body: CustomScrollView(
+    return BlocBuilder<CurrencyCubit, AppCurrency>(
+      builder: (context, currency) => Scaffold(
+        body: CustomScrollView(
         slivers: [
           // Modern App Bar with Hero Animation
           SliverAppBar(
@@ -81,7 +84,7 @@ class ExpenseDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '₦${formatter.format(expense.amount)}',
+                      formatCurrency(expense.amount, currency),
                       style: const TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
@@ -132,7 +135,7 @@ class ExpenseDetailPage extends StatelessWidget {
                       _DetailRow(
                         icon: Icons.attach_money,
                         label: 'Amount',
-                        value: '₦${formatter.format(expense.amount)}',
+                        value: formatCurrency(expense.amount, currency),
                         valueColor: Theme.of(context).colorScheme.primary,
                         isLarge: true,
                       ),
@@ -175,6 +178,7 @@ class ExpenseDetailPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

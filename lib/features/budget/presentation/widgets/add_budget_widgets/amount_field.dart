@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 
 class AmountField extends StatelessWidget {
   final TextEditingController controller;
@@ -34,7 +36,7 @@ class AmountField extends StatelessWidget {
           context,
         ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         decoration: InputDecoration(
-          prefixText: '₦ ',
+          prefixText: '${context.watch<CurrencyCubit>().state.symbol} ',
           prefixStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.primary,

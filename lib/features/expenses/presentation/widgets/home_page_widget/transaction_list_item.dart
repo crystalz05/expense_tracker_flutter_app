@@ -1,8 +1,11 @@
 // lib/features/expenses/presentation/widgets/transaction_list_item.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../../core/utils/currency_formatter.dart';
 import '../../../../../core/utils/expenses_categories.dart';
 import '../../../../../core/utils/format_date.dart';
 import '../../../domain/entities/expense.dart';
@@ -88,7 +91,7 @@ class TransactionListItem extends StatelessWidget {
                 ),
               ),
               Text(
-                "₦${formatter.format(transaction.amount)}",
+                formatCurrency(transaction.amount, context.watch<CurrencyCubit>().state),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 16,

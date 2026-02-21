@@ -225,7 +225,7 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
                 message:
                     '${budget.category} exceeded budget by ${exceededPercent.toStringAsFixed(1)}%',
                 description:
-                    'You spent ₦${totalSpent.toStringAsFixed(2)} out of ₦${budget.amount.toStringAsFixed(2)}',
+                    'You spent ${totalSpent.toStringAsFixed(2)} out of ${budget.amount.toStringAsFixed(2)}',
                 severity: InsightSeverity.critical,
                 amount: exceeded,
                 percentage: exceededPercent,
@@ -241,7 +241,7 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
                 message:
                     '${budget.category} is at ${percentageUsed.toStringAsFixed(1)}% of budget',
                 description:
-                    'You have ₦${(budget.amount - totalSpent).toStringAsFixed(2)} remaining',
+                    'You have ${(budget.amount - totalSpent).toStringAsFixed(2)} remaining',
                 severity: InsightSeverity.warning,
                 percentage: percentageUsed,
                 generatedAt: DateTime.now(),
@@ -295,7 +295,7 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
                   message:
                       '$category spending increased by ${percentageChange.toStringAsFixed(1)}%',
                   description:
-                      'You spent ₦${currentAmount.toStringAsFixed(2)} vs ₦${previousAmount.toStringAsFixed(2)} last period',
+                      'You spent ${currentAmount.toStringAsFixed(2)} vs ${previousAmount.toStringAsFixed(2)} last period',
                   severity: InsightSeverity.warning,
                   percentage: percentageChange,
                   generatedAt: DateTime.now(),
@@ -310,7 +310,7 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
                   message:
                       '$category spending decreased by ${percentageChange.abs().toStringAsFixed(1)}%',
                   description:
-                      'You spent ₦${currentAmount.toStringAsFixed(2)} vs ₦${previousAmount.toStringAsFixed(2)} last period',
+                      'You spent ${currentAmount.toStringAsFixed(2)} vs ${previousAmount.toStringAsFixed(2)} last period',
                   severity: InsightSeverity.info,
                   percentage: percentageChange.abs(),
                   generatedAt: DateTime.now(),

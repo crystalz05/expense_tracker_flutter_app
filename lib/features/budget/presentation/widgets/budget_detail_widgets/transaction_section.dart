@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 import '../../../../../core/utils/currency_formatter.dart';
 import '../../../../../core/utils/expenses_categories.dart';
 import '../../../../expenses/domain/entities/expense.dart';
@@ -101,11 +102,13 @@ class _TransactionItem extends StatelessWidget {
             ],
           ),
         ),
-        Text(
-          formatNaira(expense.amount),
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        BlocBuilder<CurrencyCubit, AppCurrency>(
+          builder: (context, currency) => Text(
+            formatCurrency(expense.amount, currency),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );

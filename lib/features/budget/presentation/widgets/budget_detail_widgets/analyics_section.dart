@@ -1,8 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 import '../../../../../core/utils/currency_formatter.dart';
 import '../../../../expenses/domain/entities/expense.dart';
 import '../../../domain/entities/budget.dart';
@@ -58,11 +59,13 @@ class AnalyticsSection extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _StatCard(
-                  label: 'Daily Avg',
-                  value: formatNaira(avgDailySpending),
-                  icon: Icons.calendar_today,
-                  color: Colors.blue,
+                child: BlocBuilder<CurrencyCubit, AppCurrency>(
+                  builder: (context, currency) => _StatCard(
+                    label: 'Daily Avg',
+                    value: formatCurrency(avgDailySpending, currency),
+                    icon: Icons.calendar_today,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -91,13 +94,15 @@ class AnalyticsSection extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _StatCard(
-                  label: 'Projected',
-                  value: formatNaira(projectedSpending),
-                  icon: Icons.trending_up,
-                  color: projectedSpending > budget.amount
-                      ? Colors.red
-                      : Colors.green,
+                child: BlocBuilder<CurrencyCubit, AppCurrency>(
+                  builder: (context, currency) => _StatCard(
+                    label: 'Projected',
+                    value: formatCurrency(projectedSpending, currency),
+                    icon: Icons.trending_up,
+                    color: projectedSpending > budget.amount
+                        ? Colors.red
+                        : Colors.green,
+                  ),
                 ),
               ),
             ],
@@ -186,8 +191,10 @@ class _SpendingChart extends StatelessWidget {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) {
+                final currency = context.read<CurrencyCubit>().state;
+                final symbol = currencySymbol(currency);
                 return Text(
-                  '₦${(value / 1000).toStringAsFixed(0)}k',
+                  '$symbol${(value / 1000).toStringAsFixed(0)}k',
                   style: const TextStyle(fontSize: 10),
                 );
               },

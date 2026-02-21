@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/presentation/cubit/currency_cubit.dart';
 
 class MonthlyBudgetDialog extends StatefulWidget {
   final double initialBudget;
@@ -75,9 +78,9 @@ class _MonthlyBudgetDialogState extends State<MonthlyBudgetDialog> {
             controller: _controller,
             keyboardType: TextInputType.number,
             autofocus: true,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: "Budget Amount",
-              prefixText: "₦",
+            prefixText: context.read<CurrencyCubit>().state.symbol,
             ),
           ),
         ],

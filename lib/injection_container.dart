@@ -12,6 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/constants/supabase_constants.dart';
 import 'core/presentation/cubit/budget_cubit.dart';
+import 'core/presentation/cubit/currency_cubit.dart';
 import 'core/presentation/cubit/theme_cubit.dart';
 import 'core/presentation/cubit/offline_mode_cubit.dart';
 import 'core/security/secure_storage_service.dart';
@@ -103,7 +104,8 @@ Future<void> init() async {
   // Cubits
   sl.registerLazySingleton(() => ThemeCubit(sl()));
   sl.registerLazySingleton(() => BudgetCubit(prefs: sl()));
-  sl.registerLazySingleton(() => OfflineModeCubit(sl())); // NEW
+  sl.registerLazySingleton(() => OfflineModeCubit(sl()));
+  sl.registerLazySingleton(() => CurrencyCubit(sl()));
 
   // Data sources
   sl.registerLazySingleton<ExpensesLocalDatasource>(

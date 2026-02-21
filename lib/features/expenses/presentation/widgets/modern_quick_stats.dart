@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../misc/formatter.dart';
 
 class ModernQuickStats extends StatelessWidget {
@@ -23,7 +26,7 @@ class ModernQuickStats extends StatelessWidget {
             icon: CupertinoIcons.arrow_down_circle_fill,
             iconColor: Colors.red,
             label: "Total Spent",
-            value: "₦${formatter.format(totalSpent)}",
+            value: formatCurrency(totalSpent, context.watch<CurrencyCubit>().state),
           ),
         ),
         const SizedBox(width: 12),

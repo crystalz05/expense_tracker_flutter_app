@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 import '../../../../../core/utils/currency_formatter.dart';
 
 class TotalSpendingCard extends StatelessWidget {
@@ -65,12 +66,14 @@ class TotalSpendingCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            formatNaira(totalSpent),
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 36,
+          BlocBuilder<CurrencyCubit, AppCurrency>(
+            builder: (context, currency) => Text(
+              formatCurrency(totalSpent, currency),
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 36,
+              ),
             ),
           ),
         ],

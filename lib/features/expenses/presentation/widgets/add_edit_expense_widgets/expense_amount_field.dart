@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 
 class ExpenseAmountField extends StatelessWidget {
   final TextEditingController controller;
@@ -65,7 +68,7 @@ class ExpenseAmountField extends StatelessWidget {
             prefixIcon: Padding(
               padding: const EdgeInsets.only(left: 20, top: 5),
               child: Text(
-                "₦",
+                context.watch<CurrencyCubit>().state.symbol,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                 ),

@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/presentation/cubit/budget_cubit.dart';
+import '../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../misc/formatter.dart';
 
 class ModernBalanceCard extends StatelessWidget {
@@ -88,12 +89,14 @@ class ModernBalanceCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Text(
-                  "₦${formatter.format(state.monthlyBudget)}",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 27,
-                    fontWeight: FontWeight.bold,
+                BlocBuilder<CurrencyCubit, AppCurrency>(
+                  builder: (context, currency) => Text(
+                    formatCurrency(state.monthlyBudget, currency),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 27,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -115,10 +118,10 @@ class ModernBalanceCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildStatItem("Spent", "₦${formatter.format(totalSpent)}"),
+                    _buildStatItem("Spent", formatCurrency(totalSpent, context.read<CurrencyCubit>().state)),
                     _buildStatItem(
                       isOverBudget ? "Over Budget" : "Remaining",
-                      "₦${formatter.format(remaining.abs())}",
+                      formatCurrency(remaining.abs(), context.read<CurrencyCubit>().state),
                       isHighlight: true,
                     ),
                   ],

@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 import '../../../../../core/utils/currency_formatter.dart';
 import '../../../../../core/utils/expenses_categories.dart';
 
@@ -115,11 +116,13 @@ class BudgetCard extends StatelessWidget {
                         ).colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
-                    Text(
-                      formatNaira(progress.spent),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: statusColor,
+                    BlocBuilder<CurrencyCubit, AppCurrency>(
+                      builder: (context, currency) => Text(
+                        formatCurrency(progress.spent, currency),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: statusColor,
+                        ),
                       ),
                     ),
                   ],
@@ -135,10 +138,12 @@ class BudgetCard extends StatelessWidget {
                         ).colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
-                    Text(
-                      formatNaira(budget.amount),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                    BlocBuilder<CurrencyCubit, AppCurrency>(
+                      builder: (context, currency) => Text(
+                        formatCurrency(budget.amount, currency),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -197,14 +202,16 @@ class BudgetCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text(
-                  isOverBudget
-                      ? 'Over by ${formatNaira(progress.spent - budget.amount)}'
-                      : '${formatNaira(progress.remaining)} left',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                BlocBuilder<CurrencyCubit, AppCurrency>(
+                  builder: (context, currency) => Text(
+                    isOverBudget
+                        ? 'Over by ${formatCurrency(progress.spent - budget.amount, currency)}'
+                        : '${formatCurrency(progress.remaining, currency)} left',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                 ),
               ],

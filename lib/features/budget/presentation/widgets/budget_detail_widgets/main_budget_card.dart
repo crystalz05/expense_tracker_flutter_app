@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 import '../../../../../core/utils/currency_formatter.dart';
 import '../../../../../core/utils/expenses_categories.dart';
 import '../../../domain/entities/budget.dart';
@@ -22,7 +23,7 @@ class MainBudgetCard extends StatelessWidget {
     final percentageUsed = progress.percentageUsed;
     final isOverBudget = progress.isOverBudget;
 
-    Color statusColor = isOverBudget
+    final statusColor = isOverBudget
         ? Colors.red
         : progress.shouldAlert
         ? Colors.orange
@@ -55,7 +56,8 @@ class MainBudgetCard extends StatelessWidget {
               Container(
                 width: 1,
                 height: 40,
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                color:
+                Theme.of(context).colorScheme.outline.withOpacity(0.2),
               ),
               _AmountColumn(
                 label: 'Spent',
@@ -65,7 +67,8 @@ class MainBudgetCard extends StatelessWidget {
               Container(
                 width: 1,
                 height: 40,
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                color:
+                Theme.of(context).colorScheme.outline.withOpacity(0.2),
               ),
               _AmountColumn(
                 label: 'Remaining',
@@ -83,7 +86,8 @@ class MainBudgetCard extends StatelessWidget {
               Container(
                 height: 12,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color:
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
@@ -147,18 +151,23 @@ class _AmountColumn extends StatelessWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(context)
+                .colorScheme
+                .onSurface
+                .withOpacity(0.6),
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          formatNaira(amount),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+        BlocBuilder<CurrencyCubit, AppCurrency>(
+          builder: (context, currency) {
+            return Text(
+              formatCurrency(amount, currency),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            );
+          },
         ),
       ],
     );
@@ -185,43 +194,48 @@ class _AlertBanner extends StatelessWidget {
     final color = isOverBudget ? Colors.red : Colors.orange;
     final icon = isOverBudget ? Icons.error_outline : Icons.warning_amber;
     final title = isOverBudget ? 'Over Budget!' : 'Budget Alert';
-    final message = isOverBudget
-        ? 'You\'ve exceeded your budget by ${formatNaira(spent - budget.amount)}'
-        : 'You\'ve reached ${percentageUsed.toStringAsFixed(0)}% of your budget. ${formatNaira(remaining)} remaining.';
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  message,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: color.withOpacity(0.8),
-                  ),
-                ),
-              ],
-            ),
+    return BlocBuilder<CurrencyCubit, AppCurrency>(
+      builder: (context, currency) {
+        final message = isOverBudget
+            ? 'You\'ve exceeded your budget by ${formatCurrency(spent - budget.amount, currency)}'
+            : 'You\'ve reached ${percentageUsed.toStringAsFixed(0)}% of your budget. ${formatCurrency(remaining, currency)} remaining.';
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color),
           ),
-        ],
-      ),
+          child: Row(
+            children: [
+              Icon(icon, color: color, size: 24),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      message,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: color.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

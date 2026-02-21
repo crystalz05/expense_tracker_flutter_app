@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../../monthly_budget/domain/entities/monthly_budget.dart';
 import '../../../monthly_budget/presentation/bloc/monthly_budget_bloc.dart';
 import '../../../monthly_budget/presentation/bloc/monthly_budget_event.dart';
@@ -206,11 +208,13 @@ class AllMonthlyBudgetsPage extends StatelessWidget {
             ],
           ],
         ),
-        subtitle: Text(
-          '₦${formatter.format(budget.amount)}',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
+        subtitle: BlocBuilder<CurrencyCubit, AppCurrency>(
+          builder: (context, currency) => Text(
+            formatCurrency(budget.amount, currency),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         trailing: PopupMenuButton(
@@ -456,10 +460,10 @@ class _MonthYearBudgetDialogState extends State<_MonthYearBudgetDialog> {
               TextFormField(
                 controller: _amountController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Amount',
-                  prefixText: '₦ ',
-                  border: OutlineInputBorder(),
+                  prefixText: '${context.watch<CurrencyCubit>().state.symbol} ',
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';

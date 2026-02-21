@@ -2,7 +2,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../../core/utils/currency_formatter.dart';
 import '../../misc/formatter.dart';
 
 class CategoryListItem extends StatelessWidget {
@@ -51,7 +54,7 @@ class CategoryListItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "₦${formatter.format(amount)}",
+                  formatCurrency(amount, context.watch<CurrencyCubit>().state),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

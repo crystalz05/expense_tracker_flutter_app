@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../../core/utils/currency_formatter.dart';
 import '../../../../../features/monthly_budget/domain/entities/monthly_budget.dart';
 import '../../../../../features/monthly_budget/presentation/bloc/monthly_budget_bloc.dart';
 import '../../../../monthly_budget/presentation/bloc/monthly_budget_event.dart';
@@ -130,19 +132,22 @@ class _MonthlyBudgetCardState extends State<MonthlyBudgetCard> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        currentBudget != null
-                            ? "₦${formatter.format(budgetAmount)}"
-                            : "Not Set",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: currentBudget != null
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withOpacity(0.4),
+                      BlocBuilder<CurrencyCubit, AppCurrency>(
+                        builder: (context, currency) => Text(
+                          currentBudget != null
+                              ? formatCurrency(budgetAmount, currency)
+                              : "Not Set",
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: currentBudget != null
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.4),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 4),
                       TextButton.icon(
                         onPressed: () async {
                           final now = DateTime.now();

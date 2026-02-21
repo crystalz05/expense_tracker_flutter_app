@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/presentation/cubit/currency_cubit.dart';
+import '../../../../core/utils/currency_formatter.dart';
 import '../../domain/entities/analytics_summary.dart';
 import '../../domain/entities/category_spending.dart';
 import '../../domain/entities/monthly_comparison.dart';
@@ -379,7 +381,7 @@ class _CategoryList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '₦${formatter.format(category.amount)}',
+                  formatCurrency(category.amount, context.watch<CurrencyCubit>().state),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -446,7 +448,7 @@ class _MonthComparisonCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '₦${formatter.format(comparison.previousTotal)}',
+                        formatCurrency(comparison.previousTotal, context.watch<CurrencyCubit>().state),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -471,7 +473,7 @@ class _MonthComparisonCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '₦${formatter.format(comparison.currentTotal)}',
+                        formatCurrency(comparison.currentTotal, context.watch<CurrencyCubit>().state),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -611,8 +613,9 @@ class _SpendingTrendChart extends StatelessWidget {
                         showTitles: true,
                         reservedSize: 50,
                         getTitlesWidget: (value, meta) {
+                          final symbol = context.watch<CurrencyCubit>().state.symbol;
                           return Text(
-                            '₦${(value / 1000).toStringAsFixed(0)}k',
+                            '$symbol${(value / 1000).toStringAsFixed(0)}k',
                             style: const TextStyle(fontSize: 10),
                           );
                         },
@@ -670,7 +673,7 @@ class _SpendingTrendChart extends StatelessWidget {
               children: [
                 _TrendStat(
                   label: 'Average',
-                  value: '₦${formatter.format(trend.averageMonthlySpending)}',
+                  value: formatCurrency(trend.averageMonthlySpending, context.watch<CurrencyCubit>().state),
                 ),
                 _TrendStat(label: 'Top Category', value: trend.topCategory),
                 _TrendStat(

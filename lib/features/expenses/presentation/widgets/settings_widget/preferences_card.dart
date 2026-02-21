@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 import '../../../../../core/presentation/cubit/offline_mode_cubit.dart';
 import '../../../../../core/presentation/cubit/theme_cubit.dart';
 
@@ -39,7 +39,6 @@ class PreferencesCard extends StatelessWidget {
             ),
           ),
           const Divider(height: 1, indent: 72),
-          // NEW: Offline Mode Toggle
           _PreferenceItem(
             icon: Icons.cloud_off,
             title: 'Offline Mode',
@@ -65,6 +64,36 @@ class PreferencesCard extends StatelessWidget {
                       ),
                     );
                   },
+                );
+              },
+            ),
+          ),
+          const Divider(height: 1, indent: 72),
+          // Currency selection
+          _PreferenceItem(
+            icon: Icons.currency_exchange,
+            title: 'Currency',
+            subtitle: 'Choose display currency',
+            trailing: BlocBuilder<CurrencyCubit, AppCurrency>(
+              builder: (context, currency) {
+                return SegmentedButton<AppCurrency>(
+                  segments: const [
+                    ButtonSegment(
+                      value: AppCurrency.ngn,
+                      label: Text('₦ NGN'),
+                    ),
+                    ButtonSegment(
+                      value: AppCurrency.usd,
+                      label: Text('\$ USD'),
+                    ),
+                  ],
+                  selected: {currency},
+                  onSelectionChanged: (selected) {
+                    context.read<CurrencyCubit>().setCurrency(selected.first);
+                  },
+                  style: ButtonStyle(
+                    visualDensity: VisualDensity.compact,
+                  ),
                 );
               },
             ),
@@ -140,3 +169,4 @@ class _PreferenceItem extends StatelessWidget {
     );
   }
 }
+

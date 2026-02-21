@@ -1,5 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/presentation/cubit/currency_cubit.dart';
 
 import '../../pages/expenses_history_page.dart';
 import 'date_button.dart';
@@ -94,7 +96,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: 'Min',
-                      prefixText: '₦',
+                      prefixText: context.read<CurrencyCubit>().state.symbol,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -108,7 +110,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: 'Max',
-                      prefixText: '₦',
+                      prefixText: context.read<CurrencyCubit>().state.symbol,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
